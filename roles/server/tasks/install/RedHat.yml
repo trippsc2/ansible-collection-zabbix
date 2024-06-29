@@ -1,0 +1,8 @@
+---
+- name: Ensure Zabbix server packages are installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - "{{ _zbxserver_package_name }}"
+      - zabbix-selinux-policy
+    state: present

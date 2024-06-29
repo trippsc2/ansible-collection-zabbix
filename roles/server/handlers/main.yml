@@ -1,0 +1,13 @@
+---
+- name: Reload systemd daemon
+  listen: _zbxserver_daemon_reload
+  become: true
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Restart Zabbix server
+  listen: _zbxserver_restart_zabbix_server
+  become: true
+  ansible.builtin.systemd_service:
+    name: zabbix-server.service
+    state: restarted

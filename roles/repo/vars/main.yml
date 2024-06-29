@@ -1,0 +1,25 @@
+---
+_zbx_supported_os_families:
+  - Debian
+  - RedHat
+
+_zbx_supported_non_el_distributions:
+  - Debian
+  - Ubuntu
+
+_zbx_supported_debian_releases:
+  - bullseye
+  - bookworm
+
+_zbx_supported_ubuntu_releases:
+  - focal
+  - jammy
+  - noble
+
+_zbx_el_supported_major_versions:
+  - '8'
+  - '9'
+
+_zbx_supported_zabbix_major_versions:
+  - '7.0'
+  - '6.4'

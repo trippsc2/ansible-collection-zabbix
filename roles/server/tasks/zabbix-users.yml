@@ -1,0 +1,80 @@
+---
+- name: Test and set credentials
+  block:
+    - name: Test default credentials
+      delegate_to: localhost
+      vars:
+        ansible_network_os: community.zabbix.zabbix
+        ansible_connection: httpapi
+        ansible_httpapi_port: "{{ zabbix_port }}"
+        ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+        ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+        ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+        ansible_host: "{{ zabbix_server }}"
+        ansible_user: Admin
+        ansible_httpapi_pass: zabbix
+      community.zabbix.zabbix_api_info:
+    
+    - name: Set credential variables
+      ansible.builtin.set_fact:
+        _zabbix_username: Admin
+        _zabbix_password: zabbix
+  rescue:
+    - name: Set credential variables
+      ansible.builtin.set_fact:
+        _zabbix_username: "{{ zabbix_username }}"
+        _zabbix_password: "{{ zabbix_password }}"
+
+- name: Create user group
+  delegate_to: localhost
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_host: "{{ zabbix_server }}"
+    ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
+    ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
+  community.zabbix.zabbix_usergroup:
+    name: Zabbix internal users
+    gui_access: internal
+    state: present
+
+- name: Create unmanaged Zabbix local user
+  delegate_to: localhost
+  loop: "{{ zbxserver_unmanaged_users }}"
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_host: "{{ zabbix_server }}"
+    ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
+    ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
+  community.zabbix.zabbix_user:
+    name: "{{ item.name | default(item.username) }}"
+    username: "{{ item.username }}"
+    passwd: "{{ item.password }}"
+    role_name: "{{ item.role_name | default('Super admin role') }}"
+    usrgrps:
+      - Zabbix internal users
+    state: present
+
+- name: Create Vault managed Zabbix local user
+  loop: "{{ zbxserver_vault_managed_users }}"
+  when:
+    - zbxserver_configure_vault
+  vars:
+    _zabbix_vault_username: "{{ item }}"
+  ansible.builtin.include_tasks: zabbix-vault-user.yml
+
+- name: Reset default 'Admin' password and store in Vault
+  when:
+    - zbxserver_configure_vault
+  vars:
+    _zabbix_vault_username: Admin
+  ansible.builtin.include_tasks: zabbix-vault-user.yml

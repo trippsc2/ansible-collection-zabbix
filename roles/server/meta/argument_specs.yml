@@ -1,0 +1,843 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix Server
+    description:
+      - This role installs and configures the Zabbix server on a Linux machine.
+    author:
+      - Jim Tarpley
+    options:
+      zbxserver_major_version:
+        type: str
+        required: false
+        default: OS specific
+        choices:
+          - '7.0'
+          - '6.4'
+        description:
+          - The major version of Zabbix to be deployed.
+          - If not specified, the latest supported version for the OS will be used.
+      zbxserver_configure_selinux:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to manage SELinux settings for the Zabbix server.
+      zbxserver_configure_firewalld:
+        type: bool
+        required: false
+        default: OS specific
+        description:
+          - Whether to manage firewalld settings for the Zabbix server.
+          - If not specified, firewalld will be managed on non-Ubuntu systems.
+      zbxserver_configure_ufw:
+        type: bool
+        required: false
+        default: OS specific
+        description:
+          - Whether to manage ufw settings for the Zabbix server.
+          - If not specified, ufw will be managed on Ubuntu systems.
+      zbxserver_configure_logrotate:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to manage logrotate settings for the Zabbix server.
+      zbxserver_configure_vault:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure the Zabbix server to use HashiCorp Vault for database credentials and storing user credentials.
+      zbxserver_configure_mssql_odbc:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure the Zabbix server to use the Microsoft SQL Server ODBC drivers for monitoring.
+      zbxserver_user:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The user as which the Zabbix server will run.
+          - If *zbxserver_configure_vault* is set to `false`, this user will be used to connect to the database.
+          - This user will be created if it does not already exist.
+      zbxserver_group:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The primary group to which the Zabbix server user belongs.
+      zbxserver_database_name:
+        type: str
+        required: false
+        default: zabbix-server
+        description:
+          - The name of the database to be used by the Zabbix server.
+      zbxserver_database_type:
+        type: str
+        required: false
+        default: postgresql
+        choices:
+          - postgresql
+          - mysql
+        description:
+          - The type of database to be used by the Zabbix server.
+      zbxserver_allow_root:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether the Zabbix server daemon should run as the root user.
+      zbxserver_listen_port:
+        type: int
+        required: false
+        default: 10051
+        description:
+          - The port on which the Zabbix server will listen for incoming connections.
+      zbxserver_listen_ip:
+        type: list
+        elements: str
+        required: false
+        default:
+          - '0.0.0.0'
+        description:
+          - The IP addresses on which the Zabbix server will listen for incoming connections.
+      zbxserver_source_ip:
+        type: str
+        required: false
+        description:
+          - The IP address to use as the source address for outgoing connections.
+          - If not specified, the OS TCP/IP stack will decide which address to use.
+      zbxserver_stats_allowed_ip:
+        type: list
+        elements: str
+        required: false
+        default:
+          - '127.0.0.1'
+        description:
+          - The IP addresses from which Zabbix server statistics can be retrieved.
+      zbxserver_listen_backlog:
+        type: int
+        required: false
+        description:
+          - The maximum length of the queue of pending connections.
+          - If not specified, the OS default will be used.
+      zbxserver_service_manager_sync_frequency:
+        type: int
+        required: false
+        default: 30
+        description:
+          - The frequency at which the Zabbix server will synchronize with the service manager.
+      zbxserver_web_service_url:
+        type: str
+        required: false
+        description:
+          - The URL of the Zabbix web service.
+      zbxserver_tls_ca_file:
+        type: path
+        required: false
+        description:
+          - The path to the CA certificate file used for validating the server certificate and any client certificate authentication attempts.
+          - If not specified, certificates will not be validated.
+      zbxserver_tls_crl_file:
+        type: path
+        required: false
+        description:
+          - The path to the certificate revocation list file.
+          - If not specified, certificate revocation lists will not be checked.
+      zbxserver_tls_cert_file:
+        type: path
+        required: false
+        description:
+          - The path to the server certificate file.
+          - If not specified, the server will not use TLS encryption.
+          - If specified, the *zbxserver_tls_key_file* option must also be specified.
+      zbxserver_tls_key_file:
+        type: path
+        required: false
+        description:
+          - The path to the server private key file.
+          - If not specified, the server will not use TLS encryption.
+          - If specified, the *zbxserver_tls_cert_file* option must also be specified.
+      zbxserver_tls_cipher_cert_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS 1.3 connections with a certificate.
+          - If not specified, the server will use the system-wide default ciphers.
+      zbxserver_tls_cipher_cert:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS connections with a certificate.
+          - If not specified, the server will use the system-wide default ciphers.
+      zbxserver_tls_cipher_psk_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS 1.3 connections with a pre-shared key.
+          - If not specified, the server will use the system-wide default ciphers.
+      zbxserver_tls_cipher_psk:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS connections with a pre-shared key.
+          - If not specified, the server will use the system-wide default ciphers.
+      zbxserver_tls_cipher_all_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for all TLS 1.3 connections.
+          - If not specified, the server will use the system-wide default ciphers.
+      zbxserver_tls_cipher_all:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for all TLS connections.
+          - If not specified, the server will use the system-wide default ciphers.
+      zbxserver_ha_node_name:
+        type: str
+        required: false
+        description:
+          - The name of the Zabbix server node in a high-availability cluster.
+      zbxserver_node_address:
+        type: str
+        required: false
+        description:
+          - The URL segment of the Zabbix server node in a high-availability cluster.
+          - This should be in a format that can be used to construct a URL (e.g. <address>:<port-number>).
+      zbxserver_log_type:
+        type: str
+        required: false
+        default: file
+        choices:
+          - file
+          - system
+          - console
+        description:
+          - The type of logging to use for the Zabbix server.
+      zbxserver_log_file:
+        type: path
+        required: false
+        default: /var/log/zabbix/zabbix_server.log
+        description:
+          - The path to the log file for the Zabbix server.
+          - This option is only used if *zbxserver_log_type* is set to `file`.
+      zbxserver_log_file_size:
+        type: int
+        required: false
+        description:
+          - The maximum size of the log file in megabytes.
+          - If set to 0, the log file will not be rotated.
+          - This option is only used if *zbxserver_log_type* is set to `file`.
+          - If *zbxserver_manage_logrotate* is set to `true`, this option will default to 0.
+          - If *zbxserver_manage_logrotate* is set to `false`, this option will default to 1.
+      zbxserver_pid_file:
+        type: path
+        required: false
+        default: /run/zabbix/zabbix_server.pid
+        description:
+          - The path to the PID file for the Zabbix server.
+      zbxserver_socket_dir:
+        type: path
+        required: false
+        default: /run/zabbix
+        description:
+          - The directory in which the Zabbix server will create its socket file.
+      zbxserver_database_host:
+        type: str
+        required: false
+        default: localhost
+        description:
+          - The host to which the Zabbix server will connect to the database.
+          - If the database is PostgreSQL, setting this to an empty string will cause the server to connect via a Unix socket on the local system.
+          - If the database is MySQL, setting this to `localhost` will cause the server to connect via a Unix socket on the local system.
+      zbxserver_database_port:
+        type: int
+        required: false
+        default: 5432
+        description:
+          - The port on which the Zabbix server will connect to the database.
+      zbxserver_database_password:
+        type: str
+        required: false
+        description:
+          - The password for the Zabbix server to connect to the database.
+          - If *zbxserver_configure_vault* is set to `true`, this option will be ignored.
+          - If *zbxserver_configure_vault* is set to `false` and *zbxserver_database_host* is not set to an empty string, this option must be set.
+      zbxserver_allow_unsupported_db_versions:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to allow the Zabbix server to connect to unsupported versions of the database.
+      zbxserver_vault_database_mount_point:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The KV version 2 mount point in HashiCorp Vault where the Zabbix server's database credentials are stored.
+      zbxserver_vault_database_path:
+        type: str
+        required: false
+        default: database
+        description:
+          - The path within the mount point in HashiCorp Vault where the Zabbix server's database credentials are stored.
+          - The secret at this path must have the keys `username` and `password` defined.
+      zbxserver_db_tls_connect:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - require
+          - verify_ca
+          - verify_full
+        description:
+          - Defines the TLS behavior for connecting to the database.
+          - If set to `unencrypted`, the server will not use TLS encryption.
+          - If set to `require`, the server will use TLS encryption but will not validate the server certificate.
+          - If set to `verify-ca`, the server will use TLS encryption and will validate the server certificate chain, but not the host name.
+          - If set to `verify-full`, the server will use TLS encryption and will validate the server certificate chain and host name.
+      zbxserver_db_tls_ca_file:
+        type: path
+        required: false
+        description:
+          - The path to the CA certificate file used for validating the database server certificate.
+          - If *zbxserver_db_tls_connect* is set to `unencrypted` or `require`, this option will be ignored.
+          - If *zbxserver_db_tls_connect* is set to `verify-ca` or `verify-full`, this option must be set.
+      zbxserver_db_tls_cert_file:
+        type: path
+        required: false
+        description:
+          - The path to the client certificate file used for authenticating the Zabbix server to the database server.
+          - If client certificate authentication is not being used, this option should not be set.
+          - If *zbxserver_db_tls_key_file* is set, this option must also be set.
+      zbxserver_db_tls_key_file:
+        type: path
+        required: false
+        description:
+          - The path to the client private key file used for authenticating the Zabbix server to the database server.
+          - If client certificate authentication is not being used, this option should not be set.
+          - If *zbxserver_db_tls_cert_file* is set, this option must also be set.
+      zbxserver_vault_token:
+        type: str
+        required: false
+        description:
+          - The token used to authenticate to HashiCorp Vault.
+          - If *zbxserver_configure_vault* is set to `true`, this option must be set.
+          - If *zbxserver_configure_vault* is set to `false`, this option will be ignored.
+      zbxserver_vault_url:
+        type: str
+        required: false
+        description:
+          - The URL of the HashiCorp Vault server.
+          - If *zbxserver_configure_vault* is set to `true`, this option must be set.
+          - If *zbxserver_configure_vault* is set to `false`, this option will be ignored.
+      zbxserver_history_storage:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to enable history storage in ElasticSearch/OpenSearch.
+      zbxserver_history_storage_url:
+        type: str
+        required: false
+        description:
+          - The URL of the ElasticSearch/OpenSearch server.
+          - If *zbxserver_history_storage* is set to `true`, this option must be set.
+          - If *zbxserver_history_storage* is set to `false`, this option will be ignored.
+      zbxserver_history_storage_types:
+        type: list
+        elements: str
+        required: false
+        default:
+          - uint
+          - dbl
+          - str
+          - log
+          - text
+        choices:
+          - uint
+          - dbl
+          - str
+          - log
+          - text
+        description:
+          - The index in ElasticSearch/OpenSearch where the Zabbix server will store history data.
+          - If *zbxserver_history_storage* is set to `true`, this option must be set.
+          - If *zbxserver_history_storage* is set to `false`, this option will be ignored.
+      zbxserver_history_storage_date_index:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to create a separate index for each day's history data.
+          - If *zbxserver_history_storage* is set to `true`, this option must be set.
+          - If *zbxserver_history_storage* is set to `false`, this option will be ignored.
+      zbxserver_export:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to enable export of historical data.
+      zbxserver_export_dir:
+        type: path
+        required: false
+        description:
+          - The directory in which the Zabbix server will store exported historical data.
+          - If *zbxserver_export* is set to `true`, this option must be set.
+          - If *zbxserver_export* is set to `false`, this option will be ignored.
+      zbxserver_export_file_size:
+        type: bytes
+        required: false
+        default: 1G
+        description:
+          - The maximum size of the exported data files.
+          - If *zbxserver_export* is set to `true`, this option must be set.
+          - If *zbxserver_export* is set to `false`, this option will be ignored.
+      zbxserver_export_type:
+        type: list
+        elements: str
+        required: false
+        default:
+          - events
+          - history
+          - trends
+        choices:
+          - events
+          - history
+          - trends
+        description:
+          - The types of data to export.
+          - If *zbxserver_export* is set to `true`, this option must be set.
+          - If *zbxserver_export* is set to `false`, this option will be ignored.
+      zbxserver_start_pollers:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of poller processes to start.
+      zbxserver_start_ipmi_pollers:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of IPMI poller processes to start.
+      zbxserver_start_pollers_unreachable:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of poller processes to start for unreachable hosts.
+      zbxserver_start_preprocessors:
+        type: int
+        required: false
+        default: 3
+        description:
+          - The number of preprocessor processes to start.
+      zbxserver_start_history_pollers:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of history poller processes to start.
+      zbxserver_start_trappers:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of trapper processes to start.
+      zbxserver_start_pingers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of pinger processes to start.
+      zbxserver_start_discoverers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of discoverer processes to start.
+      zbxserver_start_http_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of HTTP poller processes to start.
+      zbxserver_start_timers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of timer processes to start.
+      zbxserver_start_escalators:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of escalator processes to start.
+      zbxserver_start_alerters:
+        type: int
+        required: false
+        default: 3
+        description:
+          - The number of alerter processes to start.
+      zbxserver_start_java_pollers:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of Java poller processes to start.
+          - If *zbxserver_use_java_gateway* is set to `false`, this option will be ignored.
+      zbxserver_start_vmware_collectors:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of VMware collector processes to start.
+      zbxserver_start_snmp_trapper:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of SNMP trapper processes to start.
+      zbxserver_start_db_syncers:
+        type: int
+        required: false
+        default: 4
+        description:
+          - The number of database syncer processes to start.
+      zbxserver_start_proxy_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of proxy poller processes to start.
+      zbxserver_start_lld_processors:
+        type: int
+        required: false
+        default: 2
+        description:
+          - The number of low-level discovery (LLD) processor processes to start.
+      zbxserver_start_report_writers:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of report writer processes to start.
+      zbxserver_start_odbc_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of ODBC poller processes to start.
+      zbxserver_cache_size:
+        type: bytes
+        required: false
+        default: 32M
+        description:
+          - The size of the cache in memory.
+      zbxserver_history_cache_size:
+        type: bytes
+        required: false
+        default: 8M
+        description:
+          - The size of the history cache in memory.
+      zbxserver_history_index_cache_size:
+        type: bytes
+        required: false
+        default: 4M
+        description:
+          - The size of the history index cache in memory.
+      zbxserver_trend_cache_size:
+        type: bytes
+        required: false
+        default: 4M
+        description:
+          - The size of the trend cache in memory.
+      zbxserver_trend_function_cache_size:
+        type: bytes
+        required: false
+        default: 4M
+        description:
+          - The size of the trend function cache in memory.
+      zbxserver_value_cache_size:
+        type: bytes
+        required: false
+        default: 8M
+        description:
+          - The size of the value cache in memory.
+      zbxserver_vmware_cache_size:
+        type: bytes
+        required: false
+        default: 8M
+        description:
+          - The size of the VMware cache in memory.
+      zbxserver_use_java_gateway:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to use the Java Gateway for monitoring.
+      zbxserver_java_gateway:
+        type: str
+        required: false
+        description:
+          - The IP address or hostname of the Java Gateway.
+          - If *zbxserver_use_java_gateway* is set to `true`, this option must be set.
+          - If *zbxserver_use_java_gateway* is set to `false`, this option will be ignored.
+      zbxserver_java_gateway_port:
+        type: int
+        required: false
+        default: 10052
+        description:
+          - The port on which the Java Gateway will listen for incoming connections.
+          - If *zbxserver_use_java_gateway* is set to `false`, this option will be ignored.
+      zbxserver_vmware_frequency:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The frequency in seconds at which the Zabbix server will poll VMware data.
+      zbxserver_vmware_perf_frequency:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The frequency in seconds at which the Zabbix server will poll VMware performance data.
+      zbxserver_vmware_timeout:
+        type: int
+        required: false
+        default: 10
+        description:
+          - The timeout in seconds for VMware data collection.
+      zbxserver_snmp_trapper_file:
+        type: path
+        required: false
+        default: /tmp/zabbix_traps.tmp
+        description:
+          - The path to the file where SNMP traps will be stored.
+      zbxserver_housekeeping_frequency:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The frequency in seconds at which the Zabbix server will perform housekeeping tasks.
+      zbxserver_max_housekeeper_delete:
+        type: int
+        required: false
+        default: 5000
+        description:
+          - The maximum number of records to delete during housekeeping.
+      zbxserver_problem_housekeeping_frequency:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The frequency in seconds at which the Zabbix server will perform problem housekeeping tasks.
+      zbxserver_cache_update_frequency:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The frequency in seconds at which the Zabbix server will update the cache.
+      zbxserver_timeout:
+        type: int
+        required: false
+        default: 3
+        description:
+          - The timeout in seconds for processing requests.
+      zbxserver_trapper_timeout:
+        type: int
+        required: false
+        default: 300
+        description:
+          - The timeout in seconds for processing trapper requests.
+      zbxserver_unreachable_period:
+        type: int
+        required: false
+        default: 45
+        description:
+          - The period with no response in seconds after which a host is considered unavailable.
+      zbxserver_unreachable_delay:
+        type: int
+        required: false
+        default: 15
+        description:
+          - The period in seconds between checks for hosts that did not respond previously but are not yet considered unavailable.
+      zbxserver_unavailable_delay:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The period in seconds between checks for hosts that are considered unavailable.
+      zbxserver_alert_scripts_path:
+        type: path
+        required: false
+        default: /usr/lib/zabbix/alertscripts
+        description:
+          - The path to the directory where alert scripts are stored.
+      zbxserver_external_scripts:
+        type: path
+        required: false
+        default: /usr/lib/zabbix/externalscripts
+        description:
+          - The path to the directory where external scripts are stored.
+      zbxserver_fping_location:
+        type: path
+        required: false
+        default: /usr/sbin/fping
+        description:
+          - The path to the fping binary.
+      zbxserver_fping6_location:
+        type: path
+        required: false
+        default: /usr/sbin/fping6
+        description:
+          - The path to the fping6 binary.
+      zbxserver_ssh_key_location:
+        type: path
+        required: false
+        description:
+          - The path to the SSH key used for SSH checks.
+          - If not specified, the default SSH key will be used.
+      zbxserver_tmp_dir:
+        type: path
+        required: false
+        default: /tmp
+        description:
+          - The directory in which the Zabbix server will store temporary files.
+      zbxserver_proxy_config_frequency:
+        type: int
+        required: false
+        default: 300
+        description:
+          - The frequency in seconds at which the Zabbix server will synchronize with the proxy configuration.
+      zbxserver_proxy_data_frequency:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The frequency in seconds at which the Zabbix server will synchronize with the proxy data.
+      zbxserver_include_files:
+        type: list
+        elements: path
+        required: false
+        description:
+          - A list of paths to additional configuration files to include in the Zabbix server configuration.
+      zbxserver_include_directories:
+        type: list
+        elements: path
+        required: false
+        description:
+          - A list of directories containing additional configuration files to include in the Zabbix server configuration.
+      zbxserver_ssl_cert_location:
+        type: path
+        required: false
+        description:
+          - The path to the SSL certificate files to use in web monitoring.
+          - If not specified, the server will not use SSL client certificates for web monitoring.
+          - If specified, the *zbxserver_ssl_key_location* option must also be specified.
+      zbxserver_ssl_key_location:
+        type: path
+        required: false
+        description:
+          - The path to the SSL key files to use in web monitoring.
+          - If not specified, the server will not use SSL client certificates for web monitoring.
+          - If specified, the *zbxserver_ssl_cert_location* option must also be specified.
+      zbxserver_load_module_path:
+        type: path
+        required: false
+        description:
+          - The path to the directory containing loadable modules.
+      zbxserver_load_modules:
+        type: list
+        elements: str
+        required: false
+        description:
+          - A list of loadable modules to load.
+      zbxserver_vault_users_mount_point:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The KV version 2 mount point in HashiCorp Vault where the Zabbix server's user credentials are stored.
+      zbxserver_vault_users_base_path:
+        type: str
+        required: false
+        default: users
+        description:
+          - The base path within the mount point in HashiCorp Vault where the Zabbix server's user credentials are stored.
+          - The value should include a trailing slash.
+      zbxserver_vault_managed_users:
+        type: list
+        required: false
+        default:
+          - ansible
+        elements: str
+        description:
+          - A list of users whose credentials are stored in HashiCorp Vault.
+          - Each user should be specified as a string.
+      zbxserver_unmanaged_users:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A list of users that are not managed in HashiCorp Vault.
+        options:
+          name:
+            type: str
+            required: false
+            description:
+              - The display name of the user.
+              - If not specified, the username will be used.
+          username:
+            type: str
+            required: true
+            description:
+              - The username of the user.
+          password:
+            type: str
+            required: true
+            description:
+              - The password of the user.
+          role_name:
+            type: str
+            required: false
+            default: Super admin role
+            description:
+              - The name of the role to assign to the user.
+      zbxserver_logrotate_period:
+        type: str
+        required: false
+        default: daily
+        choices:
+          - daily
+          - weekly
+          - monthly
+        description:
+          - The period at which logrotate should rotate the Zabbix server's log file.
+      zbxserver_logrotate_retention:
+        type: int
+        required: false
+        default: 14
+        description:
+          - The number of rotated log files to retain.
+      zbxserver_logrotate_mode:
+        type: str
+        required: false
+        default: '0640'
+        description:
+          - The permissions to set on the rotated log files.
+      zbxserver_templates:
+        type: list
+        required: false
+        default: []
+        elements: path
+        description:
+          - A list of templates to import into the Zabbix server from a path on the controller node.

@@ -1,0 +1,9 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix NGINX
+    description:
+      - This role installs NGINX as a web frontend for Zabbix Server on a Linux machine.
+    author:
+      - Jim Tarpley
+    options: {}

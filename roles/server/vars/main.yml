@@ -1,0 +1,40 @@
+---
+_zbxserver_el_supported_major_versions:
+  '8':
+    - '7.0'
+    - '6.4'
+  '9':
+    - '7.0'
+    - '6.4'
+
+_zbxserver_non_el_supported_major_versions:
+  bullseye:
+    - '6.4'
+  bookworm:
+    - '7.0'
+    - '6.4'
+  focal:
+    - '6.4'
+  jammy:
+    - '7.0'
+    - '6.4'
+  noble:
+    - '7.0'
+    - '6.4'
+
+_zbxserver_el_default_major_version: >-
+  {{ _zbxserver_el_supported_major_versions[ansible_distribution_major_version][0] }}
+_zbxserver_non_el_default_major_version: >-
+  {{ _zbxserver_non_el_supported_major_versions[ansible_distribution_release][0] }}
+
+_zbxserver_default_major_version: >-
+  {{ _zbxserver_el_default_major_version if ansible_os_family == 'RedHat' else _zbxserver_non_el_default_major_version }}
+
+_zbxserver_package_name_by_database_type:
+  postgresql: zabbix-server-pgsql
+  mysql: zabbix-server-mysql
+
+_zbxserver_package_name: >-
+  {{ _zbxserver_package_name_by_database_type[zbxserver_database_type] }}
+
+zbx_major_version: "{{ zbxserver_major_version }}"

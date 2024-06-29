@@ -1,0 +1,18 @@
+---
+- name: Gather OS facts
+  when:
+    - ansible_distribution is not defined or
+      ansible_distribution_major_version is not defined or
+      ansible_distribution_release is not defined or
+      ansible_os_family is not defined
+  ansible.builtin.setup:
+    gather_subset:
+      - '!all'
+      - '!min'
+      - distribution
+      - distribution_major_version
+      - distribution_release
+      - os_family
+
+- name: Validate
+  ansible.builtin.import_tasks: validate.yml

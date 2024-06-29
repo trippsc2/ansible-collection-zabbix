@@ -1,0 +1,54 @@
+---
+- name: Ensure Zabbix server config file matches desired configuration
+  become: true
+  ansible.builtin.template:
+    src: zabbix_server.conf.j2
+    dest: /etc/zabbix/zabbix_server.conf
+    owner: "{{ zbxserver_user }}"
+    group: "{{ zbxserver_group }}"
+    mode: '0640'
+  notify:
+    - _zbxserver_restart_zabbix_server
+
+- name: Ensure all 'include' directories existed and are permissioned correctly
+  loop: "{{ zbxserver_include_directories | default([]) }}"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ zbxserver_user }}"
+    group: "{{ zbxserver_group }}"
+    mode: '0750'
+  notify:
+    - _zbxserver_restart_zabbix_server
+
+- name: Ensure systemd unit file is properly configured
+  become: true
+  ansible.builtin.template:
+    src: zabbix-server.service.j2
+    dest: /usr/lib/systemd/system/zabbix-server.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - _zbxserver_daemon_reload
+    - _zbxserver_restart_zabbix_server
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure Zabbix server systemd service is enabled and started
+  become: true
+  ansible.builtin.systemd_service:
+    name: zabbix-server.service
+    state: started
+    enabled: true
+
+- name: Configure logrotate for Zabbix Server
+  become: true
+  ansible.builtin.template:
+    src: zabbix-server.logrotate.j2
+    dest: /etc/logrotate.d/zabbix-server
+    owner: root
+    group: root
+    mode: '0644'

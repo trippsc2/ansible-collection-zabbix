@@ -1,0 +1,47 @@
+---
+- name: Ensure user secret is in Hashicorp Vault
+  block:
+    - name: Check if user secret has been created
+      delegate_to: localhost
+      community.hashi_vault.vault_kv2_get:
+        token: "{{ vault_token | default(omit) }}"
+        url: "{{ vault_url | default(omit) }}"
+        engine_mount_point: "{{ zbxserver_vault_users_mount_point }}"
+        path: "{{ zbxserver_vault_users_base_path }}/{{ _zabbix_vault_username }}"
+  rescue:
+    - name: Generate a new password
+      ansible.builtin.set_fact:
+        _zabbix_vault_password: >-
+          {{ lookup('ansible.builtin.password',
+                    '/dev/null chars=ascii_lowercase,ascii_uppercase,digits,punctuation length=20') }}
+
+    - name: Create Zabbix user
+      delegate_to: localhost
+      vars:
+        ansible_network_os: community.zabbix.zabbix
+        ansible_connection: httpapi
+        ansible_httpapi_port: "{{ zabbix_port }}"
+        ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+        ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+        ansible_zabbix_url_path: ''
+        ansible_host: "{{ zabbix_server }}"
+        ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
+        ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
+      community.zabbix.zabbix_user:
+        name: Ansible
+        username: "{{ _zabbix_vault_username }}"
+        passwd: "{{ _zabbix_vault_password }}"
+        role_name: Super admin role
+        usrgrps:
+          - Zabbix internal users
+        state: present
+
+    - name: Create Vault user secret
+      delegate_to: localhost
+      community.hashi_vault.vault_kv2_write:
+        url: "{{ vault_url | default(omit) }}"
+        token: "{{ vault_token | default(omit) }}"
+        engine_mount_point: "{{ zbxserver_vault_users_mount_point }}"
+        path: "{{ zbxserver_vault_users_base_path }}/{{ _zabbix_vault_username }}"
+        data:
+          password: "{{ _zabbix_vault_password }}"

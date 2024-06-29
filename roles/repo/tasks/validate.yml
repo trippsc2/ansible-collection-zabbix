@@ -1,0 +1,43 @@
+---
+- name: Validate OS family
+  ansible.builtin.assert:
+    that:
+      - ansible_os_family in _zbx_supported_os_families
+    fail_msg: "{{ ansible_os_family }}-based distributions are not supported."
+    success_msg: "Some {{ ansible_os_family }}-based distributions are supported. Checking details."
+
+- name: Validate distribution
+  when:
+    - ansible_os_family != 'RedHat'
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution in _zbx_supported_non_el_distributions
+    fail_msg: "{{ ansible_distribution }} is not supported."
+    success_msg: "Some {{ ansible_distribution }} releases are supported. Checking details."
+
+- name: Validate Debian release
+  when:
+    - ansible_distribution == 'Debian'
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution_release in _zbx_supported_debian_releases
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: '{{ _zbx_supported_debian_releases | join(''', ''') }}'."
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported."
+
+- name: Validate Ubuntu release
+  when:
+    - ansible_distribution == 'Ubuntu'
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution_release in _zbx_supported_ubuntu_releases
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: {{ _zbx_supported_ubuntu_releases | join(''', ''') }}'."
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported."
+
+- name: Validate EL version
+  when:
+    - ansible_os_family == 'RedHat'
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution_major_version | string in _zbx_el_supported_major_versions
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported. Supported versions are: '{{ _zbx_el_supported_major_versions | join(''', ''') }}'."
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is supported."

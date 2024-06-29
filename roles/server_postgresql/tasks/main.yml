@@ -1,0 +1,58 @@
+---
+- name: Gather OS facts
+  when:
+    - ansible_distribution is not defined or
+      ansible_distribution_major_version is not defined or
+      ansible_distribution_release is not defined or
+      ansible_os_family is not defined
+  ansible.builtin.setup:
+    gather_subset:
+      - '!all'
+      - '!min'
+      - distribution
+      - distribution_major_version
+      - distribution_release
+      - os_family
+
+- name: Validate
+  ansible.builtin.import_tasks: validate.yml
+
+- name: Include OS specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Include OS release specific variables (Debian-based)
+  when:
+    - ansible_os_family == 'Debian'
+  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
+
+- name: Include OS release specific variables (RHEL-based)
+  when:
+    - ansible_os_family == 'RedHat'
+  ansible.builtin.include_vars: "RedHat/{{ ansible_distribution_major_version }}.yml"
+
+- name: Set PostgreSQL facts
+  ansible.builtin.set_fact:
+    pgsql_listen_on_local_only: >-
+      {{ _zbxserver_pgsql_listen_on_local_only }}
+    pgsql_listen_on_all_addresses: >-
+      {{ _zbxserver_pgsql_listen_on_all_addresses }}
+    pgsql_install_timescaledb: >-
+      {{ _zbxserver_pgsql_install_timescaledb }}
+
+- name: Include PostgreSQL role
+  ansible.builtin.include_role:
+    name: trippsc2.postgresql.install
+
+- name: Configure Vault
+  when:
+    - zbxserver_configure_vault
+  ansible.builtin.include_tasks: vault.yml
+
+- name: Create user
+  ansible.builtin.include_tasks: user.yml
+
+- name: Install Zabbix packages
+  ansible.builtin.include_tasks: "install/{{ ansible_os_family }}.yml"
+
+- name: Configure database
+  ansible.builtin.import_tasks: configure.yml

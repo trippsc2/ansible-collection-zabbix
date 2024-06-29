@@ -1,0 +1,34 @@
+---
+- name: Verify
+  hosts:
+    - subjects
+  tasks:
+    - name: Check if Zabbix server service is enabled
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: zabbix-server.service
+        enabled: true
+      register: _service_enabled
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_enabled.changed
+        fail_msg: Zabbix server service not enabled
+        success_msg: Zabbix server service enabled
+
+    - name: Check if Zabbix server service is running
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: zabbix-server.service
+        state: started
+      register: _service_running
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_running.changed
+        fail_msg: Zabbix server service not running
+        success_msg: Zabbix server service running

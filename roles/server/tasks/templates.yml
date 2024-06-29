@@ -1,0 +1,19 @@
+---
+- name: Import template
+  delegate_to: localhost
+  loop: "{{ zbxserver_templates }}"
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: ''
+    ansible_host: "{{ zabbix_server }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  community.zabbix.zabbix_template:
+    template_json: "{{ lookup('file', item) | from_yaml }}"
+    state: present
+  tags:
+    - molecule-idempotence-notest

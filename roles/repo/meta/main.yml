@@ -1,0 +1,28 @@
+---
+galaxy_info:
+    author: Jim Tarpley
+    namespace: trippsc2
+    role_name: repo
+    description: This role installs the Zabbix official repository on a Linux machine.
+    license: MIT
+
+    min_ansible_version: '2.14'
+
+    platforms:
+      - name: Debian
+        versions:
+          - bullseye
+          - bookworm
+      - name: EL
+        versions:
+          - '8'
+          - '9'
+      - name: Ubuntu
+        versions:
+          - focal
+          - jammy
+          - noble
+
+collections: []
+
+dependencies: []

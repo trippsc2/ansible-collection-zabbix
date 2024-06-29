@@ -1,0 +1,12 @@
+---
+_zbxserver_default_configure_selinux: true
+
+_zbxserver_selinux_packages:
+  - policycoreutils
+  - python3-libsemanage
+
+_zbxserver_default_configure_firewalld: true
+_zbxserver_default_configure_ufw: false
+
+_zbxserver_env_file_path: /etc/sysconfig/zabbix-server
+_zbxserver_exec_stop_command: /bin/kill -SIGTERM $MAINPID

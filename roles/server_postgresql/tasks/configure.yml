@@ -1,0 +1,93 @@
+---
+- name: Create Zabbix server database
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_db:
+    name: "{{ zbxserver_database_name }}"
+    owner: "{{ zbxserver_user }}"
+    encoding: UTF8
+    lc_collate: en_US.UTF-8
+    lc_ctype: en_US.UTF-8
+    template: template0
+    state: present
+
+- name: Provide user with database permissions
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_privs:
+    database: postgres
+    type: database
+    objs: "{{ zbxserver_database_name }}"
+    roles: "{{ zbxserver_user }}"
+    privs: ALL
+
+- name: Ensure schema is imported
+  block:
+    - name: Query PostgreSQL for schema version
+      become: true
+      become_user: "{{ zbxserver_user }}"
+      vars:
+        ansible_ssh_pipelining: true
+      community.postgresql.postgresql_query:
+        login_user: "{{ zbxserver_user }}"
+        db: "{{ zbxserver_database_name }}"
+        query: SELECT mandatory FROM dbversion
+  rescue:
+    - name: Import schema
+      become: true
+      become_user: "{{ zbxserver_user }}"
+      vars:
+        ansible_ssh_pipelining: true
+      community.postgresql.postgresql_db:
+        login_user: "{{ zbxserver_user }}"
+        db: "{{ zbxserver_database_name }}"
+        state: restore
+        target: /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz
+
+- name: Ensure TimescaleDB is configured
+  when:
+    - zbxserver_use_timescaledb
+  block:
+    - name: Enable TimescaleDB extension on database
+      become: true
+      become_user: "{{ zbxserver_user }}"
+      vars:
+        ansible_ssh_pipelining: true
+      community.postgresql.postgresql_ext:
+        login_user: "{{ zbxserver_user }}"
+        db: "{{ zbxserver_database_name }}"
+        name: timescaledb
+        state: present
+
+    - name: Ensure TimescaleDB hypertables are created
+      become: true
+      ansible.builtin.stat:
+        path: "{{ zbxserver_timescaledb_schema_done_file_path }}"
+      register: _zbxserver_timescaledb_file
+
+    - name: Run TimescaleDB creation script, if needed
+      when:
+        - not _zbxserver_timescaledb_file.stat.exists
+      block:
+        - name: Run TimescaleDB creation script
+          become: true
+          become_user: "{{ zbxserver_user }}"
+          vars:
+            ansible_ssh_pipelining: true
+          community.postgresql.postgresql_script:
+            login_user: "{{ zbxserver_user }}"
+            db: "{{ zbxserver_database_name }}"
+            path: "{{ _zbxserver_timescaledb_schema_script_path }}"
+
+        - name: Create file to indicate that TimescaleDB hypertables are created
+          become: true
+          ansible.builtin.file:
+            path: "{{ zbxserver_timescaledb_schema_done_file_path }}"
+            owner: "{{ zbxserver_user }}"
+            group: "{{ zbxserver_group }}"
+            mode: '0644'
+            state: touch

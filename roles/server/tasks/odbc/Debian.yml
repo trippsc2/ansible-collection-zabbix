@@ -1,0 +1,25 @@
+---
+- name: Install Microsoft GPG key
+  become: true
+  ansible.builtin.apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    file: /etc/apt/trusted.gpg.d/microsoft.asc
+    state: present
+
+- name: Install Microsoft repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "{{ _zbxserver_microsoft_apt_repo_config }}"
+    filename: mssql-release
+    state: present
+
+- name: Install Microsoft ODBC packages
+  become: true
+  environment:
+    ACCEPT_EULA: Y
+  ansible.builtin.apt:
+    name:
+      - msodbcsql18
+      - mssql-tools18
+    state: present
+    update_cache: true

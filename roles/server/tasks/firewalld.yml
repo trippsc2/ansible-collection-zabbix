@@ -1,0 +1,20 @@
+---
+- name: Add firewalld service
+  when:
+    - zbxserver_listen_port == 10051
+  become: true
+  ansible.posix.firewalld:
+    service: zabbix-server
+    state: enabled
+    permanent: true
+    immediate: true
+
+- name: Add firewalld port
+  when:
+    - zbxserver_listen_port != 10051
+  become: true
+  ansible.posix.firewalld:
+    port: "{{ zbxserver_listen_port }}/tcp"
+    state: enabled
+    permanent: true
+    immediate: true

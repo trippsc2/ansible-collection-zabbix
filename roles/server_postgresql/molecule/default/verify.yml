@@ -1,0 +1,64 @@
+---
+- name: Verify
+  hosts:
+    - subjects
+  tasks:
+    - name: Set OS variables (Debian-based)
+      when:
+        - ansible_os_family == 'Debian'
+      ansible.builtin.set_fact:
+        _pgsql_package_name: postgresql-16
+        _pgsql_service_name: postgresql.service
+
+    - name: Set OS variables (Red Hat-based)
+      when:
+        - ansible_os_family == 'RedHat'
+      ansible.builtin.set_fact:
+        _pgsql_package_name: postgresql16-server
+        _pgsql_service_name: postgresql-16.service
+
+    - name: Check if PostgreSQL is installed
+      become: true
+      check_mode: true
+      ansible.builtin.package:
+        name:
+          - "{{ _pgsql_package_name }}"
+        state: present
+      register: _package_installed
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _package_installed.changed
+        fail_msg: PostgreSQL not installed
+        success_msg: PostgreSQL installed
+
+    - name: Check if PostgreSQL service is enabled
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: "{{ _pgsql_service_name }}"
+        enabled: true
+      register: _service_enabled
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_enabled.changed
+        fail_msg: PostgreSQL service not enabled
+        success_msg: PostgreSQL service enabled
+
+    - name: Check if PostgreSQL service is running
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: "{{ _pgsql_service_name }}"
+        state: started
+      register: _service_running
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_running.changed
+        fail_msg: PostgreSQL service not running
+        success_msg: PostgreSQL service running

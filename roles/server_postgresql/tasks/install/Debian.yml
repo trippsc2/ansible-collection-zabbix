@@ -1,0 +1,8 @@
+---
+- name: Ensure Zabbix SQL scripts package is installed
+  become: true
+  ansible.builtin.apt:
+    name:
+      - zabbix-sql-scripts
+    state: present
+    update_cache: true

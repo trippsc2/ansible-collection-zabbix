@@ -1,0 +1,56 @@
+---
+_zbxserver_el_supported_major_versions:
+  '8':
+    - '7.0'
+    - '6.4'
+  '9':
+    - '7.0'
+    - '6.4'
+
+_zbxserver_non_el_supported_major_versions:
+  bullseye:
+    - '6.4'
+  bookworm:
+    - '7.0'
+    - '6.4'
+  focal:
+    - '6.4'
+  jammy:
+    - '7.0'
+    - '6.4'
+  noble:
+    - '7.0'
+    - '6.4'
+
+_zbxserver_el_default_major_version: >-
+  {{ _zbxserver_el_supported_major_versions[ansible_distribution_major_version][0] }}
+_zbxserver_non_el_default_major_version: >-
+  {{ _zbxserver_non_el_supported_major_versions[ansible_distribution_release][0] }}
+
+_zbxserver_default_major_version: >-
+  {{ _zbxserver_el_default_major_version if ansible_os_family == 'RedHat' else _zbxserver_non_el_default_major_version }}
+
+
+_zbxserver_nginx_module_versions_allowed:
+  '7.0':
+    - '1.24'
+    - '1.22'
+    - '1.20'
+  '6.4':
+    - '1.24'
+    - '1.22'
+    - '1.20'
+
+_zbxserver_default_nginx_module_version: >-
+  {{ _zbxserver_nginx_module_versions_allowed[zbxserver_major_version][0] }}
+
+_zbxserver_php_module_versions_allowed:
+  '7.0':
+    - '8.0'
+    - '7.4'
+  '6.4':
+    - '8.0'
+    - '7.4'
+
+_zbxserver_default_php_module_version: >-
+  {{ _zbxserver_php_module_versions_allowed[zbxserver_major_version][0] }}

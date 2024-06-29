@@ -1,0 +1,30 @@
+[Unit]
+Description=Zabbix Server
+After=syslog.target
+After=network.target
+{%- if zbxserver_database_type == 'postgresql' %}
+After=postgresql.service
+After=postgresql-13.service
+After=postgresql-14.service
+After=postgresql-15.service
+After=postgresql-16.service
+{%- elif zbxserver_database_type == 'mysql' %}
+After=mysql.service
+After=mysqld.service
+After=mariadb.service
+{% endif %}
+
+[Service]
+Environment="CONFFILE=/etc/zabbix/zabbix_server.conf"
+EnvironmentFile=-{{ _zbxserver_env_file_path }}
+Type=forking
+Restart=on-failure
+PIDFile={{ zbxserver_pid_file }}
+KillMode=control-group
+ExecStart=/usr/sbin/zabbix_server -c $CONFFILE
+ExecStop={{ _zbxserver_exec_stop_command }}
+RestartSec=10s
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target

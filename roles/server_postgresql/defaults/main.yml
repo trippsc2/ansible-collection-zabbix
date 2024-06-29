@@ -1,0 +1,22 @@
+---
+zbxserver_major_version: "{{ _zbxserver_default_major_version | default('7.0') }}"
+zbxserver_pgsql_standalone: false
+
+zbxserver_use_timescaledb: true
+zbxserver_pgsql_additional_hba_entries: []
+
+zbxserver_user: zabbix
+zbxserver_group: zabbix
+
+zbxserver_database_name: zabbix-server
+
+zbxserver_configure_vault: true
+zbxserver_vault_create_mount_points: true
+
+zbxserver_vault_database_mount_point: zabbix
+zbxserver_vault_database_path: database
+
+zbxserver_schema_done_file_path: >-
+  {{ _zbxserver_pgsql_base_directory | default('/var/lib/pgsql') }}/zbx_schema.done
+zbxserver_timescaledb_schema_done_file_path: >-
+  {{ _zbxserver_pgsql_base_directory | default('/var/lib/pgsql') }}/zbx_timescaledb_schema.done

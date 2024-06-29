@@ -1,0 +1,20 @@
+---
+- name: Verify
+  hosts:
+    - subjects
+  tasks:
+    - name: Check if Zabbix release package is installed
+      become: true
+      check_mode: true
+      ansible.builtin.package:
+        name:
+          - zabbix-release
+        state: present
+      register: _package_installed
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _package_installed.changed
+        fail_msg: zabbix-release package not installed
+        success_msg: zabbix-release package installed

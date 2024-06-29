@@ -1,0 +1,68 @@
+---
+_zbxserver_el_supported_major_versions:
+  '8':
+    - '7.0'
+    - '6.4'
+  '9':
+    - '7.0'
+    - '6.4'
+
+_zbxserver_non_el_supported_major_versions:
+  bullseye:
+    - '6.4'
+  bookworm:
+    - '7.0'
+    - '6.4'
+  focal:
+    - '6.4'
+  jammy:
+    - '7.0'
+    - '6.4'
+  noble:
+    - '7.0'
+    - '6.4'
+
+_zbxserver_el_default_major_version: >-
+  {{ _zbxserver_el_supported_major_versions[ansible_distribution_major_version][0] }}
+_zbxserver_non_el_default_major_version: >-
+  {{ _zbxserver_non_el_supported_major_versions[ansible_distribution_release][0] }}
+
+_zbxserver_default_major_version: >-
+  {{ _zbxserver_el_default_major_version if ansible_os_family == 'RedHat' else _zbxserver_non_el_default_major_version }}
+
+_zbxserver_default_pgsql_listen_on_local_only: "{{ not zbxserver_pgsql_standalone }}"
+_zbxserver_default_pgsql_listen_on_all_addresses: "{{ zbxserver_pgsql_standalone }}"
+_zbxserver_default_pgsql_install_timescaledb: "{{ zbxserver_use_timescaledb }}"
+
+_zbxserver_pgsql_listen_on_local_only: >-
+  {{ pgsql_listen_on_local_only | default(_zbxserver_default_pgsql_listen_on_local_only) }}
+_zbxserver_pgsql_listen_on_all_addresses: >-
+  {{ pgsql_listen_on_all_addresses | default(_zbxserver_default_pgsql_listen_on_all_addresses) }}
+_zbxserver_pgsql_install_timescaledb: >-
+  {{ pgsql_install_timescaledb | default(_zbxserver_default_pgsql_install_timescaledb) }}
+_zbxserver_pgsql_hba_entries: >-
+  [
+  {% if zbxserver_pgsql_standalone | bool %}
+  {% for address in zbxserver_ip_addresses %}
+    {
+      "type": "host",
+      "database": "{{ zbxserver_database_name }}",
+      "user": "{{ zbxserver_user }}",
+      "address": "{{ address }}/32",
+      "auth_method": "{{ pgsql_password_encryption | default('scram-sha-256') }}"
+    }{{ ',' if not loop.last }}
+  {% endfor %}
+  {% endif %}
+  ]
+
+pgsql_additional_hba_entries: >-
+  {{ _zbxserver_pgsql_hba_entries + zbxserver_pgsql_additional_hba_entries }}
+
+_zbxserver_timescaledb_schema_script_path_by_zabbix_major_version:
+  '7.0': /usr/share/zabbix-sql-scripts/postgresql/timescaledb/schema.sql
+  '6.4': /usr/share/zabbix-sql-scripts/postgresql/timescaledb.sql
+
+_zbxserver_timescaledb_schema_script_path: >-
+  {{ _zbxserver_timescaledb_schema_script_path_by_zabbix_major_version[zbxserver_major_version] }}
+
+zbx_major_version: "{{ zbxserver_major_version }}"

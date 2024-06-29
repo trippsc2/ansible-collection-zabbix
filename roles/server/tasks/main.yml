@@ -1,0 +1,64 @@
+---
+- name: Gather OS facts
+  when:
+    - ansible_distribution is not defined or
+      ansible_distribution_major_version is not defined or
+      ansible_distribution_release is not defined or
+      ansible_os_family is not defined
+  ansible.builtin.setup:
+    gather_subset:
+      - '!all'
+      - '!min'
+      - distribution
+      - distribution_major_version
+      - distribution_release
+      - os_family
+
+- name: Validate
+  ansible.builtin.import_tasks: validate.yml
+
+- name: Include OS specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Include OS release specific variables (Debian-based)
+  when:
+    - ansible_os_family == 'Debian'
+  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
+
+- name: Include OS release specific variables (RHEL-based)
+  when:
+    - ansible_os_family == 'RedHat'
+  ansible.builtin.include_vars: "RedHat/{{ ansible_distribution_major_version }}.yml"
+
+- name: Ensure Zabbix user exists
+  ansible.builtin.import_tasks: user.yml
+
+- name: Ensure Zabbix Server is installed
+  ansible.builtin.include_tasks: "install/{{ ansible_os_family }}.yml"
+
+- name: Ensure SELinux is configured for use with Zabbix
+  when:
+    - zbxserver_configure_selinux
+  ansible.builtin.include_tasks: selinux.yml
+
+- name: Configure firewalld
+  when:
+    - zbxserver_configure_firewalld
+  ansible.builtin.include_tasks: firewalld.yml
+
+- name: Configure ufw
+  when:
+    - zbxserver_configure_ufw
+  ansible.builtin.include_tasks: ufw.yml
+
+- name: Ensure Zabbix is configured and started
+  ansible.builtin.import_tasks: configure.yml
+
+- name: Configure Zabbix local users
+  ansible.builtin.import_tasks: zabbix-users.yml
+
+- name: Perform first app configuration steps
+  ansible.builtin.import_tasks: first-steps.yml
+
+- name: Import Zabbix templates
+  ansible.builtin.include_tasks: templates.yml

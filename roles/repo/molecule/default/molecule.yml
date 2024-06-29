@@ -1,0 +1,24 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: libvirt
+  cachier: machine
+  parallel: true
+platforms:
+  - name: linux
+    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    memory: 2048
+    cpus: 2
+    groups:
+      - subjects
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      subjects:
+        zbx_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.0}'
+verifier:
+  name: ansible

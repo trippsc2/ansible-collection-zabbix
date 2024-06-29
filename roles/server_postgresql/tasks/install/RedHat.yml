@@ -1,0 +1,7 @@
+---
+- name: Ensure Zabbix SQL scripts package is installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - zabbix-sql-scripts
+    state: present

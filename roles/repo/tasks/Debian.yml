@@ -1,0 +1,6 @@
+---
+- name: Ensure Zabbix repositories are installed
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ _zbx_repo_package_url }}"
+    state: present

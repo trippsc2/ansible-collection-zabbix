@@ -1,0 +1,2 @@
+---
+_zbxserver_microsoft_apt_repo_config: deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/microsoft.asc] https://packages.microsoft.com/ubuntu/24.04/prod noble main

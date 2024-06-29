@@ -1,0 +1,111 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix Server PostgreSQL
+    description:
+      - This role installs PostgreSQL server for use by a Zabbix server.
+      - This role uses trippsc2.postgresql.install to install PostgreSQL.
+    author: Jim Tarpley
+    options:
+      zbxserver_major_version:
+        type: str
+        required: false
+        default: OS specific
+        choices:
+          - '7.0'
+          - '6.4'
+        description:
+          - The major version of Zabbix to install.
+          - This defaults to the latest supported version for the OS.
+      zbxserver_pgsql_standalone:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether the PostgreSQL server is separate from the Zabbix server.
+      zbxserver_pgsql_additional_hba_entries:
+        type: list
+        required: false
+        default: []
+        description:
+          - Additional host-based authentication entries to add to the pg_hba.conf file.
+          - This is in addition to the default entries and the entries added by the role.
+      zbxserver_ip_addresses:
+        type: list
+        required: false
+        elements: str
+        description:
+          - The IP addresses to add to the pg_hba.conf file if the PostgreSQL server is standalone.
+      zbxserver_configure_vault:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure Vault for the Zabbix database secret.
+          - If true, the Zabbix database password will be stored in Vault.
+          - If zabbix_database_password is defined and the password is not stored in Vault, it will be stored there.
+          - If zabbix_database_password is not defined, a new password will be generated and stored in Vault.
+      zbxserver_vault_create_mount_points:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to create the mount point for the Zabbix database secret.
+      zabbix_database_password:
+        type: str
+        required: false
+        description:
+          - The password for the Zabbix database user.
+          - If zbxserver_configure_vault is true, this value will be ignored if it is stored in Vault.
+      zbxserver_vault_database_mount_point:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The mount point for the Zabbix database secret.
+      zbxserver_vault_database_path:
+        type: str
+        required: false
+        default: database
+        description:
+          - The path for the Zabbix database secret.
+      zbxserver_user:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The user to create in the PostgreSQL database.
+      zbxserver_group:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The group to create in the PostgreSQL database.
+      zbxserver_database_name:
+        type: str
+        required: false
+        default: zabbix-server
+        description:
+          - The name of the database to create in PostgreSQL.
+      zbxserver_schema_done_file_path:
+        type: str
+        required: false
+        default: OS specific
+        description:
+          - The path to the file that indicates the schema has been created.
+          - On Debian-based systems, the default is /var/lib/postgresql/zbx_schema.done.
+          - On RHEL-based systems, the default is /var/lib/pgsql/zbx_schema.done.
+      zbxserver_use_timescaledb:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to use TimescaleDB with the Zabbix database.
+      zbxserver_timescaledb_schema_done_file_path:
+        type: str
+        required: false
+        default: OS specific
+        description:
+          - The path to the file that indicates the TimescaleDB schema has been created.
+          - On Debian-based systems, the default is /var/lib/postgresql/zbx_timescaledb_schema.done.
+          - On RHEL-based systems, the default is /var/lib/pgsql/zbx_timescaledb_schema.done.

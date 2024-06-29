@@ -1,0 +1,18 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix Repo
+    description:
+      - This role installs the Zabbix official repository on a Linux machine.
+    author:
+      - Jim Tarpley
+    options:
+      zbx_major_version:
+        type: str
+        required: true
+        choices:
+          - '7.0'
+          - '6.4'
+        description:
+          - The major version of Zabbix to be deployed.
+          - If not specified, the latest supported version for the OS will be used.

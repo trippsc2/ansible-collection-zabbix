@@ -1,0 +1,40 @@
+---
+- name: Remove default host
+  delegate_to: localhost
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: ''
+    ansible_host: "{{ zabbix_server }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  community.zabbix.zabbix_host:
+    host_name: Zabbix server
+    state: absent
+
+- name: Create Zabbix global macros
+  delegate_to: localhost
+  loop: "{{ zbxserver_global_macros }}"
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: ''
+    ansible_host: "{{ zabbix_server }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  community.zabbix.zabbix_globalmacro:
+    macro_type: "{{ item.type | default('text') }}"
+    macro_name: "{{ item.name }}"
+    macro_value: "{{ item.value }}"
+    state: present
+
+- name: Install Microsoft ODBC drivers
+  when:
+    - zbxserver_configure_mssql_odbc
+  ansible.builtin.include_tasks: "odbc/{{ ansible_os_family }}.yml"

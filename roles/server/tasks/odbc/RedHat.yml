@@ -1,0 +1,27 @@
+---
+- name: Install Microsoft ODBC
+  become: true
+  ansible.builtin.yum_repository:
+    name: packages-microsoft-com-prod
+    description: packages-microsoft-com-prod
+    file: mssql-release
+    owner: root
+    group: root
+    mode: '0644'
+    baseurl: 
+      - "https://packages.microsoft.com/rhel/{{ ansible_distribution_major_version }}/prod/"
+    enabled: true
+    gpgcheck: true
+    gpgkey:
+      - https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Install Microsoft ODBC packages
+  become: true
+  environment:
+    ACCEPT_EULA: Y
+  ansible.builtin.dnf:
+    update_cache: true
+    name:
+      - msodbcsql18
+      - mssql-tools18
+    state: present

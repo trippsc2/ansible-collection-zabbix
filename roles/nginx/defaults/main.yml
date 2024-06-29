@@ -1,0 +1,31 @@
+---
+zbxserver_major_version: "{{ _zbxserver_default_major_version | default('7.0') }}"
+zbxserver_nginx_module_version: "{{ _zbxserver_default_nginx_module_version }}"
+zbxserver_php_module_version: "{{ _zbxserver_default_php_module_version }}"
+
+zbxserver_selinux: true
+
+zbxserver_timezone: America/New_York
+
+zbxserver_database_server_name: localhost
+zbxserver_database_port: 5432
+zbxserver_database_name: zabbix-server
+
+zbxserver_configure_vault: true
+
+zbxserver_vault_database_mount_point: zabbix
+zbxserver_vault_database_path: database
+
+zbxserver_user: zabbix
+
+zbxserver_database_use_ssl: false
+zbxserver_database_verify_host: true
+
+zbxserver_server_name: localhost
+zbxserver_server_port: 10051
+zbxserver_display_name: ZABBIX
+
+nginx_redirect_return_server_name: $host
+nginx_max_body_size: 2M
+nginx_server_certificate_path: /etc/pki/tls/certs/nginx.crt
+nginx_server_certificate_key_path: /etc/pki/tls/private/nginx.key
