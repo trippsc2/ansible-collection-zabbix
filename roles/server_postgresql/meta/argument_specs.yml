@@ -94,7 +94,7 @@ argument_specs:
         description:
           - The path to the file that indicates the schema has been created.
           - On Debian-based systems, the default is /var/lib/postgresql/zbx_schema.done.
-          - On RHEL-based systems, the default is /var/lib/pgsql/zbx_schema.done.
+          - On EL systems, the default is /var/lib/pgsql/zbx_schema.done.
       zbxserver_use_timescaledb:
         type: bool
         required: false
@@ -108,4 +108,4 @@ argument_specs:
         description:
           - The path to the file that indicates the TimescaleDB schema has been created.
           - On Debian-based systems, the default is /var/lib/postgresql/zbx_timescaledb_schema.done.
-          - On RHEL-based systems, the default is /var/lib/pgsql/zbx_timescaledb_schema.done.
+          - On EL systems, the default is /var/lib/pgsql/zbx_timescaledb_schema.done.

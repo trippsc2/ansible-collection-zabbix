@@ -69,7 +69,27 @@
         cert_ca_chain_path: "{{ pgsql_ssl_ca_file }}"
     - role: trippsc2.zabbix.server_postgresql
 
-- name: Prepare
+- name: Prepare Zabbix
+  hosts:
+    - subjects
+  roles:
+    - role: trippsc2.hashi_vault.signed_certificate
+      vars:
+        cert_certificate_path: "{{ zbxserver_db_tls_cert_file }}"
+        cert_private_key_path: "{{ zbxserver_db_tls_key_file }}"
+        cert_certificate_owner: zabbix
+        cert_certificate_group: zabbix
+        cert_private_key_owner: zabbix
+        cert_private_key_group: zabbix
+        cert_common_name: "{{ inventory_hostname }}"
+        cert_subject_alternative_names:
+          - "DNS:{{ inventory_hostname }}"
+          - DNS:localhost
+          - "IP:{{ ansible_host }}"
+          - IP:127.0.0.1
+    - role: trippsc2.zabbix.server
+
+- name: Prepare NGINX
   hosts:
     - subjects
   pre_tasks:
@@ -118,26 +138,6 @@
         cert_certificate_group: "{{ _nginx_group }}"
         cert_private_key_owner: "{{ _nginx_user }}"
         cert_private_key_group: "{{ _nginx_group }}"
-        cert_common_name: "{{ inventory_hostname }}"
-        cert_subject_alternative_names:
-          - "DNS:{{ inventory_hostname }}"
-          - DNS:localhost
-          - "IP:{{ ansible_host }}"
-          - IP:127.0.0.1
-    - role: trippsc2.zabbix.nginx
-
-- name: Prepare Zabbix certificate
-  hosts:
-    - subjects
-  roles:
-    - role: trippsc2.hashi_vault.signed_certificate
-      vars:
-        cert_certificate_path: "{{ zbxserver_tls_cert_file }}"
-        cert_private_key_path: "{{ zbxserver_tls_key_file }}"
-        cert_certificate_owner: zabbix
-        cert_certificate_group: zabbix
-        cert_private_key_owner: zabbix
-        cert_private_key_group: zabbix
         cert_common_name: "{{ inventory_hostname }}"
         cert_subject_alternative_names:
           - "DNS:{{ inventory_hostname }}"

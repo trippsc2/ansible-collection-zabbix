@@ -1,0 +1,4 @@
+---
+_zbxserver_selinux_packages:
+  - policycoreutils
+  - python3-libsemanage

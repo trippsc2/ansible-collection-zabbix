@@ -1,0 +1,27 @@
+---
+- name: Ensure SELinux management packages are installed
+  become: true
+  ansible.builtin.package:
+    name: "{{ _zbxserver_selinux_packages }}"
+    state: present
+
+- name: Ensure web frontend can connect to DB
+  become: true
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect_db
+    state: true
+    persistent: true
+
+- name: Ensure web frontend can connect to Zabbix
+  become: true
+  ansible.posix.seboolean:
+    name: httpd_can_connect_zabbix
+    state: true
+    persistent: true
+
+- name: Ensure web frontend can connect to LDAP
+  become: true
+  ansible.posix.seboolean:
+    name: httpd_can_connect_ldap
+    state: true
+    persistent: true

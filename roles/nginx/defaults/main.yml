@@ -1,9 +1,11 @@
 ---
+zbxserver_configure_selinux: true
+
 zbxserver_major_version: "{{ _zbxserver_default_major_version | default('7.0') }}"
 zbxserver_nginx_module_version: "{{ _zbxserver_default_nginx_module_version }}"
 zbxserver_php_module_version: "{{ _zbxserver_default_php_module_version }}"
 
-zbxserver_selinux: true
+zbxserver_database_type: postgresql
 
 zbxserver_timezone: America/New_York
 
@@ -25,7 +27,15 @@ zbxserver_server_name: localhost
 zbxserver_server_port: 10051
 zbxserver_display_name: ZABBIX
 
-nginx_redirect_return_server_name: $host
-nginx_max_body_size: 2M
-nginx_server_certificate_path: /etc/pki/tls/certs/nginx.crt
-nginx_server_certificate_key_path: /etc/pki/tls/private/nginx.key
+
+zbxserver_nginx_redirect_return_server_name: $host
+zbxserver_nginx_max_body_size: 2M
+zbxserver_web_server_certificate_path: >-
+  {{ '/etc/pki/tls/certs/zabbix-web.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-web.crt' }}
+zbxserver_web_server_private_key_path: >-
+  {{ '/etc/pki/tls/private/zabbix-web.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-web.key' }}
+
+nginx_user: >-
+  {{ 'nginx' if ansible_os_family == 'RedHat' else 'www-data' }}
+nginx_group: >-
+  {{ 'nginx' if ansible_os_family == 'RedHat' else 'www-data' }}

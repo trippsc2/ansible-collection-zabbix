@@ -1,0 +1,4 @@
+---
+_zbxserver_selinux_packages:
+  - python3-selinux
+  - python3-semanage

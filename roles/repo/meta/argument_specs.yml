@@ -15,4 +15,3 @@ argument_specs:
           - '6.4'
         description:
           - The major version of Zabbix to be deployed.
-          - If not specified, the latest supported version for the OS will be used.

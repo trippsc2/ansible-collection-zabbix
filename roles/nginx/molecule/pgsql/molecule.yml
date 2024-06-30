@@ -1,0 +1,64 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: libvirt
+  cachier: machine
+  parallel: true
+platforms:
+  - name: linux
+    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    memory: 2048
+    cpus: 2
+    groups:
+      - subjects
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        vault_token: 47542cbc-6bf8-4fba-8eda-02e0a0d29a0a
+        vault_url: "http://{{ hostvars['linux'].ansible_host }}:8200"
+        zabbix_server: "{{ hostvars['linux'].ansible_host }}"
+        zabbix_port: 443
+        zabbix_ssl: true
+        zabbix_validate_certs: false
+        zabbix_username: test
+        zabbix_password: SecurePassword1234!
+      subjects:
+        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
+        pgsql_ssl: true
+        pgsql_ssl_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        pgsql_ssl_cert_file: >-
+          {{ '/etc/pki/tls/certs/pgsql.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/pgsql.crt' }}
+        pgsql_ssl_key_file: >-
+          {{ '/etc/pki/tls/private/pgsql.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/pgsql.key' }}
+        pgsql_log_to_csvlog: true
+        pgsql_log_to_syslog: true
+        pgsql_vault_ssl_mode: verify-full
+        pgsql_vault_access_hostname: "{{ ansible_fqdn }}"
+        zbxserver_pgsql_standalone: false
+        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.0}'
+        zbxserver_vault_token: "{{ vault_token }}"
+        zbxserver_vault_url: "{{ vault_url }}"
+        zbxserver_database_host: "{{ ansible_host }}"
+        zbxserver_database_port: 5432
+        zbxserver_db_tls_connect: verify_full
+        zbxserver_db_tls_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxserver_db_tls_cert_file: >-
+          {{ '/etc/pki/tls/certs/zabbix-server.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-server.crt' }}
+        zbxserver_db_tls_key_file: >-
+          {{ '/etc/pki/tls/private/zabbix-server.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-server.key' }}
+        zbxserver_unmanaged_users:
+          - username: "{{ zabbix_username }}"
+            password: "{{ zabbix_password }}"
+        zbxserver_web_cert_file: >-
+          {{ '/etc/pki/tls/certs/zabbix-web.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-web.crt' }}
+        zbxserver_web_key_file: >-
+          {{ '/etc/pki/tls/private/zabbix-web.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-web.key' }}
+verifier:
+  name: ansible

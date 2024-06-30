@@ -54,3 +54,123 @@ _zbxserver_php_module_versions_allowed:
 
 _zbxserver_default_php_module_version: >-
   {{ _zbxserver_php_module_versions_allowed[zbxserver_major_version][0] }}
+
+_zbxserver_web_package_names:
+  postgresql: zabbix-web-pgsql
+  mysql: zabbix-web-mysql
+
+_zbxserver_web_package_name: >-
+  {{ _zbxserver_web_package_names[zbxserver_database_type] }}
+
+nginx_allow_http: true
+nginx_allow_https: true
+
+nginx_http_config_files:
+  - destination: /etc/nginx/conf.d/reject.conf
+    server:
+      - server_tokens: 'off'
+        return:
+          code: 404
+  - destination: /etc/nginx/conf.d/redirect.conf
+    server:
+      - listen:
+          - port: 80
+        server_name: "{{ zbxserver_nginx_redirect_server_name }}"
+        server_tokens: 'off'
+        location:
+          - path: /
+            return:
+              code: 301
+              url: "https://{{ zbxserver_nginx_redirect_return_server_name }}$request_uri"
+          - path: = /basic_status
+            stub_status: true
+            log_not_found: false
+            allow:
+              - '127.0.0.1'
+              - '::1'
+            deny:
+              - all
+  - destination: /etc/nginx/conf.d/zabbix.conf
+    client_body_timeout: 10
+    client_header_timeout: 10
+    client_max_body_size: "{{ zbxserver_nginx_max_body_size }}"
+    keepalive_timeout: 10
+    send_timeout: 10
+    large_client_header_buffers:
+      count: 2
+      size: 1k
+    log_format:
+      - name: main
+        format: |
+          'server="$server_name" host="$host” dest_port="$server_port"' 'src="$remote_addr" ip="$realip_remote_addr" user="$remote_user" ' 'time_local="$time_local" http_status="$status" ' 'http_referer="$http_referer" http_user_agent="$http_user_agent" ' 'http_x_forwarded_for="$http_x_forwarded_for" ' 'http_x_header="$http_x_header" uri_query="$query_string" uri_path="$uri" ' 'request=$request http_method="$request_method"'        
+    server:
+      - listen:
+          - port: 443
+            ssl: true
+            http2: true
+        server_name: "{{ zbxserver_server_name }}"
+        server_tokens: false
+        root: /usr/share/zabbix
+        index: index.php
+        ssl_certificate:
+          - "{{ zbxserver_web_server_certificate_path }}"
+        ssl_certificate_key:
+          - "{{ zbxserver_web_server_private_key_path }}"
+        ssl_ciphers: ALL:!EXP:!NULL:!ADH:!LOW:!SSLv2:!SSLv3:!MD5:!RC4
+        ssl_prefer_server_ciphers: true
+        ssl_protocols:
+          - TLSv1.2
+          - TLSv1.3
+        ssl_stapling: true
+        ssl_stapling_verify: true
+        add_header:
+          - field: Strict-Transport-Security
+            value: "\"max-age=15768000;\""
+        log_access:
+          - path: /var/log/nginx/access.log
+            format: main
+        location:
+          - path: /favicon.ico
+            log_not_found: false
+          - path: /
+            try_files:
+              - files:
+                  - $uri
+                  - $uri/
+                response: =404
+          - path: /assets
+            access_log:
+              'off': true
+          - modifier: '~'
+            path: '/\.ht'
+            deny:
+              - all
+          - modifier: '~'
+            path: '/(api\/|conf[^\.]|include|locale)'
+            return:
+              code: 404
+            deny:
+              - all
+          - modifier: '~'
+            path: '[^/]\.php(/|$)'
+            custom_directives:
+              - fastcgi_pass unix:/run/php-fpm/zabbix.sock;
+              - fastcgi_split_path_info ^(.+\.php)(/.+)$;
+              - fastcgi_index index.php;
+              - fastcgi_param DOCUMENT_ROOT /usr/share/zabbix;
+              - fastcgi_param SCRIPT_FILENAME /usr/share/zabbix$fastcgi_script_name;
+              - fastcgi_param PATH_TRANSLATED /usr/share/zabbix$fastcgi_script_name;
+              - include fastcgi_params;
+              - fastcgi_param QUERY_STRING $query_string;
+              - fastcgi_param REQUEST_METHOD $request_method;
+              - fastcgi_param CONTENT_TYPE $content_type;
+              - fastcgi_param CONTENT_LENGTH $content_length;
+              - fastcgi_intercept_errors on;
+              - fastcgi_ignore_client_abort off;
+              - fastcgi_connect_timeout 60;
+              - fastcgi_send_timeout 180;
+              - fastcgi_read_timeout 180;
+              - fastcgi_buffer_size 128k;
+              - fastcgi_buffers 4 256k;
+              - fastcgi_busy_buffers_size 256k;
+              - fastcgi_temp_file_write_size 256k;

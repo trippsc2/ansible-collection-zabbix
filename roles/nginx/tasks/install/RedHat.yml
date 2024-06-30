@@ -1,0 +1,22 @@
+---
+- name: Ensure PHP module is installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - "@php:{{ zbxserver_php_module_version }}"
+    state: present
+
+- name: Ensure NGINX module is installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - "@nginx:{{ zbxserver_nginx_module_version }}"
+    state: present
+
+- name: Ensure Zabbix Server packages are installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - "{{ _zbxserver_web_package_name }}"
+      - zabbix-selinux-policy
+    state: present

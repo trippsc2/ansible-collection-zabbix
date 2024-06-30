@@ -23,7 +23,9 @@ galaxy_info:
           - jammy
           - noble
 
-collections: []
+collections:
+  - ansible.posix
+  - trippsc2.nginx
 
 dependencies:
   - role: trippsc2.zabbix.repo
