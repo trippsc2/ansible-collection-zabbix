@@ -4,55 +4,55 @@ AllowRoot={{ zbxserver_allow_root | ternary('1', '0') }}
 User={{ zbxserver_user }}
 ListenPort={{ zbxserver_listen_port }}
 ListenIP={{ zbxserver_listen_ip | join(',') }}
-{% if zbxserver_source_ip is defined %}
+{%- if zbxserver_source_ip is defined %}
 SourceIP={{ zbxserver_source_ip }}
 {% endif %}
 StatsAllowedIP={{ zbxserver_stats_allowed_ip | join(',') }}
-{% if zbxserver_listen_backlog is defined %}
+{%- if zbxserver_listen_backlog is defined %}
 ListenBacklog={{ zbxserver_listen_backlog }}
 {% endif %}
 ServiceManagerSyncFrequency={{ zbxserver_service_manager_sync_frequency }}
-{% if zbxserver_web_service_url is defined %}
+{%- if zbxserver_web_service_url is defined %}
 WebServiceURL={{ zbxserver_web_service_url }}
 {% endif %}
-{% if zbxserver_tls_ca_file is defined %}
+{%- if zbxserver_tls_ca_file is defined %}
 TLSCAFile={{ zbxserver_tls_ca_file }}
 {% endif %}
-{% if zbxserver_tls_crl_file is defined %}
+{%- if zbxserver_tls_crl_file is defined %}
 TLSCRLFile={{ zbxserver_tls_crl_file }}
 {% endif %}
-{% if zbxserver_tls_cert_file is defined %}
+{%- if zbxserver_tls_cert_file is defined %}
 TLSCertFile={{ zbxserver_tls_cert_file }}
 {% endif %}
-{% if zbxserver_tls_key_file is defined %}
+{%- if zbxserver_tls_key_file is defined %}
 TLSKeyFile={{ zbxserver_tls_key_file }}
 {% endif %}
-{% if zbxserver_tls_cipher_cert_13 is defined %}
+{%- if zbxserver_tls_cipher_cert_13 is defined %}
 TLSCipherCert13={{ zbxserver_tls_cipher_cert_13 }}
 {% endif %}
-{% if zbxserver_tls_cipher_cert is defined %}
+{%- if zbxserver_tls_cipher_cert is defined %}
 TLSCipherCert={{ zbxserver_tls_cipher_cert }}
 {% endif %}
-{% if zbxserver_tls_cipher_psk_13 is defined %}
+{%- if zbxserver_tls_cipher_psk_13 is defined %}
 TLSCipherPSK13={{ zbxserver_tls_cipher_psk_13 }}
 {% endif %}
-{% if zbxserver_tls_cipher_psk is defined %}
+{%- if zbxserver_tls_cipher_psk is defined %}
 TLSCipherPSK={{ zbxserver_tls_cipher_psk }}
 {% endif %}
-{% if zbxserver_tls_cipher_all_13 is defined %}
+{%- if zbxserver_tls_cipher_all_13 is defined %}
 TLSCipherAll13={{ zbxserver_tls_cipher_all_13 }}
 {% endif %}
-{% if zbxserver_tls_cipher_all is defined %}
+{%- if zbxserver_tls_cipher_all is defined %}
 TLSCipherAll={{ zbxserver_tls_cipher_all }}
 {% endif %}
-{% if zbxserver_ha_node_name is defined %}
+{%- if zbxserver_ha_node_name is defined %}
 HANodeName={{ zbxserver_ha_node_name }}
 {% endif %}
-{% if zbxserver_node_address is defined %}
+{%- if zbxserver_node_address is defined %}
 NodeAddress={{ zbxserver_node_address }}
 {% endif %}
 LogType={{ zbxserver_log_type }}
-{% if zbxserver_log_type == 'file' %}
+{%- if zbxserver_log_type == 'file' %}
 LogFile={{ zbxserver_log_file }}
 LogFileSize={{ zbxserver_log_file_size }}
 {% endif %}
@@ -60,36 +60,36 @@ PidFile={{ zbxserver_pid_file }}
 SocketDir={{ zbxserver_socket_dir }}
 DBHost={{ zbxserver_database_host }}
 DBName={{ zbxserver_database_name }}
-{% if not zbxserver_configure_vault %}
+{%- if not zbxserver_configure_vault %}
 DBUser={{ zbxserver_user }}
 DBPassword={{ zbxserver_database_password }}
 {% endif %}
 DBPort={{ zbxserver_database_port }}
 AllowUnsupportedDBVersions={{ zbxserver_allow_unsupported_db_versions | ternary('1', '0') }}
-{% if zbxserver_db_tls_connect != 'unencrypted' %}
+{%- if zbxserver_db_tls_connect != 'unencrypted' %}
 DBTLSConnect={{ zbxserver_db_tls_connect }}
 {% endif %}
-{% if zbxserver_db_tls_ca_file is defined %}
+{%- if zbxserver_db_tls_ca_file is defined %}
 DBTLSCAFile={{ zbxserver_db_tls_ca_file }}
 {% endif %}
-{% if zbxserver_db_tls_cert_file is defined %}
+{%- if zbxserver_db_tls_cert_file is defined %}
 DBTLSCertFile={{ zbxserver_db_tls_cert_file }}
 {% endif %}
-{% if zbxserver_db_tls_key_file is defined %}
+{%- if zbxserver_db_tls_key_file is defined %}
 DBTLSKeyFile={{ zbxserver_db_tls_key_file }}
 {% endif %}
-{% if zbxserver_configure_vault %}
+{%- if zbxserver_configure_vault %}
 Vault=HashiCorp
 VaultToken={{ zbxserver_vault_token }}
 VaultURL={{ zbxserver_vault_url }}
 VaultDBPath={{ zbxserver_vault_database_mount_point }}/{{ zbxserver_vault_database_path }}
 {% endif %}
-{% if zbxserver_history_storage %}
+{%- if zbxserver_history_storage %}
 HistoryStorageURL={{ zbxserver_history_storage_url }}
 HistoryStorageTypes={{ zbxserver_history_storage_types | join(',') }}
 HistoryStorageDateIndex={{ zbxserver_history_storage_date_index | ternary('1', '0') }}
 {% endif %}
-{% if zbxserver_export %}
+{%- if zbxserver_export %}
 ExportDir={{ zbxserver_export_dir }}
 ExportFileSize={{ zbxserver_export_file_size }}
 ExportType={{ zbxserver_export_type | join(',') }}
@@ -106,7 +106,7 @@ StartHTTPPollers={{ zbxserver_start_http_pollers }}
 StartTimers={{ zbxserver_start_timers }}
 StartEscalators={{ zbxserver_start_escalators }}
 StartAlerters={{ zbxserver_start_alerters }}
-{% if zbxserver_use_java_gateway %}
+{%- if zbxserver_use_java_gateway %}
 StartJavaPollers={{ zbxserver_start_java_pollers }}
 {% endif %}
 StartVMwareCollectors={{ zbxserver_start_vmware_collectors }}
@@ -123,7 +123,7 @@ TrendCacheSize={{ zbxserver_trend_cache_size }}
 TrendFunctionCacheSize={{ zbxserver_trend_function_cache_size }}
 ValueCacheSize={{ zbxserver_value_cache_size }}
 VMwareCacheSize={{ zbxserver_vmware_cache_size }}
-{% if zbxserver_use_java_gateway %}
+{%- if zbxserver_use_java_gateway %}
 JavaGateway={{ zbxserver_java_gateway }}
 JavaGatewayPort={{ zbxserver_java_gateway_port }}
 {% endif %}
@@ -144,37 +144,31 @@ AlertScriptsPath={{ zbxserver_alert_scripts_path }}
 ExternalScripts={{ zbxserver_external_scripts }}
 FpingLocation={{ zbxserver_fping_location }}
 Fping6Location={{ zbxserver_fping6_location }}
-{% if zbxserver_ssh_key_location is defined %}
+{%- if zbxserver_ssh_key_location is defined %}
 SSHKeyLocation={{ zbxserver_ssh_key_location }}
 {% endif %}
 TmpDir={{ zbxserver_tmp_dir }}
 ProxyConfigFrequency={{ zbxserver_proxy_config_frequency }}
 ProxyDataFrequency={{ zbxserver_proxy_data_frequency }}
-{% if zbxserver_include_files is defined %}
-{% for include_file in zbxserver_include_files %}
+{%- for include_file in zbxserver_include_files | default([]) %}
 Include={{ include_file }}
 {% endfor %}
-{% endif %}
-{% if zbxserver_include_directories is defined %}
-{% for include_directory in zbxserver_include_directories %}
+{%- for include_directory in zbxserver_include_directories | default([]) %}
 Include={{ include_directory }}/
 Include={{ include_directory }}/*.conf
 {% endfor %}
-{% endif %}
-{% if zbxserver_ssl_cert_location is defined %}
+{%- if zbxserver_ssl_cert_location is defined %}
 SSLCertLocation={{ zbxserver_ssl_cert_location }}
 {% endif %}
-{% if zbxserver_ssl_key_location is defined %}
+{%- if zbxserver_ssl_key_location is defined %}
 SSLKeyLocation={{ zbxserver_ssl_key_location }}
 {% endif %}
-{% if zbxserver_ssl_ca_location is defined %}
+{%- if zbxserver_ssl_ca_location is defined %}
 SSLKeyLocation={{ zbxserver_ssl_ca_location }}
 {% endif %}
-{% if zbxserver_load_module_path is defined %}
+{%- if zbxserver_load_module_path is defined %}
 LoadModulePath={{ zbxserver_load_module_path }}
 {% endif %}
-{% if zbxserver_load_modules is defined %}
-{% for load_module_item in zbxserver_load_modules %}
+{% for load_module_item in zbxserver_load_modules | default([]) %}
 LoadModule={{ load_module_item }}
 {% endfor %}
-{% endif %}

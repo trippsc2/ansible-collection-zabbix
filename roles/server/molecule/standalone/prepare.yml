@@ -1,0 +1,180 @@
+---
+- name: Prepare Vault
+  hosts:
+    - subjects
+  roles:
+    - role: trippsc2.hashi_vault.testing_ca
+
+- name: Prepare database
+  hosts:
+    - zabbix_database
+  pre_tasks:
+    - name: Set OS variables (Debian-based)
+      when:
+        - ansible_os_family == 'Debian'
+      ansible.builtin.set_fact:
+        _pgsql_home_directory: /var/lib/postgresql
+
+    - name: Set OS variables (EL)
+      when:
+        - ansible_os_family == 'RedHat'
+      ansible.builtin.set_fact:
+        _pgsql_home_directory: /var/lib/pgsql
+
+    - name: Prepare PostgreSQL
+      when:
+        - zbxserver_database_type == 'postgresql'
+      block:
+        - name: Create postgres group
+          become: true
+          ansible.builtin.group:
+            name: postgres
+            state: present
+            system: true
+
+        - name: Create postgres user
+          become: true
+          ansible.builtin.user:
+            name: postgres
+            group: postgres
+            system: true
+            shell: /usr/sbin/nologin
+            password: '!'
+            password_lock: true
+            home: "{{ _pgsql_home_directory }}"
+            createhome: false
+            comment: PostgreSQL Server
+            state: present
+        
+        - name: Create PostgreSQL certificate
+          ansible.builtin.include_role:
+            name: trippsc2.hashi_vault.signed_certificate
+          vars:
+            cert_certificate_path: "{{ pgsql_ssl_cert_file }}"
+            cert_private_key_path: "{{ pgsql_ssl_key_file }}"
+            cert_certificate_owner: postgres
+            cert_certificate_group: postgres
+            cert_private_key_owner: postgres
+            cert_private_key_group: postgres
+            cert_common_name: "{{ inventory_hostname }}"
+            cert_subject_alternative_names:
+              - "DNS:{{ inventory_hostname }}"
+              - DNS:localhost
+              - "IP:{{ ansible_host }}"
+              - IP:127.0.0.1
+            cert_copy_ca_chain: true
+            cert_ca_chain_path: "{{ _zbxserver_ca_file }}"
+        
+        - name: Configure Zabbix PostgreSQL
+          ansible.builtin.include_role:
+            name: trippsc2.zabbix.server_postgresql
+
+- name: Prepare web frontend
+  hosts:
+    - zabbix_web
+  pre_tasks:
+    - name: Set OS variables (Debian-based)
+      when:
+        - ansible_os_family == 'Debian'
+      ansible.builtin.set_fact:
+        _nginx_home_directory: /var/www
+        _nginx_user: www-data
+        _nginx_group: www-data
+
+    - name: Set OS variables (EL)
+      when:
+        - ansible_os_family == 'RedHat'
+      ansible.builtin.set_fact:
+        _nginx_home_directory: /var/lib/nginx
+        _nginx_user: nginx
+        _nginx_group: nginx
+
+    - name: Prepare NGINX
+      when:
+        - _zbxserver_web_frontend_type == 'nginx'
+      block:
+        - name: Create nginx group
+          become: true
+          ansible.builtin.group:
+            name: "{{ _nginx_group }}"
+            state: present
+            system: true
+        
+        - name: Create nginx user
+          become: true
+          ansible.builtin.user:
+            name: "{{ _nginx_user }}"
+            group: "{{ _nginx_group }}"
+            system: true
+            shell: /usr/sbin/nologin
+            password: '!'
+            password_lock: true
+            home: "{{ _nginx_home_directory }}"
+            createhome: false
+            comment: Nginx web server
+            state: present
+        
+        - name: Create NGINX certificate
+          ansible.builtin.include_role:
+            name: trippsc2.hashi_vault.signed_certificate
+          vars:
+            cert_certificate_path: "{{ zbxserver_web_server_certificate_path }}"
+            cert_private_key_path: "{{ zbxserver_web_server_private_key_path }}"
+            cert_certificate_owner: "{{ _nginx_user }}"
+            cert_certificate_group: "{{ _nginx_group }}"
+            cert_private_key_owner: "{{ _nginx_user }}"
+            cert_private_key_group: "{{ _nginx_group }}"
+            cert_common_name: "{{ inventory_hostname }}"
+            cert_subject_alternative_names:
+              - "DNS:{{ inventory_hostname }}"
+              - DNS:localhost
+              - "IP:{{ ansible_host }}"
+              - IP:127.0.0.1
+            cert_copy_ca_chain: true
+            cert_ca_chain_path: "{{ _zbxserver_ca_file }}"
+
+        - name: Configure Zabbix NGINX
+          ansible.builtin.include_role:
+            name: trippsc2.zabbix.nginx
+
+- name: Prepare Zabbix server certificate
+  hosts:
+    - subjects
+  pre_tasks:
+    - name: Create zabbix group
+      become: true
+      ansible.builtin.group:
+        name: zabbix
+        state: present
+        system: true
+    
+    - name: Create zabbix user
+      become: true
+      ansible.builtin.user:
+        name: zabbix
+        group: zabbix
+        system: true
+        shell: /usr/sbin/nologin
+        password: '!'
+        password_lock: true
+        home: /var/lib/zabbix
+        createhome: false
+        comment: Zabbix Monitoring System
+        state: present
+  roles:
+    - role: trippsc2.hashi_vault.signed_certificate
+      vars:
+        cert_certificate_path: "{{ zbxserver_tls_cert_file }}"
+        cert_private_key_path: "{{ zbxserver_tls_key_file }}"
+        cert_certificate_owner: zabbix
+        cert_certificate_group: zabbix
+        cert_private_key_owner: zabbix
+        cert_private_key_group: zabbix
+        cert_common_name: "{{ inventory_hostname }}"
+        cert_subject_alternative_names:
+          - "DNS:{{ inventory_hostname }}"
+          - DNS:localhost
+          - "IP:{{ ansible_host }}"
+          - IP:127.0.0.1
+        cert_copy_ca_chain: true
+        cert_ca_chain_path: "{{ _zbxserver_ca_file }}"

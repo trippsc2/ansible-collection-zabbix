@@ -1,0 +1,2 @@
+---
+zbx_major_version: "{{ zbxagent_major_version }}"

@@ -1,10 +1,12 @@
 ---
 - name: Install Microsoft GPG key
   become: true
-  ansible.builtin.apt_key:
+  ansible.builtin.get_url:
     url: https://packages.microsoft.com/keys/microsoft.asc
-    file: /etc/apt/trusted.gpg.d/microsoft.asc
-    state: present
+    dest: /etc/apt/trusted.gpg.d/microsoft.asc
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Install Microsoft repository
   become: true

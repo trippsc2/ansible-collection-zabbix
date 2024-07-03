@@ -1,0 +1,41 @@
+---
+- name: Ensure Zabbix Agent group exists
+  become: true
+  ansible.builtin.group:
+    name: "{{ zbxagent_group }}"
+    system: true
+    state: present
+
+- name: Ensure Zabbix Agent user exists
+  become: true
+  ansible.builtin.user:
+    name: "{{ zbxagent_user }}"
+    group: "{{ zbxagent_group }}"
+    system: true
+    password: '!'
+    password_lock: true
+    shell: /usr/sbin/nologin
+    home: /var/lib/zabbix
+    createhome: false
+    comment: Zabbix Monitoring System
+    state: present
+
+- name: Ensure Zabbix Agent user is in the ssl-certs group
+  when:
+    - ansible_os_family == 'Debian'
+  block:
+    - name: Ensure ssl-cert package is installed
+      become: true
+      ansible.builtin.package:
+        name:
+          - ssl-cert
+        state: present
+
+    - name: Ensure Zabbix Agent user is in the ssl-cert group
+      become: true
+      ansible.builtin.user:
+        name: "{{ zbxagent_user }}"
+        groups:
+          - ssl-cert
+        append: true
+        state: present

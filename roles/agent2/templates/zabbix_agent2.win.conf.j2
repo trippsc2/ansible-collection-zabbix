@@ -1,0 +1,108 @@
+{{ ansible_managed | comment }}
+
+LogType={{ zbxagent_log_type }}
+{%- if zbxagent_log_type == 'file' %}
+LogFile={{ zbxagent_log_file }}
+LogFileSize={{ zbxagent_log_file_size }}
+{% endif %}
+{%- if zbxagent_source_ip is defined %}
+SourceIP={{ zbxagent_source_ip }}
+{% endif %}
+Server={{ zbxagent_servers | join(',') }}
+ListenPort={{ zbxagent_listen_port }}
+{%- if zbxagent_listen_ip is defined %}
+ListenIP={{ zbxagent_listen_ip }}
+{% endif %}
+{%- if zbxagent_status_port is defined %}
+StatusPort={{ zbxagent_status_port }}
+{% endif %}
+ServerActive={{ zbxagent_active_servers | join(',') }}
+{%- if zbxagent_hostname is defined %}
+Hostname={{ zbxagent_hostname }}
+{% endif %}
+{%- if zbxagent_hostname_item is defined %}
+HostnameItem={{ zbxagent_hostname_item }}
+{% endif %}
+{%- if zbxagent_host_metadata is defined %}
+HostMetadata={{ zbxagent_host_metadata }}
+{% endif %}
+{%- if zbxagent_host_metadata_item is defined %}
+HostMetadataItem={{ zbxagent_host_metadata_item }}
+{% endif %}
+{%- if zbxagent_host_interface is defined %}
+HostInterface={{ zbxagent_host_interface }}
+{% endif %}
+{%- if zbxagent_host_interface_item is defined %}
+HostInterfaceItem={{ zbxagent_host_interface_item }}
+{% endif %}
+RefreshActiveChecks={{ zbxagent_refresh_active_checks }}
+BufferSend={{ zbxagent_buffer_send }}
+BufferSize={{ zbxagent_buffer_size }}
+EnablePersistentBuffer={{ zbxagent_enable_persistent_buffer | ternary('1', '0') }}
+{%- if zbxagent_enable_persistent_buffer %}
+PersistentBufferPeriod={{ zbxagent_persistent_buffer_period }}
+PersistentBufferFile={{ zbxagent_persistent_buffer_file }}
+{% endif %}
+HeartbeatFrequency={{ zbxagent_heartbeat_frequency }}
+{%- for key, value in zbxagent_aliases | default([]) %}
+Alias={{ key }}:{{ value }}
+{% endfor %}
+Timeout={{ zbxagent_timeout }}
+{%- for include_file in zbxagent_include_files | default([]) %}
+Include={{ include_file }}
+{% endfor %}
+{%- for include_directory in zbxagent_include_directories | default([]) %}
+Include={{ include_directory }}\
+Include={{ include_directory }}\*.conf
+{% endfor %}
+{%- if zbxagent_plugin_timeout is defined %}
+PluginTimeout={{ zbxagent_plugin_timeout }}
+{% endif %}
+UnsafeUserParameters={{ zbxagent_unsafe_user_parameters | ternary('1', '0') }}
+{%- for key, value in zbxagent_user_parameters.items() %}
+UserParameter={{ key }},{{ value }}
+{% endfor %}
+{%- if zbxagent_user_parameter_dir is defined %}
+UserParameterDir={{ zbxagent_user_parameter_dir }}
+{% endif %}
+TLSConnect={{ zbxagent_tls_connect }}
+TLSAccept={{ zbxagent_tls_accept }}
+{%- if zbxagent_tls_ca_file is defined %}
+TLSCAFile={{ zbxagent_tls_ca_file }}
+{% endif %}
+{%- if zbxagent_tls_crl_file is defined %}
+TLSCRLFile={{ zbxagent_tls_crl_file }}
+{% endif %}
+{%- if zbxagent_tls_server_cert_issuer is defined %}
+TLSServerCertIssuer={{ zbxagent_tls_server_cert_issuer }}
+{% endif %}
+{%- if zbxagent_tls_server_cert_subject is defined %}
+TLSServerCertSubject={{ zbxagent_tls_server_cert_subject }}
+{% endif %}
+{%- if zbxagent_tls_cert_file is defined %}
+TLSCertFile={{ zbxagent_tls_cert_file }}
+{% endif %}
+{%- if zbxagent_tls_key_file is defined %}
+TLSKeyFile={{ zbxagent_tls_key_file }}
+{% endif %}
+{%- if zbxagent_tls_psk_identity is defined %}
+TLSPSKIdentity={{ zbxagent_tls_psk_identity }}
+{% endif %}
+{%- if zbxagent_tls_psk_file is defined %}
+TLSPSKFile={{ zbxagent_tls_psk_file }}
+{% endif %}
+Plugins.Log.MaxLinesPerSecond={{ zbxagent_plugins_log_max_lines_per_second }}
+Plugins.WindowsEventlog.MaxLinesPerSecond={{ zbxagent_plugins_windows_eventlog_max_lines_per_second }}
+Plugins.SystemRun.LogRemoteCommands={{ zbxagent_systemrun_log_remote_commands | ternary('1', '0') }}
+{%- for plugin_name, parameters in zbxagent_plugin_parameters.items() %}
+{%- for parameter_name, value in parameters.items() %}
+Plugins.{{ plugin_name }}.{{ parameter_name }}={{ value }}
+{% endfor %}
+{% endfor %}
+{%- for allow_key in zbxagent_allow_keys %}
+AllowKey={{ allow_key }}
+{% endfor %}
+{%- for deny_key in zbxagent_deny_keys %}
+DenyKey={{ deny_key }}
+{% endfor %}
+ForceActiveChecksOnStart={{ zbxagent_force_active_checks_on_start | ternary('1', '0') }}

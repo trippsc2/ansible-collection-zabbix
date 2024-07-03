@@ -1,2 +1,12 @@
 ---
-_zbxserver_php_postgresql_package_name: php8.2-pgsql
+_zbxserver_supported_major_versions:
+  - '7.0'
+  - '6.4'
+
+_zbxserver_php_fpm_service_name: php8.2-fpm.service
+
+_zbxserver_php_packages:
+  - php8.2-fpm
+
+_zbxserver_php_postgresql_packages:
+  - php8.2-pgsql

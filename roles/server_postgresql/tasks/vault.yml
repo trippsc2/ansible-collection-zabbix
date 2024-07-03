@@ -48,7 +48,7 @@
   become_user: postgres
   vars:
     ansible_ssh_pipelining: true
-  community.general.postgresql_user:
+  community.postgresql.postgresql_user:
     db: postgres
     name: "{{ zbxserver_user }}"
     password: "{{ zabbix_database_password }}"

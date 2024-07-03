@@ -1,34 +1,6 @@
 ---
-- name: Gather OS facts
-  when:
-    - ansible_distribution is not defined or
-      ansible_distribution_major_version is not defined or
-      ansible_distribution_release is not defined or
-      ansible_os_family is not defined
-  ansible.builtin.setup:
-    gather_subset:
-      - '!all'
-      - '!min'
-      - distribution
-      - distribution_major_version
-      - distribution_release
-      - os_family
-
 - name: Validate
   ansible.builtin.import_tasks: validate.yml
-
-- name: Include OS family variables
-  ansible.builtin.include_vars: "{{ ansible_os_family }}/main.yml"
-
-- name: Include non-EL release variables
-  when:
-    - ansible_os_family != 'RedHat'
-  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
-
-- name: Include EL major version variables
-  when:
-    - ansible_os_family == 'RedHat'
-  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
 
 - name: Set PostgreSQL facts
   ansible.builtin.set_fact:
@@ -38,6 +10,8 @@
       {{ _zbxserver_pgsql_listen_on_all_addresses }}
     pgsql_install_timescaledb: >-
       {{ _zbxserver_pgsql_install_timescaledb }}
+    pgsql_additional_hba_entries: >-
+      {{ _zbxserver_pgsql_hba_entries + zbxserver_pgsql_additional_hba_entries }}
 
 - name: Include PostgreSQL role
   ansible.builtin.include_role:

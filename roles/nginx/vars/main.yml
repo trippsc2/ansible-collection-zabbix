@@ -1,59 +1,12 @@
 ---
-_zbxserver_el_supported_major_versions:
-  '8':
-    - '7.0'
-    - '6.4'
-  '9':
-    - '7.0'
-    - '6.4'
-
-_zbxserver_non_el_supported_major_versions:
-  bullseye:
-    - '6.4'
-  bookworm:
-    - '7.0'
-    - '6.4'
-  focal:
-    - '6.4'
-  jammy:
-    - '7.0'
-    - '6.4'
-  noble:
-    - '7.0'
-    - '6.4'
-
-_zbxserver_el_default_major_version: >-
-  {{ _zbxserver_el_supported_major_versions[ansible_distribution_major_version][0] }}
-_zbxserver_non_el_default_major_version: >-
-  {{ _zbxserver_non_el_supported_major_versions[ansible_distribution_release][0] }}
-
 _zbxserver_default_major_version: >-
-  {{ _zbxserver_el_default_major_version if ansible_os_family == 'RedHat' else _zbxserver_non_el_default_major_version }}
-
-
-_zbxserver_nginx_module_versions_allowed:
-  '7.0':
-    - '1.24'
-    - '1.22'
-    - '1.20'
-  '6.4':
-    - '1.24'
-    - '1.22'
-    - '1.20'
+  {{ _zbxserver_supported_major_versions[0] }}
 
 _zbxserver_default_nginx_module_version: >-
-  {{ _zbxserver_nginx_module_versions_allowed[zbxserver_major_version][0] }}
-
-_zbxserver_php_module_versions_allowed:
-  '7.0':
-    - '8.0'
-    - '7.4'
-  '6.4':
-    - '8.0'
-    - '7.4'
+  {{ ((_zbxserver_nginx_module_versions_allowed | default({}))[zbxserver_major_version] | default([]))[0] | default('1.24') }}
 
 _zbxserver_default_php_module_version: >-
-  {{ _zbxserver_php_module_versions_allowed[zbxserver_major_version][0] }}
+  {{ ((_zbxserver_php_module_versions_allowed | default({}))[zbxserver_major_version] | default([]))[0] | default('8.2') }}
 
 _zbxserver_web_package_names:
   postgresql: zabbix-web-pgsql
@@ -61,6 +14,8 @@ _zbxserver_web_package_names:
 
 _zbxserver_web_package_name: >-
   {{ _zbxserver_web_package_names[zbxserver_database_type] }}
+
+zbx_major_version: "{{ zbxserver_major_version }}"
 
 nginx_allow_http: true
 nginx_allow_https: true
@@ -101,17 +56,18 @@ nginx_http_config_files:
       size: 1k
     log_format:
       - name: main
-        format: |
-          'server="$server_name" host="$host” dest_port="$server_port"' 'src="$remote_addr" ip="$realip_remote_addr" user="$remote_user" ' 'time_local="$time_local" http_status="$status" ' 'http_referer="$http_referer" http_user_agent="$http_user_agent" ' 'http_x_forwarded_for="$http_x_forwarded_for" ' 'http_x_header="$http_x_header" uri_query="$query_string" uri_path="$uri" ' 'request=$request http_method="$request_method"'        
+        format: >-
+          'server="$server_name" host="$host” dest_port="$server_port"' 'src="$remote_addr" ip="$realip_remote_addr" user="$remote_user" ' 'time_local="$time_local" http_status="$status" ' 'http_referer="$http_referer" http_user_agent="$http_user_agent" ' 'http_x_forwarded_for="$http_x_forwarded_for" ' 'http_x_header="$http_x_header" uri_query="$query_string" uri_path="$uri" ' 'request=$request http_method="$request_method"'
     server:
       - listen:
           - port: 443
             ssl: true
             http2: true
-        server_name: "{{ zbxserver_server_name }}"
-        server_tokens: false
+        server_name: "{{ zbxserver_nginx_server_name }}"
+        server_tokens: 'off'
         root: /usr/share/zabbix
-        index: index.php
+        index:
+          - index.php
         ssl_certificate:
           - "{{ zbxserver_web_server_certificate_path }}"
         ssl_certificate_key:
@@ -119,16 +75,17 @@ nginx_http_config_files:
         ssl_ciphers: ALL:!EXP:!NULL:!ADH:!LOW:!SSLv2:!SSLv3:!MD5:!RC4
         ssl_prefer_server_ciphers: true
         ssl_protocols:
-          - TLSv1.2
-          - TLSv1.3
+          tlsv12: true
+          tlsv13: true
         ssl_stapling: true
         ssl_stapling_verify: true
         add_header:
           - field: Strict-Transport-Security
             value: "\"max-age=15768000;\""
-        log_access:
-          - path: /var/log/nginx/access.log
-            format: main
+        access_log:
+          logs:
+            - path: /var/log/nginx/access.log
+              format: main
         location:
           - path: /favicon.ico
             log_not_found: false
@@ -154,7 +111,7 @@ nginx_http_config_files:
           - modifier: '~'
             path: '[^/]\.php(/|$)'
             custom_directives:
-              - fastcgi_pass unix:/run/php-fpm/zabbix.sock;
+              - "fastcgi_pass unix:{{ _zbxserver_php_fpm_socket_path }};"
               - fastcgi_split_path_info ^(.+\.php)(/.+)$;
               - fastcgi_index index.php;
               - fastcgi_param DOCUMENT_ROOT /usr/share/zabbix;

@@ -1,4 +1,10 @@
 ---
+_zbxserver_default_configure_selinux: false
+
+_zbxserver_php_fpm_socket_path: /run/php/zabbix.sock
+_zbxserver_php_fpm_session_save_path: /var/lib/php/sessions/
+_zbxserver_php_fpm_config_file_path: /etc/zabbix/php-fpm.conf
+
 _zbxserver_selinux_packages:
   - python3-selinux
   - python3-semanage

@@ -1,0 +1,34 @@
+---
+- name: Verify
+  hosts:
+    - subjects
+  tasks:
+    - name: Check if NGINX service is enabled
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: nginx.service
+        enabled: true
+      register: _service_enabled
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_enabled.changed
+        fail_msg: NGINX service not enabled
+        success_msg: NGINX service enabled
+
+    - name: Check if NGINX service is running
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: nginx.service
+        state: started
+      register: _service_running
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_running.changed
+        fail_msg: NGINX service not running
+        success_msg: NGINX service running

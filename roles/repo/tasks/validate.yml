@@ -1,4 +1,19 @@
 ---
+- name: Gather OS facts
+  when:
+    - ansible_distribution is not defined or
+      ansible_distribution_major_version is not defined or
+      ansible_distribution_release is not defined or
+      ansible_os_family is not defined
+  ansible.builtin.setup:
+    gather_subset:
+      - '!all'
+      - '!min'
+      - distribution
+      - distribution_major_version
+      - distribution_release
+      - os_family
+
 - name: Validate OS family
   ansible.builtin.assert:
     that:
@@ -21,16 +36,7 @@
   ansible.builtin.assert:
     that:
       - ansible_distribution_release in _zbx_supported_debian_releases
-    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: '{{ _zbx_supported_debian_releases | join(''', ''') }}'."
-    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported."
-
-- name: Validate Ubuntu release
-  when:
-    - ansible_distribution == 'Ubuntu'
-  ansible.builtin.assert:
-    that:
-      - ansible_distribution_release in _zbx_supported_ubuntu_releases
-    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: {{ _zbx_supported_ubuntu_releases | join(''', ''') }}'."
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: {{ _zbx_supported_debian_releases | join(', ') }}"
     success_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported."
 
 - name: Validate EL version
@@ -39,5 +45,24 @@
   ansible.builtin.assert:
     that:
       - ansible_distribution_major_version | string in _zbx_el_supported_major_versions
-    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported. Supported versions are: '{{ _zbx_el_supported_major_versions | join(''', ''') }}'."
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported. Supported versions are: {{ _zbx_el_supported_major_versions | join(', ') }}"
     success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is supported."
+
+- name: Validate Ubuntu release
+  when:
+    - ansible_distribution == 'Ubuntu'
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution_release in _zbx_supported_ubuntu_releases
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: {{ _zbx_supported_ubuntu_releases | join(', ') }}"
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported."
+
+- name: Include EL OS variables
+  when:
+    - ansible_os_family == 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
+
+- name: Include non-EL OS variables
+  when:
+    - ansible_os_family != 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"

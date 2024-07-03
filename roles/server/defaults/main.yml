@@ -6,7 +6,7 @@ zbxserver_configure_firewalld: "{{ _zbxserver_default_configure_firewalld | defa
 zbxserver_configure_ufw: "{{ _zbxserver_default_configure_ufw | default(false) }}"
 zbxserver_configure_logrotate: true
 zbxserver_configure_vault: true
-zbxserver_configure_mssql_odbc: true
+zbxserver_configure_mssql_odbc: "{{ _zbxserver_default_configure_mssql_odbc | default(false) }}"
 
 zbxserver_user: zabbix
 zbxserver_group: zabbix
@@ -133,5 +133,7 @@ zbxserver_global_macros: []
 zbxserver_logrotate_period: daily
 zbxserver_logrotate_retention: 14
 zbxserver_logrotate_mode: '0640'
+
+zbxserver_mssql_odbc_connections: []
 
 zbxserver_templates: []

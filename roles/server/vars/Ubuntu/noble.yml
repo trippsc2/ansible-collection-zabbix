@@ -1,2 +1,7 @@
 ---
+_zbxserver_supported_major_versions:
+  - '7.0'
+  - '6.4'
+
 _zbxserver_microsoft_apt_repo_config: deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/microsoft.asc] https://packages.microsoft.com/ubuntu/24.04/prod noble main
+_zbxserver_default_configure_mssql_odbc: false

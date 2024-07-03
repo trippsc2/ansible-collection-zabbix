@@ -27,9 +27,68 @@ argument_specs:
         type: list
         required: false
         default: []
+        elements: dict
         description:
           - Additional host-based authentication entries to add to the pg_hba.conf file.
           - This is in addition to the default entries and the entries added by the role.
+        options:
+          type:
+            type: str
+            required: true
+            choices:
+              - local
+              - host
+              - hostssl
+              - hostnossl
+              - hostgssenc
+              - hostnogssenc
+            description:
+              - The type of host-based authentication entry.
+              - See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html#AUTH-PG-HBA-CONF for more information.
+          database:
+            type: str
+            required: true
+            description:
+              - The name of the database to which the entry applies.
+              - This can be `all` to apply to all databases.
+          user:
+            type: str
+            required: true
+            description:
+              - The name of the user to which the entry applies.
+              - This can be `all` to apply to all users.
+          address:
+            type: str
+            required: false
+            description:
+              - The CIDR range to which the entry applies.
+              - This must not be provided for `local` entries.
+          auth_method:
+            type: str
+            required: true
+            choices:
+              - trust
+              - reject
+              - scram-sha-256
+              - md5
+              - password
+              - gss
+              - ident
+              - peer
+              - ldap
+              - radius
+              - cert
+              - pam
+            description:
+              - The authentication method to use.
+              - See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html#AUTH-PG-HBA-CONF for more information.
+          auth_options:
+            type: str
+            required: false
+            description:
+              - Any additional options needed for the authentication method.
+              - For most common authentication methods, this should not be provided.
+              - See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html#AUTH-PG-HBA-CONF for more information.
       zbxserver_ip_addresses:
         type: list
         required: false
@@ -87,14 +146,6 @@ argument_specs:
         default: zabbix-server
         description:
           - The name of the database to create in PostgreSQL.
-      zbxserver_schema_done_file_path:
-        type: str
-        required: false
-        default: OS specific
-        description:
-          - The path to the file that indicates the schema has been created.
-          - On Debian-based systems, the default is /var/lib/postgresql/zbx_schema.done.
-          - On EL systems, the default is /var/lib/pgsql/zbx_schema.done.
       zbxserver_use_timescaledb:
         type: bool
         required: false

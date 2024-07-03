@@ -1,0 +1,11 @@
+{{ ansible_managed | comment }}
+
+{{ zbxagent_log_file }} {
+    {{ zbxagent_logrotate_period }}
+    rotate {{ zbxagent_logrotate_retention }}
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create {{ zbxagent_logrotate_mode }} {{ zbxagent_user }} {{ zbxagent_group }}
+}

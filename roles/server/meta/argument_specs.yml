@@ -20,23 +20,27 @@ argument_specs:
       zbxserver_configure_selinux:
         type: bool
         required: false
-        default: true
+        default: OS specific
         description:
           - Whether to manage SELinux settings for the Zabbix server.
+          - For EL systems, this defaults to true.
+          - For other systems, this defaults to false.
       zbxserver_configure_firewalld:
         type: bool
         required: false
         default: OS specific
         description:
           - Whether to manage firewalld settings for the Zabbix server.
-          - If not specified, firewalld will be managed on non-Ubuntu systems.
+          - For EL and Debian systems, this defaults to true.
+          - For Ubuntu systems, this defaults to false.
       zbxserver_configure_ufw:
         type: bool
         required: false
         default: OS specific
         description:
           - Whether to manage ufw settings for the Zabbix server.
-          - If not specified, ufw will be managed on Ubuntu systems.
+          - For Ubuntu systems, this defaults to true.
+          - For EL and Debian systems, this defaults to false.
       zbxserver_configure_logrotate:
         type: bool
         required: false
@@ -52,16 +56,17 @@ argument_specs:
       zbxserver_configure_mssql_odbc:
         type: bool
         required: false
-        default: true
+        default: OS specific
         description:
           - Whether to configure the Zabbix server to use the Microsoft SQL Server ODBC drivers for monitoring.
+          - If the OS is supported, this defaults to true.
       zbxserver_user:
         type: str
         required: false
         default: zabbix
         description:
           - The user as which the Zabbix server will run.
-          - If *zbxserver_configure_vault* is set to `false`, this user will be used to connect to the database.
+          - If zbxserver_configure_vault is set to false, this user will be used to connect to the database.
           - This user will be created if it does not already exist.
       zbxserver_group:
         type: str
@@ -69,6 +74,7 @@ argument_specs:
         default: zabbix
         description:
           - The primary group to which the Zabbix server user belongs.
+          - This group will be created if it does not already exist.
       zbxserver_database_name:
         type: str
         required: false
@@ -834,6 +840,36 @@ argument_specs:
         default: '0640'
         description:
           - The permissions to set on the rotated log files.
+      zbxserver_mssql_odbc_connections:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A list of ODBC entries for Microsoft SQL Server.
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - The name of the ODBC entry.
+          driver:
+            type: str
+            required: false
+            default: ODBC Driver 18 for SQL Server
+            description:
+              - The driver to use for the ODBC entry.
+          uri:
+            type: str
+            required: true
+            description:
+              - The server URI for the ODBC entry.
+          encrypt:
+            type: bool
+            required: false
+            default: true
+            description:
+              - Whether to encrypt the connection.
       zbxserver_templates:
         type: list
         required: false

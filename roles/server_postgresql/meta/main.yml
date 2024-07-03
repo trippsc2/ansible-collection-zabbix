@@ -31,7 +31,8 @@ collections:
   - ansible.posix
   - community.hashi_vault
   - community.postgresql
+  - trippsc2.hashi_vault
   - trippsc2.postgresql
 
 dependencies:
-  - trippsc2.zabbix.repo
+  - role: trippsc2.zabbix.repo

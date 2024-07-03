@@ -4,7 +4,7 @@
 global $DB;
 
 $DB['TYPE']        = '{{ zbxserver_database_type | upper }}';
-$DB['SERVER']      = '{{ zbxserver_database_server_name }}';
+$DB['SERVER']      = '{{ zbxserver_database_host }}';
 $DB['PORT']        = '{{ zbxserver_database_port }}';
 $DB['DATABASE']    = '{{ zbxserver_database_name }}';
 {% if not zbxserver_configure_vault %}
@@ -25,7 +25,7 @@ $DB['VAULT_TOKEN']   = '{{ zbxserver_vault_token }}';
 {% endif %}
 
 $DB['SCHEMA'] = 'public';
-$ZBX_SERVER = '{{ zbxserver_server_name }}';
+$ZBX_SERVER = '{{ zbxserver_server_host }}';
 $ZBX_SERVER_PORT = '{{ zbxserver_server_port }}';
 $ZBX_SERVER_NAME = '{{ zbxserver_display_name | upper }}';
 

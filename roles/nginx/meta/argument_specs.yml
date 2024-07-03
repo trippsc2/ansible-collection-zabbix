@@ -6,4 +6,197 @@ argument_specs:
       - This role installs NGINX as a web frontend for Zabbix Server on a Linux machine.
     author:
       - Jim Tarpley
-    options: {}
+    options:
+      zbxserver_major_version:
+        type: str
+        required: false
+        default: OS specific
+        choices:
+          - '7.0'
+          - '6.4'
+        description:
+          - The major version of Zabbix to install.
+          - This defaults to the latest supported version for the OS.
+      zbxserver_nginx_module_version:
+        type: str
+        required: false
+        default: OS specific
+        choices:
+          - '1.24'
+          - '1.22'
+          - '1.20'
+        description:
+          - The version of the NGINX module to install on EL systems.
+          - This has no effect on other systems.
+          - This defaults to the latest supported version for the OS.
+      zbxserver_php_module_version:
+        type: str
+        required: false
+        default: OS specific
+        choices:
+          - '8.2'
+          - '8.1'
+          - '8.0'
+          - '7.4'
+        description:
+          - The version of the PHP module to install on EL systems.
+          - This has no effect on other systems.
+          - This defaults to the latest supported version for the OS.
+          - 'The offered module versions for each EL major version can be found here: https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle'
+      zbxserver_configure_selinux:
+        type: bool
+        required: false
+        default: OS specific
+        description:
+          - Whether to configure SELinux for Zabbix.
+          - For EL systems, this defaults to true.
+          - For other systems, this defaults to false.
+      zbxserver_configure_vault:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure HashiCorp Vault for Zabbix.
+      zbxserver_database_type:
+        type: str
+        required: false
+        default: postgresql
+        choices:
+          - postgresql
+          - mysql
+        description:
+          - The type of database to use for Zabbix.
+      zbxserver_timezone:
+        type: str
+        required: false
+        default: America/New_York
+        description:
+          - The timezone to use for Zabbix in TZ format.
+          - 'For more information, see: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
+      zbxserver_database_host:
+        type: str
+        required: true
+        description:
+          - The name of the database server for Zabbix.
+      zbxserver_database_port:
+        type: int
+        required: false
+        default: 5432
+        description:
+          - The port number for the database server for Zabbix.
+      zbxserver_database_name:
+        type: str
+        required: false
+        default: zabbix-server
+        description:
+          - The name of the database for Zabbix.
+      zbxserver_user:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The name of the user for Zabbix.
+          - This is not used in this role, if zbxserver_configure_vault is true.
+      zbxserver_database_password:
+        type: str
+        required: false
+        description:
+          - The password for the Zabbix database user.
+          - This is not used in this role, if zbxserver_configure_vault is true.
+      zbxserver_database_use_ssl:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to use SSL for the Zabbix database.
+      zbxserver_database_ca_file:
+        type: str
+        required: false
+        description:
+          - The path to the CA file for the Zabbix database.
+      zbxserver_database_verify_host:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to verify the host for the Zabbix database.
+      zbxserver_vault_url:
+        type: str
+        required: false
+        description:
+          - The URL for the HashiCorp Vault server.
+      zbxserver_vault_database_mount_point:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The mount point for the Zabbix database secret.
+      zbxserver_vault_database_path:
+        type: str
+        required: false
+        default: database
+        description:
+          - The path for the Zabbix database secret.
+      zbxserver_vault_token:
+        type: str
+        required: false
+        description:
+          - The token for the HashiCorp Vault server.
+      zbxserver_server_host:
+        type: str
+        required: true
+        description:
+          - The host for the Zabbix server.
+      zbxserver_server_port:
+        type: int
+        required: false
+        default: 10051
+        description:
+          - The port for the Zabbix server.
+      zbxserver_display_name:
+        type: str
+        required: false
+        default: ZABBIX
+        description:
+          - The display name for Zabbix.
+      zbxserver_nginx_redirect_server_name:
+        type: list
+        required: false
+        default:
+          - _
+        elements: str
+        description:
+          - A list of server names on which to redirect HTTP requests to HTTPS.
+          - If set to '_', requests for any server name will be redirected.
+      zbxserver_nginx_redirect_return_server_name:
+        type: str
+        required: false
+        default: $host
+        description:
+          - The server name to return in the redirect.
+          - By default, this uses the hostname of the request.
+      zbxserver_nginx_max_body_size:
+        type: str
+        required: false
+        default: 2M
+        description:
+          - The maximum body size for NGINX.
+      zbxserver_nginx_server_name:
+        type: list
+        required: false
+        default:
+          - _
+        elements: str
+        description:
+          - A list of server names to accept HTTPS connections to Zabbix.
+          - If set to '_', requests for any server name will be accepted.
+      zbxserver_web_server_certificate_path:
+        type: str
+        required: true
+        description:
+          - The path to the certificate for the web server.
+      zbxserver_web_server_private_key_path:
+        type: str
+        required: true
+        description:
+          - The path to the private key for the web server.

@@ -1,0 +1,22 @@
+---
+- name: Install Zabbix Agent 2
+  ansible.builtin.dnf:
+    name:
+      - zabbix-agent2
+    state: present
+
+- name: Install MongoDB plugin
+  when:
+    - zbxagent_install_mongodb_plugin
+  ansible.builtin.dnf:
+    name:
+      - zabbix-agent2-plugin-mongodb
+    state: present
+
+- name: Install PostgreSQL plugin
+  when:
+    - zbxagent_install_pgsql_plugin
+  ansible.builtin.dnf:
+    name:
+      - zabbix-agent2-plugin-postgresql
+    state: present

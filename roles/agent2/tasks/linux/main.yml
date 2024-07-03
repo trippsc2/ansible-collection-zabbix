@@ -1,0 +1,6 @@
+---
+- name: Configure Zabbix user
+  ansible.builtin.import_tasks: user.yml
+
+- name: Install packages
+  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"

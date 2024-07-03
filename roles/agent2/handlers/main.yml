@@ -1,0 +1,17 @@
+---
+- name: Restart Zabbix Agent
+  listen: _zbxagent_restart_zabbix_agent2
+  when:
+    - ansible_os_family != 'Windows'
+  become: true
+  ansible.builtin.systemd_service:
+    name: zabbix-agent2.service
+    state: restarted
+
+- name: Restart Zabbix Agent
+  listen: _zbxagent_restart_zabbix_agent2
+  when:
+    - ansible_os_family == 'Windows'
+  ansible.windows.win_service:
+    name: Zabbix Agent 2
+    state: restarted

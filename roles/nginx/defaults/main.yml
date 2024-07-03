@@ -1,19 +1,18 @@
 ---
-zbxserver_configure_selinux: true
 
 zbxserver_major_version: "{{ _zbxserver_default_major_version | default('7.0') }}"
-zbxserver_nginx_module_version: "{{ _zbxserver_default_nginx_module_version }}"
-zbxserver_php_module_version: "{{ _zbxserver_default_php_module_version }}"
+zbxserver_nginx_module_version: "{{ _zbxserver_default_nginx_module_version | default('1.24') }}"
+zbxserver_php_module_version: "{{ _zbxserver_default_php_module_version | default('8.2') }}"
+
+zbxserver_configure_selinux: "{{ _zbxserver_default_configure_selinux | default(false) }}"
+zbxserver_configure_vault: true
 
 zbxserver_database_type: postgresql
 
 zbxserver_timezone: America/New_York
 
-zbxserver_database_server_name: localhost
 zbxserver_database_port: 5432
 zbxserver_database_name: zabbix-server
-
-zbxserver_configure_vault: true
 
 zbxserver_vault_database_mount_point: zabbix
 zbxserver_vault_database_path: database
@@ -23,10 +22,13 @@ zbxserver_user: zabbix
 zbxserver_database_use_ssl: false
 zbxserver_database_verify_host: true
 
-zbxserver_server_name: localhost
 zbxserver_server_port: 10051
 zbxserver_display_name: ZABBIX
 
+zbxserver_nginx_redirect_server_name:
+  - _
+zbxserver_nginx_server_name:
+  - _
 
 zbxserver_nginx_redirect_return_server_name: $host
 zbxserver_nginx_max_body_size: 2M

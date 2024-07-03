@@ -1,0 +1,3 @@
+---
+- name: Install Zabbix Agent 2
+  ansible.builtin.import_tasks: win/main.yml

@@ -23,7 +23,11 @@ galaxy_info:
           - jammy
           - noble
 
-collections: []
+collections:
+  - ansible.posix
+  - community.general
+  - community.hashi_vault
+  - community.zabbix
 
 dependencies:
-  - trippsc2.zabbix.repo
+  - role: trippsc2.zabbix.repo

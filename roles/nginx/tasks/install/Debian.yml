@@ -5,12 +5,20 @@
     name:
       - nginx
       - zabbix-frontend-php
+      - zabbix-nginx-conf
     state: present
     update_cache: true
 
-- name: Ensure PHP PostgreSQL package is installed
+- name: Ensure PHP packages are installed
   become: true
   ansible.builtin.apt:
-    name:
-      - "{{ _zbxserver_php_postgresql_package_name }}"
+    name: "{{ _zbxserver_php_packages }}"
+    state: present
+
+- name: Ensure PHP PostgreSQL package is installed
+  when:
+    - zbxserver_database_type == 'postgresql'
+  become: true
+  ansible.builtin.apt:
+    name: "{{ _zbxserver_php_postgresql_packages }}"
     state: present

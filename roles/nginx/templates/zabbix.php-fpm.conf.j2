@@ -2,8 +2,10 @@
 user = {{ nginx_user }}
 group = {{ nginx_group }}
 
-listen = /run/php-fpm/zabbix.sock
+listen = {{ _zbxserver_php_fpm_socket_path }}
+{% if ansible_distribution_release != 'focal' %}
 listen.acl_users = {{ nginx_user }}
+{% endif %}
 listen.owner = {{ nginx_user }}
 listen.group = {{ nginx_group }}
 listen.mode = 0664
@@ -16,7 +18,7 @@ pm.min_spare_servers = 5
 pm.max_spare_servers = 35
 
 php_value[session.save_handler] = files
-php_value[session.save_path] = /var/lib/php/session
+php_value[session.save_path] = {{ _zbxserver_php_fpm_session_save_path }}
 
 php_value[max_execution_time] = 300
 php_value[memory_limit] = 128M

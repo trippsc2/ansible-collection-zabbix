@@ -33,8 +33,3 @@
     macro_name: "{{ item.name }}"
     macro_value: "{{ item.value }}"
     state: present
-
-- name: Install Microsoft ODBC drivers
-  when:
-    - zbxserver_configure_mssql_odbc
-  ansible.builtin.include_tasks: "odbc/{{ ansible_os_family }}.yml"
