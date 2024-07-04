@@ -1,0 +1,9 @@
+---
+- name: Add ufw rule
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ zbxagent_listen_port }}"
+    proto: tcp
+    comment: "Zabbix Agent 2"
+    direction: in

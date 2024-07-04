@@ -35,7 +35,17 @@
   ansible.builtin.import_tasks: zabbix-users.yml
 
 - name: Perform first app configuration steps
-  ansible.builtin.import_tasks: first-steps.yml
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_host: "{{ zabbix_host }}"
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl | default(false) }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  ansible.builtin.include_tasks: first-steps.yml
 
 - name: Import Zabbix templates
   ansible.builtin.include_tasks: templates.yml

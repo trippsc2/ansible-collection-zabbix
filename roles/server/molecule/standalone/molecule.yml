@@ -33,7 +33,7 @@ provisioner:
       all:
         vault_token: 47542cbc-6bf8-4fba-8eda-02e0a0d29a0a
         vault_url: "http://{{ hostvars['linux'].ansible_host }}:8200"
-        zabbix_server: "{{ hostvars['web'].ansible_host }}"
+        zabbix_host: "{{ hostvars['web'].ansible_host }}"
         zabbix_port: 443
         zabbix_ssl: true
         zabbix_validate_certs: false

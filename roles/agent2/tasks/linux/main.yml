@@ -1,6 +1,19 @@
 ---
 - name: Configure Zabbix user
-  ansible.builtin.import_tasks: user.yml
+  ansible.builtin.include_tasks: user.yml
 
 - name: Install packages
-  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "install/{{ ansible_os_family }}.yml"
+
+- name: Configure Zabbix Agent 2
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Configure firewalld
+  when:
+    - zbxagent_configure_firewalld
+  ansible.builtin.include_tasks: firewalld.yml
+
+- name: Configure ufw
+  when:
+    - zbxagent_configure_ufw
+  ansible.builtin.include_tasks: ufw.yml

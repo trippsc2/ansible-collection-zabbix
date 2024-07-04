@@ -2,10 +2,63 @@
 - name: Configure Zabbix Agent 2
   become: true
   ansible.builtin.template:
-    src: zabbix_agent2.conf.j2
+    src: zabbix_agent2.linux.conf.j2
     dest: /etc/zabbix/zabbix_agent2.conf
     owner: "{{ zbxagent_user }}"
     group: "{{ zbxagent_group }}"
     mode: '0640'
   notify:
     - _zbxagent_restart_zabbix_agent2
+
+- name: Ensure include directories exist
+  loop: "{{ zbxagent_include_directories }}"
+  loop_control:
+    loop_var: _zbxagent_include_directory
+  ansible.builtin.include_tasks: include-dir.yml
+
+- name: Ensure Zabbix Agent 2 service is enabled
+  become: true
+  ansible.builtin.systemd_service:
+    name: zabbix-agent2.service
+    enabled: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure Zabbix Agent 2 is running
+  become: true
+  ansible.builtin.systemd_service:
+    name: zabbix-agent2.service
+    state: started
+    enabled: true
+
+- name: Configure logrotate for Zabbix Agent 2
+  when:
+    - zbxagent_configure_logrotate
+  become: true
+  ansible.builtin.template:
+    src: zabbix_agent2.logrotate.j2
+    dest: /etc/logrotate.d/zabbix_agent2
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add local scripts
+  loop: "{{ zbxagent_local_scripts }}"
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.path }}"
+    owner: "{{ zbxagent_user }}"
+    group: "{{ zbxagent_group }}"
+    mode: '0750'
+
+- name: Ensure log file directory exists
+  when:
+    - zbxagent_log_file | dirname != '/var/log'
+  become: true
+  ansible.builtin.file:
+    path: "{{ zbxagent_log_file | dirname }}"
+    state: directory
+    owner: "{{ zbxagent_user }}"
+    group: "{{ zbxagent_group }}"
+    mode: '0750'

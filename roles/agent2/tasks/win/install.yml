@@ -1,0 +1,8 @@
+---
+- name: Install Zabbix Agent 2
+  chocolatey.chocolatey.win_chocolatey:
+    name:
+      - zabbix-agent2
+    state: present
+  notify:
+    - _zbxagent_restart_zabbix_agent2

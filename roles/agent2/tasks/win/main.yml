@@ -1,0 +1,6 @@
+---
+- name: Install Zabbix Agent 2
+  ansible.builtin.import_tasks: install.yml
+
+- name: Configure Zabbix Agent 2
+  ansible.builtin.import_tasks: configure.yml

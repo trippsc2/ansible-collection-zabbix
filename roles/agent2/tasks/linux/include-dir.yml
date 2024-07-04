@@ -1,0 +1,27 @@
+---
+- name: Ensure directory exists and has correct permissions
+  become: true
+  ansible.builtin.file:
+    path: "{{ _zbxagent_include_directory }}"
+    state: directory
+    owner: "{{ zbxagent_user }}"
+    group: "{{ zbxagent_group }}"
+    mode: '0750'
+
+- name: Get all files inside include directory
+  ansible.builtin.find:
+    paths:
+      - "{{ _zbxagent_include_directory }}"
+    file_type: file
+    recurse: true
+  register: _zbxagent_include_files
+
+- name: Ensure all files have correct permissions
+  loop: "{{ _zbxagent_include_files.files }}"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: file
+    owner: "{{ zbxagent_user }}"
+    group: "{{ zbxagent_group }}"
+    mode: '0640'

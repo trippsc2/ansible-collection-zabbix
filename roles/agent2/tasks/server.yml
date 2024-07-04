@@ -1,0 +1,29 @@
+---
+- name: Create Zabbix host groups
+  delegate_to: localhost
+  community.zabbix.zabbix_group:
+    host_groups: "{{ zbx_host_groups }}"
+    state: present
+
+- name: Create Zabbix host
+  delegate_to: localhost
+  community.zabbix.zabbix_host:
+    host_name: "{{ zbx_host_name }}"
+    visible_name: "{{ zbx_host_visible_name | default(omit) }}"
+    host_groups: "{{ zbx_host_groups }}"
+    interfaces: "{{ zbx_host_interfaces }}"
+    link_templates: "{{ zbx_host_templates }}"
+    status: enabled
+    tls_accept: "{{ _zbxagent_tls_accept }}"
+    tls_connect: "{{ _zbxagent_tls_connect }}"
+    state: present
+
+- name: Create Zabbix host macros
+  loop: "{{ zbx_host_macros }}"
+  delegate_to: localhost
+  community.zabbix.zabbix_hostmacro:
+    host_name: "{{ zbx_host_name }}"
+    macro_name: "{{ item.name }}"
+    macro_type: "{{ item.type | default('text') }}"
+    macro_value: "{{ item.value }}"
+    state: present

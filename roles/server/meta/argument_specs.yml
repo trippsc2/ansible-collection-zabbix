@@ -7,6 +7,46 @@ argument_specs:
     author:
       - Jim Tarpley
     options:
+      zabbix_host:
+        type: str
+        required: true
+        description:
+          - The hostname or IP address of the Zabbix server for API requests.
+      zabbix_port:
+        type: int
+        required: true
+        description:
+          - The port on which to connect to Zabbix server for API requests.
+      zabbix_ssl:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to use SSL for API requests.
+      zabbix_validate_certs:
+        type: bool
+        required: false
+        description:
+          - Whether to validate SSL certificates for API requests.
+          - If not specified, the default behavior is to validate certificates.
+      zabbix_url_path:
+        type: str
+        required: false
+        default: ''
+        description:
+          - The URL path for the Zabbix API.
+          - If using Apache for web frontend, this should be set to `zabbix` unless configured otherwise.
+          - If using NGINX for web frontend, this should be set to an empty string unless configured otherwise.
+      zabbix_username:
+        type: str
+        required: true
+        description:
+          - The username to use for API requests.
+      zabbix_password:
+        type: str
+        required: true
+        description:
+          - The password to use for API requests.
       zbxserver_major_version:
         type: str
         required: false

@@ -1,0 +1,7 @@
+---
+_zbxagent_default_configure_firewalld: true
+_zbxagent_default_configure_ufw: false
+_zbxagent_default_configure_windows_firewall: false
+
+_zbxagent_default_host_name: "{{ inventory_hostname | lower }}"
+_zbxagent_default_log_file: /var/log/zabbix/zabbix_agent2.log

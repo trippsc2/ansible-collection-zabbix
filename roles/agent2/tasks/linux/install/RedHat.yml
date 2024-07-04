@@ -1,5 +1,6 @@
 ---
 - name: Install Zabbix Agent 2
+  become: true
   ansible.builtin.dnf:
     name:
       - zabbix-agent2
@@ -8,6 +9,7 @@
 - name: Install MongoDB plugin
   when:
     - zbxagent_install_mongodb_plugin
+  become: true
   ansible.builtin.dnf:
     name:
       - zabbix-agent2-plugin-mongodb
@@ -16,6 +18,7 @@
 - name: Install PostgreSQL plugin
   when:
     - zbxagent_install_pgsql_plugin
+  become: true
   ansible.builtin.dnf:
     name:
       - zabbix-agent2-plugin-postgresql

@@ -24,7 +24,7 @@
         ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
         ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
         ansible_zabbix_url_path: ''
-        ansible_host: "{{ zabbix_server }}"
+        ansible_host: "{{ zabbix_host }}"
         ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
         ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
       community.zabbix.zabbix_user:

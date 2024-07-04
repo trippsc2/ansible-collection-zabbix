@@ -1,0 +1,185 @@
+---
+- name: Include OS specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Validate VMware
+  when:
+    - zbxagent_configure_vmware_monitoring
+  block:
+    - name: Validate VMware hostname is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_hostname is defined
+        fail_msg: "The 'vmware_hostname' variable is not defined"
+        success_msg: "The 'vmware_hostname' variable is defined"
+
+    - name: Validate VMware username is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_username is defined
+        fail_msg: "The 'vmware_username' variable is not defined"
+        success_msg: "The 'vmware_username' variable is defined"
+    
+    - name: Validate VMware password is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_password is defined
+        fail_msg: "The 'vmware_password' variable is not defined"
+        success_msg: "The 'vmware_password' variable is defined"
+
+    - name: Validate VMware datacenter is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_datacenter is defined
+        fail_msg: "The 'vmware_datacenter' variable is not defined"
+        success_msg: "The 'vmware_datacenter' variable is defined"
+
+    - name: Validate VMware VM name or UUID is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_vm_name is defined or vmware_vm_uuid is defined
+        fail_msg: "The 'vmware_vm_name' or 'vmware_vm_uuid' variable are not defined"
+        success_msg: "The 'vmware_vm_name' or 'vmware_vm_uuid' variable is defined"
+    
+    - name: Validate VMware VM name is not defined when VM UUID is defined
+      when:
+        - vmware_vm_uuid is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_vm_name is not defined
+        fail_msg: "The 'vmware_vm_name' variable is defined when 'vmware_vm_uuid' is defined"
+        success_msg: "The 'vmware_vm_name' variable is not defined when 'vmware_vm_uuid' is defined"
+
+    - name: Validate VMware VM Folder is defined when VM name is defined
+      when:
+        - vmware_vm_name is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_vm_folder is defined
+        fail_msg: "The 'vmware_vm_folder' variable is not defined"
+        success_msg: "The 'vmware_vm_folder' variable is defined"
+
+- name: Validate maximum log size
+  when:
+    - zbxagent_log_type == 'file'
+  block:
+    - name: Validate maximum log size is disabled when logrotate is configured
+      when:
+        - zbxagent_configure_logrotate
+      ansible.builtin.assert:
+        that:
+          - zbxagent_log_file_size == 0
+        fail_msg: "The 'zbxagent_log_file_size' variable must be 0 when logrotate is configured"
+        success_msg: "The 'zbxagent_log_file_size' variable is 0 when logrotate is configured"
+
+    - name: Validate maximum log size is defined when logrotate is not configured
+      ansible.builtin.assert:
+        that:
+          - zbxagent_log_file_size >= 0
+          - zbxagent_log_file_size <= 1024
+        fail_msg: "The 'zbxagent_log_file_size' variable is not between 0 and 1024."
+        success_msg: "The 'zbxagent_log_file_size' variable is between 0 and 1024."
+
+- name: Validate listen port
+  when:
+    - zbxagent_listen_port is defined
+  ansible.builtin.assert:
+    that:
+      - zbxagent_listen_port >= 1024
+      - zbxagent_listen_port <= 32767
+    fail_msg: "The 'zbxagent_listen_port' variable is not between 1024 and 32767."
+    success_msg: "The 'zbxagent_listen_port' variable is between 1024 and 32767."
+
+- name: Validate status port
+  when:
+    - zbxagent_status_port is defined
+  ansible.builtin.assert:
+    that:
+      - zbxagent_status_port >= 1024
+      - zbxagent_status_port <= 32767
+    fail_msg: "The 'zbxagent_status_port' variable is not between 1024 and 32767."
+    success_msg: "The 'zbxagent_status_port' variable is between 1024 and 32767."
+
+- name: Validate refresh active checks
+  when:
+    - zbxagent_refresh_active_checks is defined
+  ansible.builtin.assert:
+    that:
+      - zbxagent_refresh_active_checks >= 1
+      - zbxagent_refresh_active_checks <= 86400
+    fail_msg: "The 'zbxagent_refresh_active_checks' variable is not between 1 and 86400."
+    success_msg: "The 'zbxagent_refresh_active_checks' variable is between 1 and 86400."
+
+- name: Validate buffer send
+  when:
+    - zbxagent_buffer_send is defined
+  ansible.builtin.assert:
+    that:
+      - zbxagent_buffer_send >= 1
+      - zbxagent_buffer_send <= 3600
+    fail_msg: "The 'zbxagent_buffer_send' variable is not between 1 and 3600."
+    success_msg: "The 'zbxagent_buffer_send' variable is between 1 and 3600."
+
+- name: Validate buffer size
+  when:
+    - zbxagent_buffer_size is defined
+  ansible.builtin.assert:
+    that:
+      - zbxagent_buffer_size >= 2
+      - zbxagent_buffer_size <= 65535
+    fail_msg: "The 'zbxagent_buffer_size' variable is not between 2 and 65535."
+    success_msg: "The 'zbxagent_buffer_size' variable is between 2 and 65535."
+
+- name: Validate persistent buffer file is defined
+  when:
+    - zbxagent_enable_persistent_buffer
+  ansible.builtin.assert:
+    that:
+      - zbxagent_persistent_buffer_file is defined
+    fail_msg: "The 'zbxagent_persistent_buffer_file' variable is not defined"
+    success_msg: "The 'zbxagent_persistent_buffer_file' variable is defined"
+
+- name: Validate heartbeat frequency
+  when:
+    - zbxagent_heartbeat_frequency is defined
+  ansible.builtin.assert:
+    that:
+      - zbxagent_heartbeat_frequency >= 0
+      - zbxagent_heartbeat_frequency <= 3600
+    fail_msg: "The 'zbxagent_heartbeat_frequency' variable is not between 0 and 3600."
+    success_msg: "The 'zbxagent_heartbeat_frequency' variable is between 0 and 3600."
+
+- name: Validate timeout
+  ansible.builtin.assert:
+    that:
+      - zbxagent_timeout >= 1
+      - zbxagent_timeout <= 30
+    fail_msg: "The 'zbxagent_timeout' variable is not between 1 and 30."
+    success_msg: "The 'zbxagent_timeout' variable is between 1 and 30."
+
+- name: Validate plugin timeout
+  when:
+    - zbxagent_plugin_timeout is defined
+  ansible.builtin.assert:
+    that:
+      - zbxagent_plugin_timeout >= 1
+      - zbxagent_plugin_timeout <= 30
+    fail_msg: "The 'zbxagent_plugin_timeout' variable is not between 1 and 30."
+    success_msg: "The 'zbxagent_plugin_timeout' variable is between 1 and 30."
+
+- name: Validate maximum log lines per second
+  ansible.builtin.assert:
+    that:
+      - zbxagent_log_max_lines_per_second >= 1
+      - zbxagent_log_max_lines_per_second <= 1000
+    fail_msg: "The 'zbxagent_log_max_lines_per_second' variable is not between 1 and 1000."
+    success_msg: "The 'zbxagent_log_max_lines_per_second' variable is between 1 and 1000."
+
+- name: Validate logrotate retention
+  when:
+    - zbxagent_configure_logrotate
+  ansible.builtin.assert:
+    that:
+      - zbxagent_logrotate_retention >= 1
+    fail_msg: "The 'zbxagent_logrotate_retention' variable is not greater than 0."
+    success_msg: "The 'zbxagent_logrotate_retention' variable is greater than 0."

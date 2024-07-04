@@ -1,0 +1,34 @@
+---
+galaxy_info:
+    author: Jim Tarpley
+    namespace: trippsc2
+    role_name: agent2
+    description: This role installs the Zabbix Agent 2 on a Linux or Windows machine.
+    license: MIT
+
+    min_ansible_version: '2.14'
+
+    platforms:
+      - name: Debian
+        versions:
+          - bullseye
+          - bookworm
+      - name: EL
+        versions:
+          - '8'
+          - '9'
+      - name: Ubuntu
+        versions:
+          - focal
+          - jammy
+          - noble
+
+collections:
+  - ansible.posix
+  - ansible.windows
+  - chocolatey.chocolatey
+  - community.general
+  - community.vmware
+  - community.zabbix
+
+dependencies: []

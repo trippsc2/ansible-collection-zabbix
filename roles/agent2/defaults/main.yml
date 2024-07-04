@@ -1,0 +1,70 @@
+---
+zbxagent_major_version: '7.0'
+
+zbxagent_configure_logrotate: "{{ zbxagent_log_type == 'file' }}"
+zbxagent_configure_firewalld: "{{ _zbxagent_default_configure_firewalld | default(false) }}"
+zbxagent_configure_ufw: "{{ _zbxagent_default_configure_ufw | default(false) }}"
+zbxagent_configure_windows_firewall: "{{ _zbxagent_default_configure_windows_firewall | default(false) }}"
+zbxagent_configure_vmware_monitoring: false
+zbxagent_install_mongodb_plugin: false
+zbxagent_install_pgsql_plugin: false
+
+zbxagent_user: zabbix
+zbxagent_group: zabbix
+
+zbxagent_pid_file: /run/zabbix/zabbix_agent2.pid
+
+zbxagent_log_type: file
+zbxagent_log_file: "{{ _zbxagent_default_log_file | default(omit) }}"
+zbxagent_log_file_size: 0
+
+zbxagent_listen_port: 10050
+
+zbxagent_refresh_active_checks: 5
+zbxagent_buffer_send: 5
+zbxagent_buffer_size: 1000
+
+zbxagent_enable_persistent_buffer: false
+zbxagent_persistent_buffer_period: 1h
+
+zbxagent_heartbeat_frequency: 60
+
+zbxagent_aliases: {}
+
+zbxagent_timeout: 3
+
+zbxagent_include_files: []
+zbxagent_include_directories: []
+
+zbxagent_unsafe_user_parameters: false
+
+zbxagent_user_parameters: {}
+
+zbxagent_control_socket: /tmp/agent.sock
+
+zbxagent_tls_connect: unencrypted
+zbxagent_tls_accept: unencrypted
+
+zbxagent_log_max_lines_per_second: 20
+
+zbxagent_systemrun_log_remote_commands: false
+
+zbxagent_plugin_parameters: {}
+
+zbxagent_allow_keys: []
+zbxagent_deny_keys: []
+
+zbxagent_force_active_checks_on_start: false
+
+zbxagent_plugins_windows_eventlog_max_lines_per_second: 20
+
+zbxagent_local_scripts: []
+
+zbxagent_logrotate_period: daily
+zbxagent_logrotate_retention: 14
+zbxagent_logrotate_mode: '0640'
+
+zbx_host_name: "{{ _zbxagent_default_host_name | default(inventory_hostname) }}"
+zbx_host_visible_name: "{{ _zbxagent_default_host_visible_name | default(omit) }}"
+
+zbx_host_macros: []

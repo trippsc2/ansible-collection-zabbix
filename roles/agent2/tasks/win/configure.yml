@@ -1,0 +1,44 @@
+---
+- name: Configure Zabbix Agent 2
+  ansible.windows.win_template:
+    src: zabbix_agent2.win.conf.j2
+    dest: C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf
+  notify:
+    - _zbxagent_restart_zabbix_agent2
+
+- name: Ensure include directories exist
+  loop: "{{ zbxagent_include_directories }}"
+  ansible.windows.win_file:
+    path: "{{ item }}"
+    state: directory
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure Zabbix Agent 2 is running
+  ansible.windows.win_service:
+    name: Zabbix Agent 2
+    state: started
+
+- name: Configure Zabbix Agent firewall rule
+  when:
+    - zbxagent_configure_windows_firewall
+  community.windows.win_firewall_rule:
+    name: Zabbix Agent 2
+    localport: "{{ zbxagent_listen_port }}"
+    action: allow
+    direction: in
+    protocol: tcp
+    enabled: true
+    state: present
+
+- name: Add local scripts
+  loop: "{{ zbxagent_local_scripts }}"
+  ansible.windows.win_copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.path }}"
+
+- name: Ensure log file directory exists
+  ansible.windows.win_file:
+    path: "{{ zbxagent_log_file | dirname }}"
+    state: directory

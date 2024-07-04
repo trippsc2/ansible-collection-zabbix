@@ -1,0 +1,842 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix Agent 2
+    description:
+      - This role installs the Zabbix Agent 2 on a Linux or Windows machine.
+    author:
+      - Jim Tarpley
+    options:
+      vmware_hostname:
+        type: str
+        required: false
+        description:
+          - The hostname or IP address of the vCenter server or standalone ESXi host.
+          - Required if *zbxagent_configure_vmware_monitoring* is `true`.
+      vmware_username:
+        type: str
+        required: false
+        description:
+          - The username to use for connecting to the vCenter server or standalone ESXi host.
+          - Required if *zbxagent_configure_vmware_monitoring* is `true`.
+      vmware_password:
+        type: str
+        required: false
+        description:
+          - The password to use for connecting to the vCenter server or standalone ESXi host.
+          - Required if *zbxagent_configure_vmware_monitoring* is `true`.
+      vmware_datacenter:
+        type: str
+        required: false
+        description:
+          - The name of the datacenter in which the VM is located.
+          - If using a standalone ESXi host, this should be set to `ha-datacenter`.
+          - Required if *zbxagent_configure_vmware_monitoring* is `true`.
+      vmware_vm_name:
+        type: str
+        required: false
+        description:
+          - The name of the VM to monitor.
+          - If *zbxagent_configure_vmware_monitoring* is `true`, this is required if *vmware_vm_uuid* is not specified.
+      vmware_vm_uuid:
+        type: str
+        required: false
+        description:
+          - The UUID of the VM to monitor.
+          - If *zbxagent_configure_vmware_monitoring* is `true`, this is required if *vmware_vm_name* is not specified.
+      vmware_vm_folder:
+        type: str
+        required: false
+        description:
+          - The folder in which the VM is located.
+          - If *zbxagent_configure_vmware_monitoring* is `true`, this is required if *vmware_vm_name* is specified.
+          - For formatting, see https://docs.ansible.com/ansible/latest/collections/community/vmware/vmware_guest_info_module.html#parameter-folder.
+      zabbix_host:
+        type: str
+        required: true
+        description:
+          - The hostname or IP address of the Zabbix server for API requests.
+      zabbix_port:
+        type: int
+        required: true
+        description:
+          - The port on which to connect to Zabbix server for API requests.
+      zabbix_ssl:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to use SSL for API requests.
+      zabbix_validate_certs:
+        type: bool
+        required: false
+        description:
+          - Whether to validate SSL certificates for API requests.
+          - If not specified, the default behavior is to validate certificates.
+      zabbix_url_path:
+        type: str
+        required: false
+        default: ''
+        description:
+          - The URL path for the Zabbix API.
+          - If using Apache for web frontend, this should be set to `zabbix` unless configured otherwise.
+          - If using NGINX for web frontend, this should be set to an empty string unless configured otherwise.
+      zabbix_username:
+        type: str
+        required: true
+        description:
+          - The username to use for API requests.
+      zabbix_password:
+        type: str
+        required: true
+        description:
+          - The password to use for API requests.
+      zbxagent_major_version:
+        type: str
+        required: false
+        default: '7.0'
+        choices:
+          - '7.0'
+          - '6.4'
+        description:
+          - The major version of the Zabbix Agent 2 to install.
+          - This is ignored on Windows systems, as Chocolatey installs the latest version always.
+      zbxagent_configure_logrotate:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure logrotate for the Zabbix Agent 2 log file.
+          - This is ignored on Windows systems.
+          - If *zbxagent_log_type* is set to `file`, this is `true` by default.  Otherwise, it is `false`.
+          - If set to `true`, the *zbxagent_log_size* should be set to `0` to prevent conflicts.
+      zbxagent_configure_firewalld:
+        type: bool
+        required: false
+        default: OS specific
+        description:
+          - Whether to configure firewalld for the Zabbix Agent 2.
+          - This is ignored on Windows systems.
+          - For EL and Debian systems, this is `true` by default.
+          - For other systems, this is `false` by default.
+      zbxagent_configure_ufw:
+        type: bool
+        required: false
+        default: OS specific
+        description:
+          - Whether to configure ufw for the Zabbix Agent 2.
+          - This is ignored on Windows systems.
+          - For Ubuntu systems, this is `true` by default.
+          - For other systems, this is `false` by default.
+      zbxagent_configure_windows_firewall:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure the Windows Firewall for the Zabbix Agent 2.
+          - This is ignored on non-Windows systems.
+      zbxagent_configure_vmware_monitoring:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to configure VMware monitoring for the Zabbix Agent 2.
+      zbxagent_user:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The user as which the Zabbix Agent 2 service will run.
+          - This is ignored on Windows systems.
+          - If not set to `zabbix`, the user must be created before running this role.
+      zbxagent_group:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The primary group of the user as which the Zabbix Agent 2 service will run.
+          - This is ignored on Windows systems.
+          - If not set to `zabbix`, the group must be created before running this role.
+      zbxagent_pid_file:
+        type: str
+        required: false
+        default: /run/zabbix/zabbix_agent2.pid
+        description:
+          - The path to the PID file for the Zabbix Agent 2 service.
+          - This is ignored on Windows systems.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pidfile'
+      zbxagent_log_type:
+        type: str
+        required: false
+        default: file
+        choices:
+          - file
+          - console
+          - system
+        description:
+          - The type of logging to use for the Zabbix Agent 2.
+          - The value `system` is only supported on Linux systems.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logtype'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logtype'
+      zbxagent_log_file:
+        type: path
+        required: false
+        default: OS specific
+        description:
+          - The path to the log file for the Zabbix Agent 2.
+          - For Linux systems, this is `/var/log/zabbix/zabbix_agent2.log` by default.
+          - For Windows systems, this is `C:\ProgramData\Zabbix Agent 2\zabbix_agent2.log` by default.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logfile'
+      zbxagent_log_file_size:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The maximum size of the log file in MB.
+          - Valid values are between `0` and `1024`.
+          - If set to `0`, the log file will not be rotated.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logfilesize'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logfilesize'
+      zbxagent_source_ip:
+        type: str
+        required: false
+        description:
+          - The IP address to use as the source IP for active checks.
+          - If not specified, the default behavior is to use the IP address of the default route.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#sourceip'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#sourceip'
+      zbxagent_servers:
+        type: list
+        required: true
+        elements: str
+        description:
+          - A list of Zabbix servers for which the agent will allow connections.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#server'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#server'
+      zbxagent_listen_port:
+        type: int
+        required: false
+        default: 10050
+        description:
+          - The port on which the Zabbix Agent 2 will listen for connections.
+          - Valid values are between `1024` and `32767`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#listenport'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#listenport'
+      zbxagent_listen_ip:
+        type: str
+        required: false
+        description:
+          - The IP address on which the Zabbix Agent 2 will listen for connections.
+          - If not specified, the default behavior is to listen on all available IP addresses.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#listenip'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#listenip'
+      zbxagent_status_port:
+        type: int
+        required: false
+        description:
+          - The port on which the Zabbix Agent 2 will host the HTTP status page.
+          - If not specified, the default behavior is to not host the HTTP status page.
+          - Valid values are between `1024` and `32767`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#statusport'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#statusport'
+      zbxagent_active_servers:
+        type: list
+        required: true
+        elements: str
+        description:
+          - A list of Zabbix servers to which the agent will send active check data.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#serveractive'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#serveractive'
+      zbxagent_hostname:
+        type: str
+        required: false
+        description:
+          - The hostname of the Zabbix Agent 2.
+          - If not specified, the default behavior is to use the hostname of the machine.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostname'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostname'
+      zbxagent_hostname_item:
+        type: str
+        required: false
+        description:
+          - The item key to use for the hostname of the Zabbix Agent 2.
+          - If not specified, the default behavior is to use the `system.hostname` item key.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostnameitem'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostnameitem'
+      zbxagent_host_metadata:
+        type: str
+        required: false
+        description:
+          - The metadata to associate with the Zabbix Agent 2 host.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostmetadata'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostmetadata'
+      zbxagent_host_metadata_item:
+        type: str
+        required: false
+        description:
+          - The item key to use for the metadata of the Zabbix Agent 2 host.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostmetadataitem'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostmetadataitem'
+      zbxagent_host_interface:
+        type: str
+        required: false
+        description:
+          - The host interface to use during autoregistration.
+          - If not specified, the default behavior is to use the IP address of the default route.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostinterface'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostinterface'
+      zbxagent_host_interface_item:
+        type: str
+        required: false
+        description:
+          - The item key to use for the host interface during autoregistration.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostinterfaceitem'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostinterfaceitem'
+      zbxagent_refresh_active_checks:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The interval at which the Zabbix Agent 2 will refresh active checks in seconds.
+          - Valid values are between `1` and `86400`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#refreshactivechecks'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#refreshactivechecks'
+      zbxagent_buffer_send:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of values to buffer before sending to the Zabbix server.
+          - Valid values are between `1` and `3600`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#buffersend'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#buffersend'
+      zbxagent_buffer_size:
+        type: int
+        required: false
+        default: 1000
+        description:
+          - The number of values to buffer before flushing to the server or proxy.
+          - This is ignored if *zbxagent_enable_persistent_buffer* is `true`.
+          - Valid values are between `2` and `65535`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#buffersize'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#buffersize'
+      zbxagent_enable_persistent_buffer:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to enable the persistent buffer for the Zabbix Agent 2.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#enablepersistentbuffer'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#enablepersistentbuffer'
+      zbxagent_persistent_buffer_period:
+        type: str
+        required: false
+        default: 1h
+        description:
+          - The period at which the persistent buffer will be flushed to the server or proxy.
+          - Valid values are in the duration formats `Xs`, `Xm`, `Xh`, or `Xd`.
+          - Valid values are between `1m` and `365d`.
+          - If *zbxagent_enable_persistent_buffer* is `false`, this is ignored.  Otherwise, it is required.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#persistentbufferperiod'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#persistentbufferperiod'
+      zbxagent_persistent_buffer_file:
+        type: path
+        required: false
+        description:
+          - The path to the persistent buffer SQLite file.
+          - If *zbxagent_enable_persistent_buffer* is `false`, this is ignored.  Otherwise, it is required.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#persistentbufferfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#persistentbufferfile'
+      zbxagent_heartbeat_frequency:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The interval at which the Zabbix Agent 2 will send heartbeat messages in seconds.
+          - If set to `0`, the heartbeat messages will not be sent.
+          - Valid values are between `0` and `3600`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#heartbeatfrequency'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#heartbeatfrequency'
+      zbxagent_aliases:
+        type: dict
+        required: false
+        description:
+          - A dictionary of aliases for items, triggers, and graphs.
+          - 'The key is the alias name and the value is the item key, trigger expression, or graph name. (e.g. Alias=`key`:`value`)'
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#aliases'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#aliases'
+      zbxagent_timeout:
+        type: int
+        required: false
+        default: 3
+        description:
+          - The timeout for active checks in seconds.
+          - Valid values are between `1` and `30`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#timeout'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#timeout'
+      zbxagent_include_files:
+        type: list
+        required: false
+        default: []
+        elements: path
+        description:
+          - A list of configuration files to include in the Zabbix Agent 2 configuration.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#include'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#include'
+      zbxagent_include_directories:
+        type: list
+        required: false
+        default: []
+        elements: path
+        description:
+          - A list of directories to include in the Zabbix Agent 2 configuration.
+          - This will include the directory and all .conf files within it.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#include'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#include'
+      zbxagent_plugin_timeout:
+        type: int
+        required: false
+        description:
+          - The timeout for plugin execution in seconds.
+          - If not specified, the *zbxagent_timeout* value will be used.
+          - Valid values are between `1` and `30`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#plugintimeout'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#plugintimeout'
+      zbxagent_plugin_socket:
+        type: path
+        required: false
+        description:
+          - The path to the control socket for plugin execution.
+          - This is ignored on Windows systems.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pluginsocket'
+      zbxagent_unsafe_user_parameters:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to allow parameters without sanitization.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#unsafeuserparameters'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#unsafeuserparameters'
+      zbxagent_user_parameters:
+        type: dict
+        required: false
+        description:
+          - A dictionary of user parameters.
+          - The key is the user parameter name and the value is the command to execute. (e.g. UserParameter=`name`,`command`)
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#userparameters'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#userparameter'
+      zbxagent_user_parameter_dir:
+        type: path
+        required: false
+        description:
+          - The working directory when executing scripts for user parameters.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#userparameterdir'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#userparameterdir'
+      zbxagent_control_socket:
+        type: path
+        required: false
+        default: /tmp/agent.sock
+        description:
+          - The path to the control socket for the Zabbix Agent 2.
+          - This is ignored on Windows systems.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#controlsocket'
+      zbxagent_tls_connect:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - psk
+          - cert
+        description:
+          - The type of connection to use for connections to the Zabbix server for active checks.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsconnect'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsconnect'
+      zbxagent_tls_accept:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - psk
+          - cert
+        description:
+          - The type of connection to accept for connections from the Zabbix server.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsaccept'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsaccept'
+      zbxagent_tls_ca_file:
+        type: path
+        required: false
+        description:
+          - The path to the top level CA certificate file for validating TLS certificates.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlscafile'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlscafile'
+      zbxagent_tls_crl_file:
+        type: path
+        required: false
+        description:
+          - The path to the certificate revocation list file for validating TLS certificates.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlscrlfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlscrlfile'
+      zbxagent_tls_server_cert_issuer:
+        type: str
+        required: false
+        description:
+          - The issuer of the certificate used to validate the Zabbix server.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsservercertissuer'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsservercertissuer'
+      zbxagent_tls_server_cert_subject:
+        type: str
+        required: false
+        description:
+          - The subject of the certificate used to validate the Zabbix server.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsservercertsubject'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsservercertsubject'
+      zbxagent_tls_cert_file:
+        type: path
+        required: false
+        description:
+          - The path to the server certificate file or server certificate chain file for the Zabbix Agent 2.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlscertfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlscertfile'
+      zbxagent_tls_key_file:
+        type: path
+        required: false
+        description:
+          - The path to the server private key file for the Zabbix Agent 2.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlskeyfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlskeyfile'
+      zbxagent_tls_psk_identity:
+        type: str
+        required: false
+        description:
+          - The PSK identity string for the Zabbix Agent 2.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlspskidentity'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlspskidentity'
+      zbxagent_tls_psk_file:
+        type: path
+        required: false
+        description:
+          - The path to the PSK file for the Zabbix Agent 2.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlspskfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlspskfile'
+      zbxagent_log_max_lines_per_second:
+        type: int
+        required: false
+        default: 20
+        description:
+          - The maximum number of log lines per second to send to the Zabbix server/proxy for monitoring.
+          - Valid values are between `1` and `1000`.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logmaxlinespersecond'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logmaxlinespersecond'
+      zbxagent_systemrun_log_remote_commands:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to log remote commands in the systemrun log.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#systemrunlogremotecommands'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#systemrunlogremotecommands'
+      zbxagent_plugin_parameters:
+        type: dict
+        required: false
+        description:
+          - A dictionary of parameters for plugins.
+          - The key is the plugin name and the value is a dictionary of parameters.
+          - See individual plugin documentation for valid parameters.
+      zbxagent_allow_keys:
+        type: list
+        required: false
+        default: []
+        elements: str
+        description:
+          - A list of keys to allow for passive checks.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#allowkey'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#allowkey'
+      zbxagent_deny_keys:
+        type: list
+        required: false
+        default: []
+        elements: str
+        description:
+          - A list of keys to deny for passive checks.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#denykey'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#denykey'
+      zbxagent_force_active_checks_on_start:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to force active checks on start.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#forceactivechecksonstart'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#forceactivechecksonstart'
+      zbxagent_logrotate_period:
+        type: str
+        required: false
+        default: daily
+        choices:
+          - daily
+          - weekly
+          - monthly
+        description:
+          - The period at which to rotate the log file.
+          - This is ignored on Windows systems.
+      zbxagent_logrotate_retention:
+        type: int
+        required: false
+        default: 14
+        description:
+          - The number of rotated log files to retain.
+          - This is ignored on Windows systems.
+      zbxagent_logrotate_mode:
+        type: str
+        required: false
+        default: '0640'
+        description:
+          - The mode of the rotated log files.
+          - This is ignored on Windows systems.
+      zbxagent_local_scripts:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A list of local scripts to be used by the Zabbix Agent 2.
+        options:
+          src:
+            type: path
+            required: true
+            description:
+              - The path to the script on the control node.
+          dest:
+            type: path
+            required: true
+            description:
+              - The destination path for the script on the target node.
+      zbx_host_name:
+        type: str
+        required: false
+        default: OS specific
+        description:
+          - The name of the host on the Zabbix Server.
+          - On Linux systems, this will default to *inventory_hostname* in lower case.
+          - On Windows systems, this will default to *inventory_hostname* in upper case.
+      zbx_host_visible_name:
+        type: str
+        required: false
+        description:
+          - The visible name of the host on the Zabbix Server.
+          - If not specified, this will default to *inventory_hostname* in upper case, if that is different from *zbx_host_name*.
+      zbx_host_groups:
+        type: list
+        required: true
+        elements: str
+        description:
+          - A list of host groups to which the host on the Zabbix Server belongs.
+      zbx_host_interfaces:
+        type: list
+        required: true
+        elements: dict
+        description:
+          - A list of interfaces for the host on the Zabbix Server.
+        options:
+          type:
+            type: str
+            required: false
+            default: agent
+            choices:
+              - agent
+              - snmp
+              - ipmi
+              - jmx
+            description:
+              - Interface type to add.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/type'
+          main:
+            type: int
+            required: true
+            choices:
+              - 0
+              - 1
+            description:
+              - Whether the interface is used as default.
+              - If multiple interfaces with the same type are provided, only one can be default.
+              - '`0` (not default), `1` (default)'
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/main'
+          useip:
+            type: int
+            required: true
+            choices:
+              - 0
+              - 1
+            description:
+              - Connect to host interface with IP address instead of DNS name.
+              - '`0` (don’t use ip), `1` (use ip)'
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/useip'
+          ip:
+            type: str
+            required: false
+            description:
+              - IP address used by host interface.
+              - Required if useip=`1`.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/ip'
+          dns:
+            type: str
+            required: false
+            description:
+              - DNS name of the host interface.
+              - Required if useip=`0`.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/dns'
+          port:
+            type: int
+            required: false
+            description:
+              - Port used by host interface.
+              - If not specified, default port for each type of interface is used
+              - '`10050` if type=”agent”'
+              - '`161` if type=”snmp”'
+              - '`623` if type=”ipmi”'
+              - '`12345` if type=”jmx”'
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/port'
+          details:
+            type: dict
+            required: false
+            description:
+              - Additional details for SNMP host interfaces.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details'
+            options:
+              authpassphrase:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 authentication passphrase.
+                  - Used when securitylevel=`1`(authNoPriv) or securitylevel=`2`(AuthPriv).
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/authpassphrase'
+              authprotocol:
+                type: int
+                required: false
+                default: 0
+                choices:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                description:
+                  - SNMPv3 authentication protocol.
+                  - Used when securitylevel=1(authNoPriv) or securitylevel=2(AuthPriv).
+                  - '`0` (MD5), `1` (SHA1), `2` (SHA224), `3` (SHA256), `4` (SHA384), `5` (SHA512)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/authprotocol'
+              bulk:
+                type: int
+                required: false
+                default: 1
+                choices:
+                  - 0
+                  - 1
+                description:
+                  - Whether to use bulk SNMP requests.
+                  - '`0` (don’t use bulk requests), `1` (use bulk requests)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/bulk'
+              community:
+                type: str
+                required: false
+                description:
+                  - SNMPv1 and SNMPv2 community string.
+                  - Required when version=`1` or version=`2`.
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/community'
+              contextname:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 context name.
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/contextname'
+              privpassphrase:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 privacy passphrase.
+                  - Used when securitylevel=`2`(AuthPriv).
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/privpassphrase'
+              privprotocol:
+                type: int
+                required: false
+                default: 0
+                choices:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                description:
+                  - SNMPv3 privacy protocol.
+                  - Used when securitylevel=`2`(AuthPriv).
+                  - '`0` (DES), `1` (AES128), `2` (AES192), `3` (AES256), `4` (AES192C), `5` (AES256C)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/privprotocol'
+              securitylevel:
+                type: int
+                required: false
+                default: 0
+                choices:
+                  - 0
+                  - 1
+                  - 2
+                description:
+                  - SNMPv3 security level.
+                  - '`0` (noAuthNoPriv), `1` (authNoPriv), `2` (AuthPriv)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/securitylevel'
+              securityname:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 security name.
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/securityname'
+              version:
+                type: int
+                required: false
+                default: 2
+                choices:
+                  - 1
+                  - 2
+                  - 3
+                description:
+                  - SNMP version.
+                  - '`1` (SNMPv1), `2` (SNMPv2c), `3` (SNMPv3)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/version'
+      zbx_host_templates:
+        type: list
+        required: true
+        elements: str
+        description:
+          - A list of templates to link to the host on the Zabbix Server.
+      zbx_host_macros:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A dictionary of macros to set for the host on the Zabbix Server.
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - The macro name.
+          type:
+            type: str
+            required: false
+            default: text
+            choices:
+              - text
+              - secret
+              - vault
+            description:
+              - The macro type.
+          value:
+            type: str
+            required: true
+            description:
+              - The macro value.

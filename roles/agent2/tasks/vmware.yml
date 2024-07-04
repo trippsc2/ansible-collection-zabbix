@@ -1,0 +1,31 @@
+---
+- name: Get VM info
+  delegate_to: localhost
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vmware_hostname }}"
+    username: "{{ vmware_username }}"
+    password: "{{ vmware_password }}"
+    datacenter: "{{ vmware_datacenter }}"
+    folder: "{{ vmware_vm_folder | default(omit) }}"
+    name: "{{ vmware_vm_name | default(omit) }}"
+    uuid: "{{ vmware_vm_uuid | default(omit) }}"
+  register: _zbxagent_vmware_info
+
+- name: Add VMware UUID host macro
+  delegate_to: localhost
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_host: "{{ zabbix_host }}"
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(true) }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  community.zabbix.zabbix_hostmacro:
+    host_name: "{{ zbx_host_name }}"
+    macro_name: VMWARE.VM.UUID
+    macro_type: text
+    macro_value: "{{ _zbxagent_vmware_info.instance.instance_uuid }}"
+    state: present

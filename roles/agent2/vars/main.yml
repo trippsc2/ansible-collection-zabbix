@@ -1,2 +1,13 @@
 ---
+_zbxagent_tls_encryption_values:
+  cert: 4
+  psk: 2
+  unencrypted: 1
+
+_zbxagent_default_host_visible_name: >-
+  {{ inventory_hostname | upper if zbx_host_name != inventory_hostname | upper else omit }}
+
+_zbxagent_tls_accept: "{{ _zbxagent_tls_encryption_values[zbxagent_tls_accept] }}"
+_zbxagent_tls_connect: "{{ _zbxagent_tls_encryption_values[zbxagent_tls_connect] }}"
+
 zbx_major_version: "{{ zbxagent_major_version }}"
