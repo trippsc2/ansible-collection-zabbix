@@ -7,34 +7,26 @@
         token: "{{ vault_token | default(omit) }}"
         url: "{{ vault_url | default(omit) }}"
         engine_mount_point: "{{ zbxserver_vault_users_mount_point }}"
-        path: "{{ zbxserver_vault_users_base_path }}/{{ _zabbix_vault_username }}"
+        path: "{{ zbxserver_vault_users_base_path }}/{{ _zbxserver_vault_user.username }}"
+      register: _zbxserver_vault_secret
+
+    - name: Set user secret variables
+      ansible.builtin.set_fact:
+        _zbxserver_vault_password: "{{ _zbxserver_vault_secret.secret.password }}"
   rescue:
     - name: Generate a new password
+      when:
+        - _zbxserver_vault_user.password is not defined
       ansible.builtin.set_fact:
-        _zabbix_vault_password: >-
+        _zbxserver_vault_password: >-
           {{ lookup('ansible.builtin.password',
                     '/dev/null chars=ascii_lowercase,ascii_uppercase,digits,punctuation length=20') }}
-
-    - name: Create Zabbix user
-      delegate_to: localhost
-      vars:
-        ansible_network_os: community.zabbix.zabbix
-        ansible_connection: httpapi
-        ansible_httpapi_port: "{{ zabbix_port }}"
-        ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
-        ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
-        ansible_zabbix_url_path: ''
-        ansible_host: "{{ zabbix_host }}"
-        ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
-        ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
-      community.zabbix.zabbix_user:
-        name: Ansible
-        username: "{{ _zabbix_vault_username }}"
-        passwd: "{{ _zabbix_vault_password }}"
-        role_name: Super admin role
-        usrgrps:
-          - Zabbix internal users
-        state: present
+    
+    - name: Create user secret
+      when:
+        - _zbxserver_vault_user.password is defined
+      ansible.builtin.set_fact:
+        _zbxserver_vault_password: "{{ _zbxserver_vault_user.password }}"
 
     - name: Create Vault user secret
       delegate_to: localhost
@@ -42,6 +34,32 @@
         url: "{{ vault_url | default(omit) }}"
         token: "{{ vault_token | default(omit) }}"
         engine_mount_point: "{{ zbxserver_vault_users_mount_point }}"
-        path: "{{ zbxserver_vault_users_base_path }}/{{ _zabbix_vault_username }}"
+        path: "{{ zbxserver_vault_users_base_path }}/{{ _zbxserver_vault_user.username }}"
         data:
-          password: "{{ _zabbix_vault_password }}"
+          password: "{{ _zbxserver_vault_password }}"
+
+- name: Create Zabbix user
+  delegate_to: localhost
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: ''
+    ansible_host: "{{ zabbix_host }}"
+    ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
+    ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
+  community.zabbix.zabbix_user:
+    username: "{{ _zbxserver_vault_user.username }}"
+    passwd: "{{ _zbxserver_vault_password }}"
+    name: "{{ _zbxserver_vault_user.name | default(_zbxserver_vault_user.username) }}"
+    surname: "{{ _zbxserver_vault_user.surname | default(omit) }}"
+    usrgrps: "{{ _zbxserver_vault_user.groups | default([]) }}"
+    role_name: "{{ _zbxserver_vault_user.role_name | default(omit) }}"
+    lang: "{{ _zbxserver_vault_user.lang | default(omit) }}"
+    refresh: "{{ _zbxserver_vault_user.refresh | default(omit) }}"
+    theme: "{{ _zbxserver_vault_user.theme | default(omit) }}"
+    timezone: "{{ _zbxserver_vault_user.timezone | default(omit) }}"
+    user_medias: "{{ _zbxserver_vault_user.user_medias | default(omit) }}"
+    state: present

@@ -8,6 +8,13 @@ driver:
   cachier: machine
   parallel: true
 platforms:
+  - name: dc
+    box: jtarpley/w2022_cis
+    memory: 2048
+    cpus: 2
+    groups:
+      - windows
+      - windows_domain
   - name: linux
     box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
     memory: 2048
@@ -65,9 +72,34 @@ provisioner:
         zbxserver_db_tls_connect: verify_full
         zbxserver_db_tls_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxserver_user_groups:
+          - name: LDAP
+            gui_access: default
         zbxserver_unmanaged_users:
           - username: "{{ zabbix_username }}"
             password: "{{ zabbix_password }}"
+            role_name: Super admin role
+            groups:
+              - Internal
+        zbxserver_ldap_directories:
+          - name: LDAP
+            host: "{{ hostvars['dc'].ansible_host }}"
+            encryption: starttls
+            description: LDAP
+            base_dn: dc=test,dc=loc
+            bind_dn: vagrant@test.loc
+            bind_password: vagrant
+            group_mappings:
+              - name: Zabbix
+                role: Super admin role
+                user_groups:
+                  - LDAP
+        zbxserver_default_auth_type: ldap
+        zbxserver_active_ldap_directory: LDAP
         _zbxserver_web_frontend_type: ${MOLECULE_ZABBIX_WEB_FRONTEND_TYPE:-nginx}
+      windows:
+        ansible_shell_type: powershell
+        ansible_become_method: runas
+        ansible_become_user: SYSTEM
 verifier:
   name: ansible

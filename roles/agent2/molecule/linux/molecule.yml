@@ -9,7 +9,7 @@ driver:
   parallel: true
 platforms:
   - name: zabbix
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/rocky8_cis
     memory: 2048
     cpus: 2
     groups:
@@ -53,12 +53,13 @@ provisioner:
           - Linux servers
         zbx_host_interfaces:
           - type: agent
-            ip: "{{ ansible_host }}"
+            ip: "{{ hostvars['linux'].ansible_host }}"
             useip: 1
             main: 1
             port: '10050'
         zbx_host_templates:
           - Linux by Zabbix agent
+        _zbxagent_cert_file: /tmp/zabbix-agent.crt
       zabbix_server:
         pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
         pgsql_ssl: true
@@ -96,5 +97,8 @@ provisioner:
         zbxserver_unmanaged_users:
           - username: "{{ zabbix_username }}"
             password: "{{ zabbix_password }}"
+            role_name: Super admin role
+            groups:
+              - Internal
 verifier:
   name: ansible

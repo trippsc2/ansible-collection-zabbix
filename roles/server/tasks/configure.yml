@@ -34,6 +34,17 @@
     - _zbxserver_daemon_reload
     - _zbxserver_restart_zabbix_server
 
+- name: Ensure log file directory exists
+  when:
+    - zbxserver_log_file | dirname != '/var/log'
+  become: true
+  ansible.builtin.file:
+    path: "{{ zbxserver_log_file | dirname }}"
+    state: directory
+    owner: "{{ zbxserver_user }}"
+    group: "{{ zbxserver_group }}"
+    mode: '0750'
+
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 

@@ -1,4 +1,51 @@
 ---
+- name: Prepare Windows
+  hosts:
+    - dc
+  pre_tasks:
+    - name: Copy files to DC
+      loop:
+        - dc.pfx
+        - winca.pem
+      ansible.windows.win_copy:
+        src: "files/{{ item }}"
+        dest: C:\Windows\temp\
+
+    - name: Import certificate
+      loop:
+        - file_type: pem
+          path: winca.pem
+          store_name: Root
+        - file_type: pkcs12
+          key_storage: machine
+          password: SecurePassword1234!
+          path: dc.pfx
+          store_name: My
+      ansible.windows.win_certificate_store:
+        file_type: "{{ item.file_type }}"
+        key_storage: "{{ item.key_storage | default(omit) }}"
+        password: "{{ item.password | default(omit) }}"
+        path: "C:\\Windows\\temp\\{{ item.path }}"
+        store_location: LocalMachine
+        store_name: "{{ item.store_name }}"
+        store_type: system
+        state: present
+      loop_control:
+        label: "{{ item.path }}"
+  roles:
+    - role: trippsc2.ad.testing_domain_controller
+  tasks:
+    - name: Create Zabbix group
+      microsoft.ad.group:
+        name: Zabbix
+        scope: global
+        category: security
+        path: DC=test,DC=loc
+        members:
+          add:
+            - vagrant
+        state: present
+
 - name: Prepare Vault
   hosts:
     - subjects

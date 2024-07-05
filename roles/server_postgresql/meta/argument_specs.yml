@@ -4,9 +4,22 @@ argument_specs:
     short_description: Zabbix Server PostgreSQL
     description:
       - This role installs PostgreSQL server for use by a Zabbix server.
-      - This role uses trippsc2.postgresql.install to install PostgreSQL.
+      - This role uses **trippsc2.postgresql.install** to install PostgreSQL.
+      - The *pgsql_additional_hba_entries* variable is overridden by this role. The rest of the role variables can be set in the playbook or inventory.
     author: Jim Tarpley
     options:
+      vault_url:
+        type: str
+        required: false
+        description:
+          - The URL for accessing HashiCorp Vault.
+          - Alternatively, this can be configured through ansible.cfg or environment variables.
+      vault_token:
+        type: str
+        required: false
+        description:
+          - The token for accessing HashiCorp Vault.
+          - Alternatively, this (or any other authentication method) can be configured through ansible.cfg or environment variables.
       zbxserver_major_version:
         type: str
         required: false
@@ -23,6 +36,8 @@ argument_specs:
         default: false
         description:
           - Whether the PostgreSQL server is separate from the Zabbix server.
+          - If set to `true`, *pgsql_listen_on_local_only* defaults to `false` (and must be `false`) and *pgsql_listen_on_all_addresses* defaults to `true`.
+          - If set to `false`, *pgsql_listen_on_local_only* defaults to `true` and *pgsql_listen_on_all_addresses* defaults to `false`.
       zbxserver_pgsql_additional_hba_entries:
         type: list
         required: false
@@ -30,7 +45,7 @@ argument_specs:
         elements: dict
         description:
           - Additional host-based authentication entries to add to the pg_hba.conf file.
-          - This is in addition to the default entries and the entries added by the role.
+          - These entries are in addition to the default entries from the **trippsc2.postgresql.install** role and the entries added by this role.
         options:
           type:
             type: str
@@ -94,69 +109,75 @@ argument_specs:
         required: false
         elements: str
         description:
-          - The IP addresses to add to the pg_hba.conf file if the PostgreSQL server is standalone.
+          - The IP addresses of the Zabbix servers.
+          - If *zbxserver_pgsql_standalone* is `true`, this is required.
+          - A pg_hba.conf entry will be created to access the Zabbix server database authenticated with the Zabbix server user via scram-sha-256 for each IP address.
       zbxserver_configure_vault:
         type: bool
         required: false
         default: true
         description:
-          - Whether to configure Vault for the Zabbix database secret.
-          - If true, the Zabbix database password will be stored in Vault.
-          - If zabbix_database_password is defined and the password is not stored in Vault, it will be stored there.
-          - If zabbix_database_password is not defined, a new password will be generated and stored in Vault.
+          - Whether to configure HashiCorp Vault for the Zabbix database secret.
+          - If `true`, the Zabbix database password will be stored in Vault.
+          - If *zabbix_database_password* is defined and an existing password is not stored in Vault, the supplied password will be stored there.
+          - If *zabbix_database_password* is not defined, a new password will be generated and stored in Vault.
       zbxserver_vault_create_mount_points:
         type: bool
         required: false
         default: true
         description:
-          - Whether to create the mount point for the Zabbix database secret.
+          - Whether to create HashiCorp Vault the expected mount points, if they do not exist.
       zabbix_database_password:
         type: str
         required: false
         description:
           - The password for the Zabbix database user.
-          - If zbxserver_configure_vault is true, this value will be ignored if it is stored in Vault.
+          - If *zbxserver_configure_vault* is true and HashiCorp Vault already stores the secret, this value is ignored.
       zbxserver_vault_database_mount_point:
         type: str
         required: false
         default: zabbix
         description:
-          - The mount point for the Zabbix database secret.
+          - The HashiCorp Vault mount point where the Zabbix KV2 database secret is to be stored.
       zbxserver_vault_database_path:
         type: str
         required: false
         default: database
         description:
-          - The path for the Zabbix database secret.
+          - The path in HashiCorp Vault where the Zabbix KV2 database secret is to be stored.
       zbxserver_user:
         type: str
         required: false
         default: zabbix
         description:
-          - The user to create in the PostgreSQL database.
+          - The PostgreSQL user to be used by the Zabbix server.
+          - A Linux user with the same name will be created, if it does not exist.
+          - The Linux user will be used for peer authentication to the PostgreSQL server during initial configuration.
       zbxserver_group:
         type: str
         required: false
         default: zabbix
         description:
-          - The group to create in the PostgreSQL database.
+          - The Linux primary group of the *zbxserver_user* user.
       zbxserver_database_name:
         type: str
         required: false
         default: zabbix-server
         description:
-          - The name of the database to create in PostgreSQL.
+          - The name of the Zabbix Server database.
       zbxserver_use_timescaledb:
         type: bool
         required: false
         default: true
         description:
-          - Whether to use TimescaleDB with the Zabbix database.
+          - Whether to initialize TimescaleDB schema hypertables for Zabbix server.
+          - If set to `true`, the *pgsql_install_timescaledb* variable defaults to `true`.
+          - If set to `true` and *pgsql_install_timescaledb* is set to `false`, TimescaleDB needs to be installed and configured in PostgreSQL through other means.
       zbxserver_timescaledb_schema_done_file_path:
         type: str
         required: false
         default: OS specific
         description:
-          - The path to the file that indicates the TimescaleDB schema has been created.
+          - The filesystem path where a file will be created to indicate that the TimescaleDB schema has been applied.
           - On Debian-based systems, the default is /var/lib/postgresql/zbx_timescaledb_schema.done.
           - On EL systems, the default is /var/lib/pgsql/zbx_timescaledb_schema.done.

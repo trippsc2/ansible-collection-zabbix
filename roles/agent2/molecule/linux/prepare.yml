@@ -1,3 +1,4 @@
+---
 - name: Prepare Vault
   hosts:
     - zabbix_server
@@ -153,6 +154,9 @@
           - DNS:localhost
           - "IP:{{ ansible_host }}"
           - IP:127.0.0.1
+        cert_extended_key_usage:
+          - serverAuth
+          - clientAuth
     - role: trippsc2.zabbix.server
 
 - name: Prepare Zabbix agent certificate
@@ -188,11 +192,25 @@
         cert_certificate_group: zabbix
         cert_private_key_owner: zabbix
         cert_private_key_group: zabbix
-        cert_common_name: "{{ inventory_hostname }}"
+        cert_common_name: "{{ ansible_host }}"
         cert_subject_alternative_names:
           - "DNS:{{ inventory_hostname }}"
           - DNS:localhost
           - "IP:{{ ansible_host }}"
           - IP:127.0.0.1
+        cert_extended_key_usage:
+          - serverAuth
+          - clientAuth
         cert_copy_ca_chain: true
         cert_ca_chain_path: "{{ zbxagent_tls_ca_file }}"
+  # tasks:
+  #   - name: Combine certificates
+  #     become: true
+  #     trippsc2.general.combine_certificates:
+  #       certificates: 
+  #         - "{{ _zbxagent_cert_file }}"
+  #         - "{{ zbxagent_tls_ca_file }}"
+  #       path: "{{ zbxagent_tls_cert_file }}"
+  #       owner: zabbix
+  #       group: zabbix
+  #       mode: '0644'

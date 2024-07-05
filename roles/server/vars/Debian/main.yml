@@ -1,6 +1,9 @@
 ---
 _zbxserver_default_configure_selinux: false
 
+_zbxserver_default_additional_groups:
+  - ssl-cert
+
 _zbxserver_selinux_packages:
   - python3-selinux
   - python3-semanage

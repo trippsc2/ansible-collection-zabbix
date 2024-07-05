@@ -16,6 +16,26 @@
     loop_var: _zbxagent_include_directory
   ansible.builtin.include_tasks: include-dir.yml
 
+- name: Ensure log file directory exists
+  when:
+    - zbxagent_log_file | dirname != '/var/log'
+  become: true
+  ansible.builtin.file:
+    path: "{{ zbxagent_log_file | dirname }}"
+    state: directory
+    owner: "{{ zbxagent_user }}"
+    group: "{{ zbxagent_group }}"
+    mode: '0750'
+
+- name: Add local scripts
+  loop: "{{ zbxagent_local_scripts }}"
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.path }}"
+    owner: "{{ zbxagent_user }}"
+    group: "{{ zbxagent_group }}"
+    mode: '0750'
+
 - name: Ensure Zabbix Agent 2 service is enabled
   become: true
   ansible.builtin.systemd_service:
@@ -42,23 +62,3 @@
     owner: root
     group: root
     mode: '0644'
-
-- name: Add local scripts
-  loop: "{{ zbxagent_local_scripts }}"
-  ansible.builtin.copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.path }}"
-    owner: "{{ zbxagent_user }}"
-    group: "{{ zbxagent_group }}"
-    mode: '0750'
-
-- name: Ensure log file directory exists
-  when:
-    - zbxagent_log_file | dirname != '/var/log'
-  become: true
-  ansible.builtin.file:
-    path: "{{ zbxagent_log_file | dirname }}"
-    state: directory
-    owner: "{{ zbxagent_user }}"
-    group: "{{ zbxagent_group }}"
-    mode: '0750'

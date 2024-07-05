@@ -11,6 +11,8 @@ zbxserver_configure_mssql_odbc: "{{ _zbxserver_default_configure_mssql_odbc | de
 zbxserver_user: zabbix
 zbxserver_group: zabbix
 
+zbxserver_additional_groups: "{{ _zbxserver_default_additional_groups | default(omit) }}"
+
 zbxserver_database_name: zabbix-server
 
 zbxserver_database_type: postgresql
@@ -29,7 +31,7 @@ zbxserver_service_manager_sync_frequency: 60
 zbxserver_log_type: file
 zbxserver_log_file: /var/log/zabbix/zabbix_server.log
 zbxserver_log_file_size: >-
-  {{ 0 if zbxserver_configure_logrotate else 1 }}
+  {{ (0 if zbxserver_configure_logrotate else 1) | int }}
 
 zbxserver_pid_file: /run/zabbix/zabbix_server.pid
 zbxserver_socket_dir: /run/zabbix
@@ -67,7 +69,7 @@ zbxserver_start_preprocessors: 3
 zbxserver_start_history_pollers: 5
 zbxserver_start_trappers: 5
 zbxserver_start_pingers: 1
-zbxserver_start_discoverers: 1
+zbxserver_start_discoverers: 5
 zbxserver_start_http_pollers: 1
 zbxserver_start_timers: 1
 zbxserver_start_escalators: 1
@@ -102,7 +104,7 @@ zbxserver_housekeeping_frequency: 1
 zbxserver_max_housekeeper_delete: 5000
 zbxserver_problem_housekeeping_frequency: 60
 
-zbxserver_cache_update_frequency: 60
+zbxserver_cache_update_frequency: 10
 
 zbxserver_timeout: 3
 zbxserver_trapper_timeout: 300
@@ -118,16 +120,40 @@ zbxserver_fping6_location: /usr/sbin/fping6
 
 zbxserver_tmp_dir: /tmp
 
-zbxserver_proxy_config_frequency: 300
+zbxserver_proxy_config_frequency: 10
 zbxserver_proxy_data_frequency: 1
 
 zbxserver_vault_users_mount_point: zabbix
 zbxserver_vault_users_base_path: users
 
+zbxserver_user_groups: []
+
 zbxserver_vault_managed_users:
-  - ansible
+  - username: ansible
+    role_name: Super admin role
+    groups:
+      - Internal
 
 zbxserver_unmanaged_users: []
+
+zbxserver_ldap_directories: []
+zbxserver_saml_directories: []
+
+zbxserver_default_auth_type: internal
+zbxserver_disabled_users_group: Disabled
+
+zbxserver_min_password_length: 8
+zbxserver_password_complexity:
+  - avoid_easy_to_guess
+
+zbxserver_jit_provisioning_interval: 1h
+
+zbxserver_ldap_enabled: "{{ zbxserver_ldap_directories | length > 0 }}"
+zbxserver_ldap_jit_status: "{{ zbxserver_ldap_enabled }}"
+
+zbxserver_saml_enabled: "{{ zbxserver_saml_directories | length > 0 }}"
+zbxserver_saml_jit_status: "{{ zbxserver_saml_enabled }}"
+
 zbxserver_global_macros: []
 
 zbxserver_logrotate_period: daily

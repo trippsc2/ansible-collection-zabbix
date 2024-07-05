@@ -11,6 +11,7 @@
   ansible.builtin.user:
     name: "{{ zbxserver_user }}"
     group: "{{ zbxserver_group }}"
+    groups: "{{ zbxserver_additional_groups | default(omit) }}"
     system: true
     password: '!'
     password_lock: true
@@ -19,23 +20,3 @@
     createhome: false
     comment: Zabbix Monitoring System
     state: present
-
-- name: Ensure Zabbix Server user is in the ssl-certs group
-  when:
-    - ansible_os_family == 'Debian'
-  block:
-    - name: Ensure ssl-cert package is installed
-      become: true
-      ansible.builtin.package:
-        name:
-          - ssl-cert
-        state: present
-
-    - name: Ensure Zabbix Server user is in the ssl-cert group
-      become: true
-      ansible.builtin.user:
-        name: "{{ zbxserver_user }}"
-        groups:
-          - ssl-cert
-        append: true
-        state: present

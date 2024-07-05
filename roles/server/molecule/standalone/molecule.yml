@@ -8,6 +8,13 @@ driver:
   cachier: machine
   parallel: true
 platforms:
+  - name: dc
+    box: jtarpley/w2022_cis
+    memory: 2048
+    cpus: 2
+    groups:
+      - windows
+      - windows_domain
   - name: linux
     box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
     memory: 2048
@@ -57,9 +64,30 @@ provisioner:
         zbxserver_tls_key_file: >-
           {{ '/etc/pki/tls/private/zabbix-server.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-server.key' }}
         zbxserver_allow_unsupported_db_versions: true # TimescaleDB can give false positives
+        zbxserver_user_groups:
+          - name: LDAP
+            gui_access: default
         zbxserver_unmanaged_users:
           - username: "{{ zabbix_username }}"
             password: "{{ zabbix_password }}"
+            role_name: Super admin role
+            groups:
+              - Internal
+        zbxserver_ldap_directories:
+          - name: LDAP
+            host: "{{ hostvars['dc'].ansible_host }}"
+            encryption: starttls
+            description: LDAP
+            base_dn: dc=test,dc=loc
+            bind_dn: vagrant@test.loc
+            bind_password: vagrant
+            group_mappings:
+              - name: Zabbix
+                role: Super admin role
+                user_groups:
+                  - LDAP
+        zbxserver_default_auth_type: ldap
+        zbxserver_active_ldap_directory: LDAP
       zabbix_database:
         pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
         pgsql_ssl: true
@@ -87,5 +115,9 @@ provisioner:
           {{ '/etc/pki/tls/certs/zabbix-web.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-web.crt' }}
         zbxserver_web_server_private_key_path: >-
           {{ '/etc/pki/tls/private/zabbix-web.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-web.key' }}
+      windows:
+        ansible_shell_type: powershell
+        ansible_become_method: runas
+        ansible_become_user: SYSTEM
 verifier:
   name: ansible

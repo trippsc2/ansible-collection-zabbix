@@ -12,6 +12,17 @@
     path: "{{ item }}"
     state: directory
 
+- name: Add local scripts
+  loop: "{{ zbxagent_local_scripts }}"
+  ansible.windows.win_copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.path }}"
+
+- name: Ensure log file directory exists
+  ansible.windows.win_file:
+    path: "{{ zbxagent_log_file | win_dirname }}"
+    state: directory
+
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 
@@ -31,14 +42,3 @@
     protocol: tcp
     enabled: true
     state: present
-
-- name: Add local scripts
-  loop: "{{ zbxagent_local_scripts }}"
-  ansible.windows.win_copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.path }}"
-
-- name: Ensure log file directory exists
-  ansible.windows.win_file:
-    path: "{{ zbxagent_log_file | dirname }}"
-    state: directory

@@ -27,6 +27,7 @@
 
 - name: Create user group
   delegate_to: localhost
+  loop: "{{ zbxserver_user_groups }}"
   vars:
     ansible_network_os: community.zabbix.zabbix
     ansible_connection: httpapi
@@ -38,8 +39,11 @@
     ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
     ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
   community.zabbix.zabbix_usergroup:
-    name: Zabbix internal users
-    gui_access: internal
+    name: "{{ item.name }}"
+    gui_access: "{{ item.gui_access | default(omit) }}"
+    hostgroup_rights: "{{ item.host_group_rights | default(omit) }}"
+    templategroup_rights: "{{ item.template_group_rights | default(omit) }}"
+    status: enabled
     state: present
 
 - name: Create unmanaged Zabbix local user
@@ -56,12 +60,17 @@
     ansible_user: "{{ hostvars[inventory_hostname]._zabbix_username }}"
     ansible_httpapi_pass: "{{ hostvars[inventory_hostname]._zabbix_password }}"
   community.zabbix.zabbix_user:
-    name: "{{ item.name | default(item.username) }}"
     username: "{{ item.username }}"
     passwd: "{{ item.password }}"
-    role_name: "{{ item.role_name | default('Super admin role') }}"
-    usrgrps:
-      - Zabbix internal users
+    name: "{{ item.name | default(item.username) }}"
+    surname: "{{ item.surname | default(omit) }}"
+    usrgrps: "{{ item.groups | default([]) }}"
+    role_name: "{{ item.role_name | default(omit) }}"
+    lang: "{{ item.lang | default(omit) }}"
+    refresh: "{{ item.refresh | default(omit) }}"
+    theme: "{{ item.theme | default(omit) }}"
+    timezone: "{{ item.timezone | default(omit) }}"
+    user_medias: "{{ item.user_medias | default(omit) }}"
     state: present
 
 - name: Create Vault managed Zabbix local user
@@ -69,12 +78,119 @@
   when:
     - zbxserver_configure_vault
   vars:
-    _zabbix_vault_username: "{{ item }}"
+    _zbxserver_vault_user: "{{ item }}"
   ansible.builtin.include_tasks: zabbix-vault-user.yml
+
+- name: Replace default credentials
+  ansible.builtin.set_fact:
+    _zabbix_username: "{{ zabbix_username }}"
+    _zabbix_password: "{{ zabbix_password }}"
 
 - name: Reset default 'Admin' password and store in Vault
   when:
     - zbxserver_configure_vault
   vars:
-    _zabbix_vault_username: Admin
+    _zbxserver_vault_user:
+      username: Admin
   ansible.builtin.include_tasks: zabbix-vault-user.yml
+
+- name: Configure LDAP directory
+  delegate_to: localhost
+  loop: "{{ zbxserver_ldap_directories }}"
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_host: "{{ zabbix_host }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  community.zabbix.zabbix_user_directory:
+    name: "{{ item.name }}"
+    idp_type: ldap
+    host: "{{ 'ldaps://' + item.host if item.encryption == 'ldaps' else item.host }}"
+    description: "{{ item.description | default(omit) }}"
+    port: "{{ item.port | default(636 if item.encryption == 'ldaps' else 389) }}"
+    start_tls: "{{ 1 if item.encryption == 'starttls' else 0 }}"
+    base_dn: "{{ item.base_dn }}"
+    bind_dn: "{{ item.bind_dn | default(omit) }}"
+    bind_password: "{{ item.bind_password | default(omit) }}"
+    search_attribute: "{{ item.username_attribute | default('sAMAccountName') }}"
+    user_username: "{{ item.name_attribute | default('displayName') }}"
+    user_lastname: "{{ item.surname_attribute | default('sn') }}"
+    group_membership: "{{ item.user_group_attribute | default('memberOf') }}"
+    provision_media:
+      - attribute: "{{ item.email_attribute | default('mail') }}"
+        mediatype: Email
+        name: Email
+    provision_groups: "{{ item.group_mappings | default(omit) }}"
+    provision_status: true
+    state: present
+  tags:
+    - always
+    - molecule-idempotence-notest
+
+- name: Configure SAML directory
+  delegate_to: localhost
+  loop: "{{ zbxserver_saml_directories }}"
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_host: "{{ zabbix_host }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  community.zabbix.zabbix_user_directory:
+    name: "{{ item.name }}"
+    idp_type: saml
+    sp_entityid: "{{ item.sp_entity_id }}"
+    idp_entityid: "{{ item.idp_entity_id }}"
+    sso_url: "{{ item.sso_url }}"
+    slo_url: "{{ item.slo_url | default(omit) }}"
+    description: "{{ item.description | default(omit) }}"
+    encrypt_assertions: "{{ item.encrypt_assertions | default(omit) }}"
+    sign_assertions: "{{ item.sign_assertions | default(omit) }}"
+    sign_authn_requests: "{{ item.sign_authn_requests | default(omit) }}"
+    sign_logout_requests: "{{ item.sign_logout_requests | default(omit) }}"
+    sign_logout_responses: "{{ item.sign_logout_responses | default(omit) }}"
+    sign_messages: "{{ item.sign_messages | default(omit) }}"
+    username_attribute: "{{ item.username_attribute | default('NameID') }}"
+    nameid_format: "{{ item.nameid_format | default('urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified') }}"
+    user_username: "{{ item.name_attribute | default('DisplayName') }}"
+    user_lastname: "{{ item.surname_attribute | default('LastName') }}"
+    group_name: "{{ item.user_group_attribute | default('Groups') }}"
+    provision_media:
+      - attribute: "{{ item.email_attribute | default('Email') }}"
+        mediatype: Email
+        name: Email
+    provision_groups: "{{ item.group_mappings | default(omit) }}"
+    state: present
+
+- name: Configure authentication
+  delegate_to: localhost
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_host: "{{ zabbix_host }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  community.zabbix.zabbix_authentication:
+    authentication_type: "{{ zbxserver_default_auth_type }}"
+    disabled_usrgroup: "{{ zbxserver_disabled_users_group }}"
+    passwd_min_length: "{{ zbxserver_min_password_length }}"
+    passwd_check_rules: "{{ zbxserver_password_complexity }}"
+    jit_provision_interval: "{{ zbxserver_jit_provisioning_interval }}"
+    ldap_auth_enabled: "{{ zbxserver_ldap_enabled }}"
+    ldap_jit_status: "{{ zbxserver_ldap_jit_status }}"
+    ldap_userdirectory: "{{ zbxserver_active_ldap_directory }}"
+    saml_auth_enabled: "{{ zbxserver_saml_enabled }}"
+    saml_jit_status: "{{ zbxserver_saml_jit_status }}"

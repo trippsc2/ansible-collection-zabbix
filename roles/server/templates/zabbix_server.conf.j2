@@ -3,7 +3,9 @@
 AllowRoot={{ zbxserver_allow_root | ternary('1', '0') }}
 User={{ zbxserver_user }}
 ListenPort={{ zbxserver_listen_port }}
+{% if zbxserver_listen_ip is defined %}
 ListenIP={{ zbxserver_listen_ip | join(',') }}
+{% endif %}
 {% if zbxserver_source_ip is defined %}
 SourceIP={{ zbxserver_source_ip }}
 {% endif %}
@@ -14,6 +16,9 @@ ListenBacklog={{ zbxserver_listen_backlog }}
 ServiceManagerSyncFrequency={{ zbxserver_service_manager_sync_frequency }}
 {% if zbxserver_web_service_url is defined %}
 WebServiceURL={{ zbxserver_web_service_url }}
+{% endif %}
+{% if zbxserver_web_driver_url is defined %}
+WebDriverURL={{ zbxserver_web_driver_url }}
 {% endif %}
 {% if zbxserver_tls_ca_file is defined %}
 TLSCAFile={{ zbxserver_tls_ca_file }}
@@ -59,6 +64,9 @@ LogFileSize={{ zbxserver_log_file_size }}
 PidFile={{ zbxserver_pid_file }}
 SocketDir={{ zbxserver_socket_dir }}
 DBHost={{ zbxserver_database_host }}
+{% if zbxserver_database_type == 'mysql' and zbxserver_database_socket is defined %}
+DBSocket={{ zbxserver_database_socket }}
+{% endif %}
 DBName={{ zbxserver_database_name }}
 {% if not zbxserver_configure_vault %}
 DBUser={{ zbxserver_user }}

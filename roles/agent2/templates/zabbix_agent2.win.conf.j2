@@ -91,7 +91,7 @@ TLSPSKIdentity={{ zbxagent_tls_psk_identity }}
 {% if zbxagent_tls_psk_file is defined %}
 TLSPSKFile={{ zbxagent_tls_psk_file }}
 {% endif %}
-Plugins.Log.MaxLinesPerSecond={{ zbxagent_plugins_log_max_lines_per_second }}
+Plugins.Log.MaxLinesPerSecond={{ zbxagent_log_max_lines_per_second }}
 Plugins.WindowsEventlog.MaxLinesPerSecond={{ zbxagent_log_max_lines_per_second }}
 Plugins.SystemRun.LogRemoteCommands={{ zbxagent_systemrun_log_remote_commands | ternary('1', '0') }}
 {% for plugin_name, parameters in zbxagent_plugin_parameters.items() %}

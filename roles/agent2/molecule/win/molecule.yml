@@ -48,7 +48,7 @@ provisioner:
           - Windows servers
         zbx_host_interfaces:
           - type: agent
-            ip: "{{ ansible_host }}"
+            ip: "{{ hostvars['win'].ansible_host }}"
             useip: 1
             main: 1
             port: '10050'
@@ -97,5 +97,8 @@ provisioner:
         zbxserver_unmanaged_users:
           - username: "{{ zabbix_username }}"
             password: "{{ zabbix_password }}"
+            role_name: Super admin role
+            groups:
+              - Internal
 verifier:
   name: ansible
