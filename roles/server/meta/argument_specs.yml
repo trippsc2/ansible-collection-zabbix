@@ -62,7 +62,6 @@ argument_specs:
       zbxserver_major_version:
         type: str
         required: false
-        default: OS specific
         choices:
           - '7.0'
           - '6.4'
@@ -72,27 +71,16 @@ argument_specs:
       zbxserver_configure_selinux:
         type: bool
         required: false
-        default: OS specific
         description:
           - Whether to manage SELinux settings for the Zabbix server.
           - For EL systems, this defaults to true.
           - For other systems, this defaults to false.
-      zbxserver_configure_firewalld:
+      zbxserver_configure_firewall:
         type: bool
         required: false
-        default: OS specific
+        default: true
         description:
-          - Whether to manage firewalld settings for the Zabbix server.
-          - For EL and Debian systems, this defaults to true.
-          - For Ubuntu systems, this defaults to false.
-      zbxserver_configure_ufw:
-        type: bool
-        required: false
-        default: OS specific
-        description:
-          - Whether to manage ufw settings for the Zabbix server.
-          - For Ubuntu systems, this defaults to true.
-          - For EL and Debian systems, this defaults to false.
+          - Whether to manage the host firewall for use with Zabbix server.
       zbxserver_configure_logrotate:
         type: bool
         required: false
@@ -108,7 +96,6 @@ argument_specs:
       zbxserver_configure_mssql_odbc:
         type: bool
         required: false
-        default: OS specific
         description:
           - Whether to configure the Zabbix server to use the Microsoft SQL Server ODBC drivers for monitoring.
           - If the OS is supported, this defaults to true.
@@ -130,12 +117,21 @@ argument_specs:
       zbxserver_additional_groups:
         type: list
         required: false
-        default: OS specific
         elements: str
         description:
           - A list of additional Linux groups to which the *zbxserver_user* user will belong.
           - On Debian-based systems, this defaults to `ssl-cert`.
           - On EL systems, this will not be defined.
+      zbxserver_firewall_type:
+        type: str
+        required: false
+        choices:
+          - firewalld
+          - ufw
+        description:
+          - The type of host firewall to configure for use with Zabbix server.
+          - For Debian and EL systems, this defaults to `firewalld`.
+          - For Ubuntu systems, this defaults to `ufw`.
       zbxserver_database_type:
         type: str
         required: false
@@ -1655,7 +1651,6 @@ argument_specs:
       zbxserver_ldap_enabled:
         type: bool
         required: false
-        default: varies
         description:
           - Whether LDAP authentication is enabled.
           - If *zbxserver_ldap_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.
@@ -1674,7 +1669,6 @@ argument_specs:
       zbxserver_saml_enabled:
         type: bool
         required: false
-        default: varies
         description:
           - Whether SAML authentication is enabled.
           - If *zbxserver_saml_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.

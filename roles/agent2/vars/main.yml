@@ -1,13 +1,26 @@
 ---
+_zbxagent_install_plugins: >-
+  {{ zbxagent_install_mongodb_plugin or
+     zbxagent_install_mssql_plugin or
+     zbxagent_install_pgsql_plugin }} 
+
 _zbxagent_tls_encryption_values:
   cert: 4
   psk: 2
   unencrypted: 1
 
-_zbxagent_default_host_visible_name: >-
-  {{ inventory_hostname | upper if zbx_host_name != inventory_hostname | upper else omit }}
+_zbx_default_host_visible_name: >-
+  {{ inventory_hostname | upper if _zbx_host_name != inventory_hostname | upper else omit }}
+
+_zbx_host_name: >-
+  {{ zbx_host_name | default(_zbx_default_host_name) }}
+_zbx_host_visible_name: >-
+  {{ zbx_host_visible_name | default(_zbx_default_host_visible_name) }}
 
 _zbxagent_tls_accept: "{{ _zbxagent_tls_encryption_values[zbxagent_tls_accept] }}"
 _zbxagent_tls_connect: "{{ _zbxagent_tls_encryption_values[zbxagent_tls_connect] }}"
+
+_zbxagent_firewall_type: >-
+  {{ zbxagent_firewall_type | default(_zbxagent_default_firewall_type) }}
 
 zbx_major_version: "{{ zbxagent_major_version }}"

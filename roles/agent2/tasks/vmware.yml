@@ -24,7 +24,7 @@
     ansible_user: "{{ zabbix_username }}"
     ansible_httpapi_pass: "{{ zabbix_password }}"
   community.zabbix.zabbix_hostmacro:
-    host_name: "{{ zbx_host_name }}"
+    host_name: "{{ _zbx_host_name }}"
     macro_name: VMWARE.VM.UUID
     macro_type: text
     macro_value: "{{ _zbxagent_vmware_info.instance.instance_uuid }}"

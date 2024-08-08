@@ -1,13 +1,13 @@
 [zabbix]
-user = {{ nginx_user }}
-group = {{ nginx_group }}
+user = {{ _nginx_user }}
+group = {{ _nginx_group }}
 
 listen = {{ _zbxserver_php_fpm_socket_path }}
 {% if ansible_distribution_release != 'focal' %}
-listen.acl_users = {{ nginx_user }}
+listen.acl_users = {{ _nginx_user }}
 {% endif %}
-listen.owner = {{ nginx_user }}
-listen.group = {{ nginx_group }}
+listen.owner = {{ _nginx_user }}
+listen.group = {{ _nginx_group }}
 listen.mode = 0664
 listen.allowed_clients = 127.0.0.1
 

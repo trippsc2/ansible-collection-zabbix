@@ -3,10 +3,14 @@ _zbxserver_default_major_version: >-
   {{ _zbxserver_supported_major_versions[0] }}
 
 _zbxserver_default_nginx_module_version: >-
-  {{ ((_zbxserver_nginx_module_versions_allowed | default({}))[zbxserver_major_version] | default([]))[0] | default('1.24') }}
+  {{ ((_zbxserver_nginx_module_versions_allowed |
+        default({}))[_zbxserver_major_version] |
+        default(['1.24']))[0] }}
 
 _zbxserver_default_php_module_version: >-
-  {{ ((_zbxserver_php_module_versions_allowed | default({}))[zbxserver_major_version] | default([]))[0] | default('8.2') }}
+  {{ ((_zbxserver_php_module_versions_allowed |
+        default({}))[_zbxserver_major_version] |
+        default(['8.2']))[0] }}
 
 _zbxserver_web_package_names:
   postgresql: zabbix-web-pgsql
@@ -15,7 +19,23 @@ _zbxserver_web_package_names:
 _zbxserver_web_package_name: >-
   {{ _zbxserver_web_package_names[zbxserver_database_type] }}
 
-zbx_major_version: "{{ zbxserver_major_version }}"
+_zbxserver_major_version: >-
+  {{ zbxserver_major_version | default(_zbxserver_default_major_version) }}
+
+_zbxserver_configure_selinux: >-
+  {{ zbxserver_configure_selinux | default(_zbxserver_default_configure_selinux) }}
+
+_zbxserver_nginx_module_version: >-
+  {{ zbxserver_nginx_module_version | default(_zbxserver_default_nginx_module_version) }}
+_zbxserver_php_module_version: >-
+  {{ zbxserver_php_module_version | default(_zbxserver_default_php_module_version) }}
+
+zbx_major_version: "{{ _zbxserver_major_version }}"
+
+_nginx_user: >-
+  {{ nginx_user | default(_nginx_default_user) }}
+_nginx_group: >-
+  {{ nginx_group | default(_nginx_default_group) }}
 
 nginx_allow_http: true
 nginx_allow_https: true
@@ -46,14 +66,15 @@ nginx_http_config_files:
             deny:
               - all
   - destination: /etc/nginx/conf.d/zabbix.conf
-    client_body_timeout: 10
-    client_header_timeout: 10
+    client_body_timeout: 10s
+    client_header_timeout: 10s
     client_max_body_size: "{{ zbxserver_nginx_max_body_size }}"
-    keepalive_timeout: 10
-    send_timeout: 10
+    keepalive_timeout:
+      timeout: 10s
+    send_timeout: 10s
     large_client_header_buffers:
       count: 2
-      size: 1k
+      size: 16k
     log_format:
       - name: main
         format: >-

@@ -33,7 +33,7 @@
 
 - name: Configure Zabbix Agent firewall rule
   when:
-    - zbxagent_configure_windows_firewall
+    - zbxagent_configure_firewall
   community.windows.win_firewall_rule:
     name: Zabbix Agent 2
     localport: "{{ zbxagent_listen_port }}"

@@ -8,8 +8,8 @@
 - name: Create Zabbix host
   delegate_to: localhost
   community.zabbix.zabbix_host:
-    host_name: "{{ zbx_host_name }}"
-    visible_name: "{{ zbx_host_visible_name | default(omit) }}"
+    host_name: "{{ _zbx_host_name }}"
+    visible_name: "{{ _zbx_host_visible_name }}"
     host_groups: "{{ zbx_host_groups }}"
     interfaces: "{{ zbx_host_interfaces }}"
     link_templates: "{{ zbx_host_templates }}"
@@ -22,7 +22,7 @@
   loop: "{{ zbx_host_macros }}"
   delegate_to: localhost
   community.zabbix.zabbix_hostmacro:
-    host_name: "{{ zbx_host_name }}"
+    host_name: "{{ _zbx_host_name }}"
     macro_name: "{{ item.name }}"
     macro_type: "{{ item.type | default('text') }}"
     macro_value: "{{ item.value }}"

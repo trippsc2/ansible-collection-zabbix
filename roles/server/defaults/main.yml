@@ -1,17 +1,10 @@
 ---
-zbxserver_major_version: "{{ _zbxserver_default_major_version | default('7.0') }}"
-
-zbxserver_configure_selinux: "{{ _zbxserver_default_configure_selinux | default(false) }}"
-zbxserver_configure_firewalld: "{{ _zbxserver_default_configure_firewalld | default(false) }}"
-zbxserver_configure_ufw: "{{ _zbxserver_default_configure_ufw | default(false) }}"
+zbxserver_configure_firewall: true
 zbxserver_configure_logrotate: "{{ zbxserver_log_type == 'file' }}"
 zbxserver_configure_vault: true
-zbxserver_configure_mssql_odbc: "{{ _zbxserver_default_configure_mssql_odbc | default(false) }}"
 
 zbxserver_user: zabbix
 zbxserver_group: zabbix
-
-zbxserver_additional_groups: "{{ _zbxserver_default_additional_groups | default(omit) }}"
 
 zbxserver_database_name: zabbix-server
 

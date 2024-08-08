@@ -10,7 +10,6 @@ argument_specs:
       zbxserver_major_version:
         type: str
         required: false
-        default: OS specific
         choices:
           - '7.0'
           - '6.4'
@@ -20,7 +19,6 @@ argument_specs:
       zbxserver_nginx_module_version:
         type: str
         required: false
-        default: OS specific
         choices:
           - '1.24'
           - '1.22'
@@ -32,7 +30,6 @@ argument_specs:
       zbxserver_php_module_version:
         type: str
         required: false
-        default: OS specific
         choices:
           - '8.2'
           - '8.1'
@@ -46,7 +43,6 @@ argument_specs:
       zbxserver_configure_selinux:
         type: bool
         required: false
-        default: OS specific
         description:
           - Whether to configure SELinux for Zabbix.
           - For EL systems, this defaults to true.

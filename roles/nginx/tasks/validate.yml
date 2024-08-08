@@ -14,6 +14,8 @@
   ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
 
 - name: Validate Zabbix major version
+  when:
+    - zbxserver_major_version is defined
   ansible.builtin.assert:
     that:
       - zbxserver_major_version in _zbxserver_supported_major_versions
@@ -23,20 +25,22 @@
 - name: Validate NGINX module version (EL)
   when:
     - ansible_os_family == 'RedHat'
+    - zbxserver_nginx_module_version is defined
   ansible.builtin.assert:
     that:
-      - zbxserver_nginx_module_version | string in _zbxserver_nginx_module_versions_allowed[zbxserver_major_version]
-    fail_msg: "Unsupported NGINX module version '{{ zbxserver_nginx_module_version }}' for Zabbix major version '{{ zbxserver_major_version }}'. Supported versions are: {{ _zbxserver_nginx_module_versions_allowed[zbxserver_major_version] | join(', ') }}."
-    success_msg: "NGINX module version '{{ zbxserver_nginx_module_version }}' for Zabbix major version '{{ zbxserver_major_version }}' is supported."
+      - zbxserver_nginx_module_version | string in _zbxserver_nginx_module_versions_allowed[_zbxserver_major_version]
+    fail_msg: "Unsupported NGINX module version '{{ zbxserver_nginx_module_version }}' for Zabbix major version '{{ _zbxserver_major_version }}'. Supported versions are: {{ _zbxserver_nginx_module_versions_allowed[_zbxserver_major_version] | join(', ') }}."
+    success_msg: "NGINX module version '{{ zbxserver_nginx_module_version }}' for Zabbix major version '{{ _zbxserver_major_version }}' is supported."
 
 - name: Validate PHP module version (EL)
   when:
     - ansible_os_family == 'RedHat'
+    - zbxserver_php_module_version is defined
   ansible.builtin.assert:
     that:
-      - zbxserver_php_module_version | string in _zbxserver_php_module_versions_allowed[zbxserver_major_version]
-    fail_msg: "Unsupported PHP module version '{{ zbxserver_php_module_version }}' for Zabbix major version '{{ zbxserver_major_version }}'. Supported versions are: {{ _zbxserver_php_module_versions_allowed[zbxserver_major_version] | join(', ') }}."
-    success_msg: "PHP module version '{{ zbxserver_php_module_version }}' for Zabbix major version '{{ zbxserver_major_version }}' is supported."
+      - zbxserver_php_module_version | string in _zbxserver_php_module_versions_allowed[_zbxserver_major_version]
+    fail_msg: "Unsupported PHP module version '{{ zbxserver_php_module_version }}' for Zabbix major version '{{ _zbxserver_major_version }}'. Supported versions are: {{ _zbxserver_php_module_versions_allowed[_zbxserver_major_version] | join(', ') }}."
+    success_msg: "PHP module version '{{ zbxserver_php_module_version }}' for Zabbix major version '{{ _zbxserver_major_version }}' is supported."
 
 - name: Validate Vault URL
   when:

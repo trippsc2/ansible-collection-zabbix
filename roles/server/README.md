@@ -167,6 +167,7 @@ This role installs and configures the Zabbix server on a Linux machine.
 | zbxserver_jit_provisioning_interval | <p>The interval in seconds at which just-in-time provisioning should be performed.</p> | str | no |  | 1h |
 | zbxserver_ldap_enabled | <p>Whether LDAP authentication is enabled.</p><p>If *zbxserver_ldap_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.</p> | bool | no |  | true |
 | zbxserver_ldap_jit_status | <p>Whether just-in-time provisioning is enabled for LDAP users.</p> | bool | no |  | false |
+| zbxserver_active_ldap_directory | <p>The name of the LDAP directory to use for authentication.</p><p>If *zbxserver_ldap_enabled* is set to `true`, this is required.</p> | str | no |  |  |
 | zbxserver_saml_enabled | <p>Whether SAML authentication is enabled.</p><p>If *zbxserver_saml_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.</p> | bool | no |  | true |
 | zbxserver_saml_jit_status | <p>Whether just-in-time provisioning is enabled for SAML users.</p> | bool | no |  | false |
 | zbxserver_logrotate_period | <p>The period at which logrotate should rotate the Zabbix server's log file.</p> | str | no | <ul><li>daily</li><li>weekly</li><li>monthly</li></ul> | daily |

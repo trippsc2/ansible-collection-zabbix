@@ -2,11 +2,11 @@
 zbxagent_major_version: '7.0'
 
 zbxagent_configure_logrotate: "{{ zbxagent_log_type == 'file' }}"
-zbxagent_configure_firewalld: "{{ _zbxagent_default_configure_firewalld | default(false) }}"
-zbxagent_configure_ufw: "{{ _zbxagent_default_configure_ufw | default(false) }}"
-zbxagent_configure_windows_firewall: "{{ _zbxagent_default_configure_windows_firewall | default(false) }}"
+zbxagent_configure_firewall: true
 zbxagent_configure_vmware_monitoring: false
+zbxagent_install_ember_plus_plugin: false
 zbxagent_install_mongodb_plugin: false
+zbxagent_install_mssql_plugin: false
 zbxagent_install_pgsql_plugin: false
 
 zbxagent_user: zabbix
@@ -51,6 +51,11 @@ zbxagent_systemrun_log_remote_commands: false
 
 zbxagent_plugin_parameters: {}
 
+zbxagent_ember_plus_sessions: []
+zbxagent_mongodb_sessions: []
+zbxagent_mssql_sessions: []
+zbxagent_pgsql_sessions: []
+
 zbxagent_allow_keys: []
 zbxagent_deny_keys: []
 
@@ -63,8 +68,5 @@ zbxagent_local_scripts: []
 zbxagent_logrotate_period: daily
 zbxagent_logrotate_retention: 14
 zbxagent_logrotate_mode: '0640'
-
-zbx_host_name: "{{ _zbxagent_default_host_name | default(inventory_hostname) }}"
-zbx_host_visible_name: "{{ _zbxagent_default_host_visible_name | default(omit) }}"
 
 zbx_host_macros: []

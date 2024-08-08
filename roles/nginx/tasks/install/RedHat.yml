@@ -3,14 +3,14 @@
   become: true
   ansible.builtin.dnf:
     name:
-      - "@php:{{ zbxserver_php_module_version }}"
+      - "@php:{{ _zbxserver_php_module_version }}"
     state: present
 
 - name: Ensure NGINX module is installed
   become: true
   ansible.builtin.dnf:
     name:
-      - "@nginx:{{ zbxserver_nginx_module_version }}"
+      - "@nginx:{{ _zbxserver_nginx_module_version }}"
     state: present
 
 - name: Ensure Zabbix Server packages are installed

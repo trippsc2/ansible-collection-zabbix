@@ -10,10 +10,12 @@
 
 - name: Configure firewalld
   when:
-    - zbxagent_configure_firewalld
+    - zbxagent_configure_firewall
+    - _zbxagent_firewall_type == 'firewalld'
   ansible.builtin.include_tasks: firewalld.yml
 
 - name: Configure ufw
   when:
-    - zbxagent_configure_ufw
+    - zbxagent_configure_firewall
+    - _zbxagent_firewall_type == 'ufw'
   ansible.builtin.include_tasks: ufw.yml

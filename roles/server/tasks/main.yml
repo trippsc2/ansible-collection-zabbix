@@ -10,22 +10,24 @@
 
 - name: Ensure SELinux is configured for use with Zabbix
   when:
-    - zbxserver_configure_selinux
+    - _zbxserver_configure_selinux
   ansible.builtin.include_tasks: selinux.yml
 
 - name: Configure firewalld
   when:
-    - zbxserver_configure_firewalld
+    - zbxserver_configure_firewall
+    - _zbxserver_firewall_type == 'firewalld'
   ansible.builtin.include_tasks: firewalld.yml
 
 - name: Configure ufw
   when:
-    - zbxserver_configure_ufw
+    - zbxserver_configure_firewall
+    - _zbxserver_firewall_type == 'ufw'
   ansible.builtin.include_tasks: ufw.yml
 
 - name: Configure MSSQL ODBC
   when:
-    - zbxserver_configure_mssql_odbc
+    - _zbxserver_configure_mssql_odbc
   ansible.builtin.include_tasks: odbc/main.yml
 
 - name: Ensure Zabbix is configured and started

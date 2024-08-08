@@ -23,7 +23,6 @@ argument_specs:
       zbxserver_major_version:
         type: str
         required: false
-        default: OS specific
         choices:
           - '7.0'
           - '6.4'
@@ -176,7 +175,6 @@ argument_specs:
       zbxserver_timescaledb_schema_done_file_path:
         type: str
         required: false
-        default: OS specific
         description:
           - The filesystem path where a file will be created to indicate that the TimescaleDB schema has been applied.
           - On Debian-based systems, the default is /var/lib/postgresql/zbx_timescaledb_schema.done.

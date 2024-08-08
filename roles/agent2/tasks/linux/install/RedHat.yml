@@ -6,6 +6,15 @@
       - zabbix-agent2
     state: present
 
+- name: Install Ember+ plugin
+  when:
+    - zbxagent_install_ember_plus_plugin
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - zabbix-agent2-plugin-ember-plus
+    state: present
+
 - name: Install MongoDB plugin
   when:
     - zbxagent_install_mongodb_plugin
@@ -13,6 +22,15 @@
   ansible.builtin.dnf:
     name:
       - zabbix-agent2-plugin-mongodb
+    state: present
+
+- name: Install MSSQL plugin
+  when:
+    - zbxagent_install_mssql_plugin
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - zabbix-agent2-plugin-mssql
     state: present
 
 - name: Install PostgreSQL plugin

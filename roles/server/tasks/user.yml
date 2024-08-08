@@ -11,7 +11,7 @@
   ansible.builtin.user:
     name: "{{ zbxserver_user }}"
     group: "{{ zbxserver_group }}"
-    groups: "{{ zbxserver_additional_groups | default(omit) }}"
+    groups: "{{ _zbxserver_additional_groups }}"
     system: true
     password: '!'
     password_lock: true

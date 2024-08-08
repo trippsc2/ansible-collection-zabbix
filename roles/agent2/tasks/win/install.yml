@@ -6,3 +6,24 @@
     state: present
   notify:
     - _zbxagent_restart_zabbix_agent2
+
+- name: Install Zabbix Agent 2 plugins
+  when:
+    - _zbxagent_install_plugins
+  block:
+    - name: Gather Chocolatey facts
+      chocolatey.chocolatey.win_chocolatey_facts:
+
+    - name: Get Zabbix Agent 2 package version
+      ansible.builtin.set_fact:
+        _zbxagent_package_version: >-
+          {{ ansible_chocolatey.packages |
+             selectattr('package', 'equalto', 'zabbix-agent2') |
+             map(attribute='version') |
+             first }}
+
+    - name: Install Zabbix Agent 2 plugins
+      ansible.windows.win_package:
+        path: >-
+          https://cdn.zabbix.com/zabbix/binaries/stable/{{ zbxagent_major_version }}/{{ _zbxagent_package_version }}/zabbix_agent2_plugins-{{ _zbxagent_package_version }}-windows-amd64.msi
+        state: present

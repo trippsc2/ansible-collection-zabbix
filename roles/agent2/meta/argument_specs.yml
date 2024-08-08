@@ -110,37 +110,43 @@ argument_specs:
           - This is ignored on Windows systems.
           - If *zbxagent_log_type* is set to `file`, this is `true` by default.  Otherwise, it is `false`.
           - If set to `true`, the *zbxagent_log_size* should be set to `0` to prevent conflicts.
-      zbxagent_configure_firewalld:
-        type: bool
-        required: false
-        default: OS specific
-        description:
-          - Whether to configure firewalld for the Zabbix Agent 2.
-          - This is ignored on Windows systems.
-          - For EL and Debian systems, this is `true` by default.
-          - For other systems, this is `false` by default.
-      zbxagent_configure_ufw:
-        type: bool
-        required: false
-        default: OS specific
-        description:
-          - Whether to configure ufw for the Zabbix Agent 2.
-          - This is ignored on Windows systems.
-          - For Ubuntu systems, this is `true` by default.
-          - For other systems, this is `false` by default.
-      zbxagent_configure_windows_firewall:
+      zbxagent_configure_firewall:
         type: bool
         required: false
         default: true
         description:
-          - Whether to configure the Windows Firewall for the Zabbix Agent 2.
-          - This is ignored on non-Windows systems.
+          - Whether to configure the host firewall for use with Zabbix Agent 2.
       zbxagent_configure_vmware_monitoring:
         type: bool
         required: false
         default: false
         description:
           - Whether to configure VMware monitoring for the Zabbix Agent 2.
+      zbxagent_install_ember_plus_plugin:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to install the Ember+ plugin for the Zabbix Agent 2 on Linux systems.
+          - This is ignored on Windows systems.
+      zbxagent_install_mongodb_plugin:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to install the MongoDB plugin for the Zabbix Agent 2.
+      zbxagent_install_mssql_plugin:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to install the MSSQL plugin for the Zabbix Agent 2.
+      zbxagent_install_pgsql_plugin:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to install the PostgreSQL plugin for the Zabbix Agent 2.
       zbxagent_user:
         type: str
         required: false
@@ -181,7 +187,6 @@ argument_specs:
       zbxagent_log_file:
         type: path
         required: false
-        default: OS specific
         description:
           - The path to the log file for the Zabbix Agent 2.
           - For Linux systems, this is `/var/log/zabbix/zabbix_agent2.log` by default.
@@ -545,6 +550,524 @@ argument_specs:
           - A dictionary of parameters for plugins.
           - The key is the plugin name and the value is a dictionary of parameters.
           - See individual plugin documentation for valid parameters.
+      zbxagent_ember_plus_default_uri:
+        type: str
+        required: false
+        description:
+          - The default URI for the Ember+ plugin.
+          - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+      zbxagent_ember_plus_keepalive:
+        type: int
+        required: false
+        description:
+          - The interval at which the Ember+ plugin will send keepalive messages in seconds.
+          - Valid values are between `60` and `900`.
+          - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+      zbxagent_ember_plus_sessions:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A list of Ember+ sessions to configure.
+          - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - The name of the session.
+          uri:
+            type: str
+            required: true
+            description:
+              - The URI for the session.
+      zbxagent_ember_plus_system_path:
+        type: path
+        required: false
+        description:
+          - The path to the Ember+ system file.
+          - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+      zbxagent_ember_plus_timeout:
+        type: int
+        required: false
+        description:
+          - The timeout for Ember+ plugin requests in seconds.
+          - Valid values are between `1` and `30`.
+          - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+      zbxagent_mongodb_default_password:
+        type: str
+        required: false
+        description:
+          - The default password for the MongoDB plugin.
+          - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+      zbxagent_mongodb_default_uri:
+        type: str
+        required: false
+        description:
+          - The default URI for the MongoDB plugin.
+          - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+      zbxagent_mongodb_default_user:
+        type: str
+        required: false
+        description:
+          - The default user for the MongoDB plugin.
+          - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+      zbxagent_mongodb_keepalive:
+        type: int
+        required: false
+        description:
+          - The interval at which the MongoDB plugin will send keepalive messages in seconds.
+          - Valid values are between `60` and `900`.
+          - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+      zbxagent_mongodb_sessions:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A list of MongoDB sessions to configure.
+          - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - The name of the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          tls_ca_file:
+            type: path
+            required: false
+            description:
+              - The path to the CA certificate file for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          tls_cert_file:
+            type: path
+            required: false
+            description:
+              - The path to the certificate file for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          tls_connect:
+            type: str
+            required: false
+            choices:
+              - required
+              - verify_ca
+              - verify_full
+            description:
+              - Whether to use and verify TLS for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          tls_key_file:
+            type: path
+            required: false
+            description:
+              - The path to the key file for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          uri:
+            type: str
+            required: false
+            description:
+              - The URI for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          user:
+            type: str
+            required: false
+            description:
+              - The user for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+      zbxagent_mongodb_system_path:
+        type: path
+        required: false
+        description:
+          - The path to the MongoDB system file.
+          - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+      zbxagent_mongodb_timeout:
+        type: int
+        required: false
+        description:
+          - The timeout for MongoDB plugin requests in seconds.
+          - Valid values are between `1` and `30`.
+          - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+      zbxagent_mssql_custom_queries_dir:
+        type: path
+        required: false
+        description:
+          - The path to the directory containing custom queries for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_ca_cert_path:
+        type: path
+        required: false
+        description:
+          - The path to the default CA certificate file for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_database:
+        type: str
+        required: false
+        description:
+          - The default database for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_encrypt:
+        type: str
+        required: false
+        choices:
+          - 'true'
+          - 'false'
+          - strict
+          - disable
+        description:
+          - The default encryption setting for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_host_name_in_certificate:
+        type: bool
+        required: false
+        description:
+          - Whether to use the host name in the certificate for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_password:
+        type: str
+        required: false
+        description:
+          - The default password for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_tls_min_version:
+        type: str
+        required: false
+        choices:
+          - '1.0'
+          - '1.1'
+          - '1.2'
+          - '1.3'
+        description:
+          - The default TLS minimum version for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_trust_server_certificate:
+        type: bool
+        required: false
+        description:
+          - Whether to trust the server certificate for the MSSQL plugin without verifying it.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_uri:
+        type: str
+        required: false
+        description:
+          - The default URI for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_default_user:
+        type: str
+        required: false
+        description:
+          - The default user for the MSSQL plugin.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_keepalive:
+        type: int
+        required: false
+        description:
+          - The interval at which the MSSQL plugin will send keepalive messages in seconds.
+          - Valid values are between `60` and `900`.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_sessions:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A list of MSSQL sessions to configure.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - The name of the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          ca_cert_path:
+            type: path
+            required: false
+            description:
+              - The path to the CA certificate file for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          database:
+            type: str
+            required: false
+            description:
+              - The default database for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          encrypt:
+            type: str
+            required: false
+            choices:
+              - 'true'
+              - 'false'
+              - strict
+              - disable
+            description:
+              - The encryption setting for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          host_name_in_certificate:
+            type: bool
+            required: false
+            description:
+              - Whether to use the host name in the certificate for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          password:
+            type: str
+            required: false
+            description:
+              - The password for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          tls_min_version:
+            type: str
+            required: false
+            choices:
+              - '1.0'
+              - '1.1'
+              - '1.2'
+              - '1.3'
+            description:
+              - The TLS minimum version for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          trust_server_certificate:
+            type: bool
+            required: false
+            description:
+              - Whether to trust the server certificate for the session without verifying it.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          uri:
+            type: str
+            required: false
+            description:
+              - The URI for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          user:
+            type: str
+            required: false
+            description:
+              - The user for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_system_path:
+        type: path
+        required: false
+        description:
+          - The path to the MSSQL system file.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_mssql_timeout:
+        type: int
+        required: false
+        description:
+          - The timeout for MSSQL plugin requests in seconds.
+          - Valid values are between `1` and `30`.
+          - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+      zbxagent_pgsql_call_timeout:
+        type: int
+        required: false
+        description:
+          - The timeout for PostgreSQL plugin requests.
+          - Valid values are between `1` and `30`.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_custom_queries_dir:
+        type: path
+        required: false
+        description:
+          - The path to the directory containing custom queries for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_cache_mode:
+        type: str
+        required: false
+        choices:
+          - prepare
+          - describe
+        description:
+          - The default cache mode for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_database:
+        type: str
+        required: false
+        description:
+          - The default database for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_password:
+        type: str
+        required: false
+        description:
+          - The default password for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_tls_ca_file:
+        type: path
+        required: false
+        description:
+          - The default CA certificate file for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_tls_cert_file:
+        type: path
+        required: false
+        description:
+          - The default certificate file for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_tls_connect:
+        type: str
+        required: false
+        choices:
+          - required
+          - verify_ca
+          - verify_full
+        description:
+          - The default TLS connection setting for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_tls_key_file:
+        type: path
+        required: false
+        description:
+          - The default key file for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_uri:
+        type: str
+        required: false
+        description:
+          - The default URI for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_default_user:
+        type: str
+        required: false
+        description:
+          - The default user for the PostgreSQL plugin.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_keepalive:
+        type: int
+        required: false
+        description:
+          - The interval at which the PostgreSQL plugin will send keepalive messages in seconds.
+          - Valid values are between `60` and `900`.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_sessions:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A list of PostgreSQL sessions to configure.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - The name of the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          cache_mode:
+            type: str
+            required: false
+            choices:
+              - prepare
+              - describe
+            description:
+              - The cache mode for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          database:
+            type: str
+            required: false
+            description:
+              - The default database for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          password:
+            type: str
+            required: false
+            description:
+              - The password for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          tls_ca_file:
+            type: path
+            required: false
+            description:
+              - The CA certificate file for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          tls_cert_file:
+            type: path
+            required: false
+            description:
+              - The certificate file for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          tls_connect:
+            type: str
+            required: false
+            choices:
+              - required
+              - verify_ca
+              - verify_full
+            description:
+              - The TLS connection setting for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          tls_key_file:
+            type: path
+            required: false
+            description:
+              - The key file for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          uri:
+            type: str
+            required: false
+            description:
+              - The URI for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          user:
+            type: str
+            required: false
+            description:
+              - The user for the session.
+              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_system_path:
+        type: path
+        required: false
+        description:
+          - The path to the PostgreSQL system file.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+      zbxagent_pgsql_timeout:
+        type: int
+        required: false
+        description:
+          - The timeout for PostgreSQL plugin requests in seconds.
+          - Valid values are between `1` and `30`.
+          - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
+          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_allow_keys:
         type: list
         required: false
@@ -614,10 +1137,18 @@ argument_specs:
             required: true
             description:
               - The destination path for the script on the target node.
+      zbxagent_firewall_type:
+        type: str
+        required: false
+        choices:
+          - firewalld
+          - ufw
+        description:
+          - The type of host firewall to configure for use with Zabbix Agent 2.
+          - This is ignored on Windows systems.
       zbx_host_name:
         type: str
         required: false
-        default: OS specific
         description:
           - The name of the host on the Zabbix Server.
           - On Linux systems, this will default to *inventory_hostname* in lower case.

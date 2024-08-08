@@ -16,4 +16,5 @@
     template_json: "{{ lookup('file', item) | from_yaml }}"
     state: present
   tags:
+    - always
     - molecule-idempotence-notest

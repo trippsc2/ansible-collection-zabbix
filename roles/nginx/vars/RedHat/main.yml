@@ -9,3 +9,6 @@ _zbxserver_php_fpm_config_file_path: /etc/php-fpm.d/zabbix.conf
 _zbxserver_selinux_packages:
   - policycoreutils
   - python3-libsemanage
+
+_nginx_default_user: nginx
+_nginx_default_group: nginx

@@ -191,6 +191,7 @@
     jit_provision_interval: "{{ zbxserver_jit_provisioning_interval }}"
     ldap_auth_enabled: "{{ zbxserver_ldap_enabled }}"
     ldap_jit_status: "{{ zbxserver_ldap_jit_status }}"
-    ldap_userdirectory: "{{ zbxserver_active_ldap_directory }}"
+    ldap_userdirectory: >-
+      {{ zbxserver_active_ldap_directory | default(omit) if zbxserver_ldap_enabled else omit }}
     saml_auth_enabled: "{{ zbxserver_saml_enabled }}"
     saml_jit_status: "{{ zbxserver_saml_jit_status }}"

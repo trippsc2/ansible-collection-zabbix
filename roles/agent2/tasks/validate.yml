@@ -1,6 +1,12 @@
 ---
-- name: Include OS specific variables
-  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+- name: Include OS family variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/main.yml"
+
+- name: Include non-EL Linux distribution variables
+  when:
+    - ansible_os_family != 'RedHat'
+    - ansible_os_family != 'Windows'
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution }}.yml"
 
 - name: Validate VMware
   when:
@@ -166,6 +172,413 @@
       - zbxagent_plugin_timeout <= 30
     fail_msg: "The 'zbxagent_plugin_timeout' variable is not between 1 and 30."
     success_msg: "The 'zbxagent_plugin_timeout' variable is between 1 and 30."
+
+- name: Validate Ember+ configuration
+  when:
+    - ansible_os_family != 'Windows'
+    - zbxagent_install_ember_plus_plugin
+  block:
+    - name: Validate Ember+ default URI
+      when:
+        - zbxagent_ember_plus_default_uri is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_ember_plus_default_uri is uri
+        fail_msg: "The 'zbxagent_ember_plus_default_uri' variable is not a valid URI."
+        success_msg: "The 'zbxagent_ember_plus_default_uri' variable is a valid URI."
+
+    - name: Validate Ember+ keepalive
+      when:
+        - zbxagent_ember_plus_keepalive is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_ember_plus_keepalive >= 60
+          - zbxagent_ember_plus_keepalive <= 900
+        fail_msg: "The 'zbxagent_ember_plus_keepalive' variable is not between 60 and 900."
+        success_msg: "The 'zbxagent_ember_plus_keepalive' variable is between 60 and 900."
+
+    - name: Validate Ember+ session URI
+      loop: "{{ zbxagent_ember_plus_sessions }}"
+      ansible.builtin.assert:
+        that:
+          - item.uri is uri
+        fail_msg: "The 'uri' variable in the 'zbxagent_ember_plus_sessions' is not a valid URI."
+        success_msg: "The 'uri' variable in the 'zbxagent_ember_plus_sessions' is a valid URI."
+
+    - name: Validate Ember+ timeout
+      when:
+        - zbxagent_ember_plus_timeout is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_ember_plus_timeout >= 1
+          - zbxagent_ember_plus_timeout <= 30
+        fail_msg: "The 'zbxagent_ember_plus_timeout' variable is not between 1 and 30."
+        success_msg: "The 'zbxagent_ember_plus_timeout' variable is between 1 and 30."
+
+- name: Validate MongoDB configuration
+  when:
+    - zbxagent_install_mongodb_plugin
+  block:
+    - name: Validate MongoDB default URI
+      when:
+        - zbxagent_mongodb_default_uri is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_mongodb_default_uri is uri
+        fail_msg: "The 'zbxagent_mongodb_default_uri' variable is not a valid URI."
+        success_msg: "The 'zbxagent_mongodb_default_uri' variable is a valid URI."
+
+    - name: Validate MongoDB keepalive
+      when:
+        - zbxagent_mongodb_keepalive is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_mongodb_keepalive >= 60
+          - zbxagent_mongodb_keepalive <= 900
+        fail_msg: "The 'zbxagent_mongodb_keepalive' variable is not between 60 and 900."
+        success_msg: "The 'zbxagent_mongodb_keepalive' variable is between 60 and 900."
+
+    - name: Validate MongoDB session URI
+      loop: "{{ zbxagent_mongodb_sessions }}"
+      when:
+        - item.uri is defined
+      ansible.builtin.assert:
+        that:
+          - item.uri is uri
+        fail_msg: "The 'uri' variable in the 'zbxagent_mongodb_sessions' is not a valid URI."
+        success_msg: "The 'uri' variable in the 'zbxagent_mongodb_sessions' is a valid URI."
+
+    - name: Check if MongoDB session TLS CA certificate is valid path
+      loop: "{{ zbxagent_mongodb_sessions }}"
+      when:
+        - item.tls_ca_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ item.tls_ca_file }}"
+      register: _zbxagent_mongodb_tls_ca_file
+
+    - name: Validate MongoDB session TLS CA certificate is valid path
+      loop: "{{ _zbxagent_mongodb_tls_ca_file.results }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg or item.stat.islnk
+        fail_msg: "The 'tls_ca_cert' variable in the 'zbxagent_mongodb_sessions' is not a valid path."
+        success_msg: "The 'tls_ca_cert' variable in the 'zbxagent_mongodb_sessions' is a valid path."
+
+    - name: Check if MongoDB session TLS certificate is valid path
+      loop: "{{ zbxagent_mongodb_sessions }}"
+      when:
+        - item.tls_cert_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ item.tls_cert_file }}"
+      register: _zbxagent_mongodb_tls_cert_file
+
+    - name: Validate MongoDB session TLS certificate is valid path
+      loop: "{{ _zbxagent_mongodb_tls_cert_file.results }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg or item.stat.islnk
+        fail_msg: "The 'tls_cert_file' variable in the 'zbxagent_mongodb_sessions' is not a valid path."
+        success_msg: "The 'tls_cert_file' variable in the 'zbxagent_mongodb_sessions' is a valid path."
+
+    - name: Check if MongoDB session TLS key is valid path
+      loop: "{{ zbxagent_mongodb_sessions }}"
+      when:
+        - item.tls_key_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ item.tls_key_file }}"
+      register: _zbxagent_mongodb_tls_key_file
+
+    - name: Validate MongoDB session TLS key is valid path
+      loop: "{{ _zbxagent_mongodb_tls_key_file.results }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg or item.stat.islnk
+        fail_msg: "The 'tls_key_file' variable in the 'zbxagent_mongodb_sessions' is not a valid path."
+        success_msg: "The 'tls_key_file' variable in the 'zbxagent_mongodb_sessions' is a valid path."
+
+    - name: Validate MongoDB timeout
+      when:
+        - zbxagent_mongodb_timeout is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_mongodb_timeout >= 1
+          - zbxagent_mongodb_timeout <= 30
+        fail_msg: "The 'zbxagent_mongodb_timeout' variable is not between 1 and 30."
+        success_msg: "The 'zbxagent_mongodb_timeout' variable is between 1 and 30."
+
+- name: Validate MSSQL configuration
+  when:
+    - zbxagent_install_mssql_plugin
+  block:
+    - name: Check if MSSQL custom queries directory is valid path
+      when:
+        - zbxagent_mssql_custom_queries_dir is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ zbxagent_mssql_custom_queries_dir }}"
+      register: _zbxagent_mssql_custom_queries_dir
+
+    - name: Validate MSSQL custom queries directory is valid path
+      when:
+        - zbxagent_mssql_custom_queries_dir is defined
+      ansible.builtin.assert:
+        that:
+          - _zbxagent_mssql_custom_queries_dir.stat.isdir
+        fail_msg: "The 'zbxagent_mssql_custom_queries_dir' variable is not a valid path."
+        success_msg: "The 'zbxagent_mssql_custom_queries_dir' variable is a valid path."
+
+    - name: Check if MSSQL CA certificate path is valid path
+      when:
+        - zbxagent_mssql_default_ca_cert_path is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ zbxagent_mssql_default_ca_cert_path }}"
+      register: _zbxagent_mssql_default_ca_cert_path
+
+    - name: Validate MSSQL CA certificate path is valid path
+      when:
+        - zbxagent_mssql_default_ca_cert_path is defined
+      ansible.builtin.assert:
+        that:
+          - _zbxagent_mssql_default_ca_cert_path.stat.isreg or
+            _zbxagent_mssql_default_ca_cert_path.stat.islnk
+        fail_msg: "The 'zbxagent_mssql_default_ca_cert_path' variable is not a valid path."
+        success_msg: "The 'zbxagent_mssql_default_ca_cert_path' variable is a valid path."
+
+    - name: Validate MSSQL default URI
+      when:
+        - zbxagent_mssql_default_uri is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_mssql_default_uri is uri
+        fail_msg: "The 'zbxagent_mssql_default_uri' variable is not a valid URI."
+        success_msg: "The 'zbxagent_mssql_default_uri' variable is a valid URI."
+
+    - name: Validate MSSQL keepalive
+      when:
+        - zbxagent_mssql_keepalive is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_mssql_keepalive >= 60
+          - zbxagent_mssql_keepalive <= 900
+        fail_msg: "The 'zbxagent_mssql_keepalive' variable is not between 60 and 900."
+        success_msg: "The 'zbxagent_mssql_keepalive' variable is between 60 and 900."
+
+    - name: Check if MSSQL session CA certificate path is valid path
+      loop: "{{ zbxagent_mssql_sessions }}"
+      when:
+        - item.ca_cert_path is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ item.ca_cert_path }}"
+      register: _zbxagent_mssql_ca_cert_path
+
+    - name: Validate MSSQL session CA certificate path is valid path
+      loop: "{{ _zbxagent_mssql_ca_cert_path.results }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg or item.stat.islnk
+        fail_msg: "The 'ca_cert_path' variable in the 'zbxagent_mssql_sessions' is not a valid path."
+        success_msg: "The 'ca_cert_path' variable in the 'zbxagent_mssql_sessions' is a valid path."
+
+    - name: Validate MSSQL session URI
+      loop: "{{ zbxagent_mssql_sessions }}"
+      when:
+        - item.uri is defined
+      become: true
+      ansible.builtin.assert:
+        that:
+          - item.uri is uri
+        fail_msg: "The 'uri' variable in the 'zbxagent_mssql_sessions' is not a valid URI."
+        success_msg: "The 'uri' variable in the 'zbxagent_mssql_sessions' is a valid URI."
+
+    - name: Validate MSSQL timeout
+      when:
+        - zbxagent_mssql_timeout is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_mssql_timeout >= 1
+          - zbxagent_mssql_timeout <= 30
+        fail_msg: "The 'zbxagent_mssql_timeout' variable is not between 1 and 30."
+        success_msg: "The 'zbxagent_mssql_timeout' variable is between 1 and 30."
+
+- name: Validate PostgreSQL configuration
+  when:
+    - zbxagent_install_pgsql_plugin
+  block:
+    - name: Validate PostgreSQL call timeout
+      when:
+        - zbxagent_pgsql_call_timeout is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_pgsql_call_timeout >= 1
+          - zbxagent_pgsql_call_timeout <= 30
+        fail_msg: "The 'zbxagent_pgsql_call_timeout' variable is not between 1 and 30."
+        success_msg: "The 'zbxagent_pgsql_call_timeout' variable is between 1 and 30."
+
+    - name: Check if PostgreSQL custom queries directory is valid path
+      when:
+        - zbxagent_pgsql_custom_queries_dir is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ zbxagent_pgsql_custom_queries_dir }}"
+      register: _zbxagent_pgsql_custom_queries_dir
+
+    - name: Validate PostgreSQL custom queries directory is valid path
+      when:
+        - zbxagent_pgsql_custom_queries_dir is defined
+      ansible.builtin.assert:
+        that:
+          - _zbxagent_pgsql_custom_queries_dir.stat.isdir
+        fail_msg: "The 'zbxagent_pgsql_custom_queries_dir' variable is not a valid path."
+        success_msg: "The 'zbxagent_pgsql_custom_queries_dir' variable is a valid path."
+
+    - name: Check if PostgreSQL default CA certificate is valid path
+      when:
+        - zbxagent_pgsql_default_tls_ca_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ zbxagent_pgsql_default_tls_ca_file }}"
+      register: _zbxagent_pgsql_default_tls_ca_file
+
+    - name: Validate PostgreSQL default CA certificate is valid path
+      when:
+        - zbxagent_pgsql_default_tls_ca_file is defined
+      ansible.builtin.assert:
+        that:
+          - _zbxagent_pgsql_default_tls_ca_file.stat.isreg or
+            _zbxagent_pgsql_default_tls_ca_file.stat.islnk
+        fail_msg: "The 'zbxagent_pgsql_default_tls_ca_file' variable is not a valid path."
+        success_msg: "The 'zbxagent_pgsql_default_tls_ca_file' variable is a valid path."
+
+    - name: Check if PostgreSQL default certificate is valid path
+      when:
+        - zbxagent_pgsql_default_tls_cert_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ zbxagent_pgsql_default_tls_cert_file }}"
+      register: _zbxagent_pgsql_default_tls_cert_file
+
+    - name: Validate PostgreSQL default certificate is valid path
+      when:
+        - zbxagent_pgsql_default_tls_cert_file is defined
+      ansible.builtin.assert:
+        that:
+          - _zbxagent_pgsql_default_tls_cert_file.stat.isreg or
+            _zbxagent_pgsql_default_tls_cert_file.stat.islnk
+        fail_msg: "The 'zbxagent_pgsql_default_tls_cert_file' variable is not a valid path."
+        success_msg: "The 'zbxagent_pgsql_default_tls_cert_file' variable is a valid path."
+
+    - name: Check if PostgreSQL default private key is valid path
+      when:
+        - zbxagent_pgsql_default_tls_key_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ zbxagent_pgsql_default_tls_key_file }}"
+      register: _zbxagent_pgsql_default_tls_key_file
+
+    - name: Validate PostgreSQL default private key is valid path
+      when:
+        - zbxagent_pgsql_default_tls_key_file is defined
+      ansible.builtin.assert:
+        that:
+          - _zbxagent_pgsql_default_tls_key_file.stat.isreg or
+            _zbxagent_pgsql_default_tls_key_file.stat.islnk
+        fail_msg: "The 'zbxagent_pgsql_default_tls_key_file' variable is not a valid path."
+        success_msg: "The 'zbxagent_pgsql_default_tls_key_file' variable is a valid path."
+
+    - name: Validate PostgreSQL default URI
+      when:
+        - zbxagent_pgsql_default_uri is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_pgsql_default_uri is uri
+        fail_msg: "The 'zbxagent_pgsql_default_uri' variable is not a valid URI."
+        success_msg: "The 'zbxagent_pgsql_default_uri' variable is a valid URI."
+
+    - name: Validate PostgreSQL keepalive
+      when:
+        - zbxagent_pgsql_keepalive is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_pgsql_keepalive >= 60
+          - zbxagent_pgsql_keepalive <= 900
+        fail_msg: "The 'zbxagent_pgsql_keepalive' variable is not between 60 and 900."
+        success_msg: "The 'zbxagent_pgsql_keepalive' variable is between 60 and 900."
+
+    - name: Check if PostgreSQL session CA certificate is valid path
+      loop: "{{ zbxagent_pgsql_sessions }}"
+      when:
+        - item.tls_ca_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ item.tls_ca_file }}"
+      register: _zbxagent_pgsql_tls_ca_file
+
+    - name: Validate PostgreSQL session CA certificate is valid path
+      loop: "{{ _zbxagent_pgsql_tls_ca_file.results }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg or item.stat.islnk
+        fail_msg: "The 'tls_ca_file' variable in the 'zbxagent_pgsql_sessions' is not a valid path."
+        success_msg: "The 'tls_ca_file' variable in the 'zbxagent_pgsql_sessions' is a valid path."
+
+    - name: Check if PostgreSQL session certificate is valid path
+      loop: "{{ zbxagent_pgsql_sessions }}"
+      when:
+        - item.tls_cert_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ item.tls_cert_file }}"
+      register: _zbxagent_pgsql_tls_cert_file
+
+    - name: Validate PostgreSQL session certificate is valid path
+      loop: "{{ _zbxagent_pgsql_tls_cert_file.results }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg or item.stat.islnk
+        fail_msg: "The 'tls_cert_file' variable in the 'zbxagent_pgsql_sessions' is not a valid path."
+        success_msg: "The 'tls_cert_file' variable in the 'zbxagent_pgsql_sessions' is a valid path."
+
+    - name: Check if PostgreSQL session private key is valid path
+      loop: "{{ zbxagent_pgsql_sessions }}"
+      when:
+        - item.tls_key_file is defined
+      become: true
+      ansible.builtin.stat:
+        path: "{{ item.tls_key_file }}"
+      register: _zbxagent_pgsql_tls_key_file
+
+    - name: Validate PostgreSQL session private key is valid path
+      loop: "{{ _zbxagent_pgsql_tls_key_file.results }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg or item.stat.islnk
+        fail_msg: "The 'tls_key_file' variable in the 'zbxagent_pgsql_sessions' is not a valid path."
+        success_msg: "The 'tls_key_file' variable in the 'zbxagent_pgsql_sessions' is a valid path."
+
+    - name: Validate PostgreSQL session URI
+      loop: "{{ zbxagent_pgsql_sessions }}"
+      when:
+        - item.uri is defined
+      ansible.builtin.assert:
+        that:
+          - item.uri is uri
+        fail_msg: "The 'uri' variable in the 'zbxagent_pgsql_sessions' is not a valid URI."
+        success_msg: "The 'uri' variable in the 'zbxagent_pgsql_sessions' is a valid URI."
+
+    - name: Validate PostgreSQL timeout
+      when:
+        - zbxagent_pgsql_timeout is defined
+      ansible.builtin.assert:
+        that:
+          - zbxagent_pgsql_timeout >= 1
+          - zbxagent_pgsql_timeout <= 30
+        fail_msg: "The 'zbxagent_pgsql_timeout' variable is not between 1 and 30."
+        success_msg: "The 'zbxagent_pgsql_timeout' variable is between 1 and 30."
 
 - name: Validate maximum log lines per second
   ansible.builtin.assert:

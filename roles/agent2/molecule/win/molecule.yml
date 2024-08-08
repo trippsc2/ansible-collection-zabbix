@@ -35,6 +35,10 @@ provisioner:
         zabbix_username: test
         zabbix_password: SecurePassword1234!
       subjects:
+        zbxagent_install_ember_plus_plugin: true
+        zbxagent_install_mongodb_plugin: true
+        zbxagent_install_mssql_plugin: true
+        zbxagent_install_pgsql_plugin: true
         zbxagent_servers:
           - "{{ hostvars['zabbix'].ansible_host }}"
         zbxagent_active_servers:

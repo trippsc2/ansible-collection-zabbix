@@ -2,6 +2,20 @@
 _zbxserver_default_major_version: >-
   {{ _zbxserver_supported_major_versions[0] }}
 
+_zbxserver_major_version: >-
+  {{ zbxserver_major_version | default(_zbxserver_default_major_version) }}
+
+_zbxserver_configure_selinux: >-
+  {{ zbxserver_configure_selinux | default(_zbxserver_default_configure_selinux) }}
+_zbxserver_configure_mssql_odbc: >-
+  {{ zbxserver_configure_mssql_odbc | default(_zbxserver_default_configure_mssql_odbc) }}
+
+_zbxserver_additional_groups: >-
+  {{ zbxserver_additional_groups | default(_zbxserver_default_additional_groups) }}
+
+_zbxserver_firewall_type: >-
+  {{ zbxserver_firewall_type | default(_zbxserver_default_firewall_type) }}
+
 _zbxserver_package_name_by_database_type:
   postgresql: zabbix-server-pgsql
   mysql: zabbix-server-mysql
@@ -9,4 +23,4 @@ _zbxserver_package_name_by_database_type:
 _zbxserver_package_name: >-
   {{ _zbxserver_package_name_by_database_type[zbxserver_database_type] }}
 
-zbx_major_version: "{{ zbxserver_major_version }}"
+zbx_major_version: "{{ _zbxserver_major_version }}"

@@ -66,7 +66,7 @@
     - name: Ensure TimescaleDB hypertables are created
       become: true
       ansible.builtin.stat:
-        path: "{{ zbxserver_timescaledb_schema_done_file_path }}"
+        path: "{{ _zbxserver_timescaledb_schema_done_file_path }}"
       register: _zbxserver_timescaledb_file
 
     - name: Run TimescaleDB creation script, if needed
@@ -86,7 +86,7 @@
         - name: Create file to indicate that TimescaleDB hypertables are created
           become: true
           ansible.builtin.file:
-            path: "{{ zbxserver_timescaledb_schema_done_file_path }}"
+            path: "{{ _zbxserver_timescaledb_schema_done_file_path }}"
             owner: "{{ zbxserver_user }}"
             group: "{{ zbxserver_group }}"
             mode: '0644'

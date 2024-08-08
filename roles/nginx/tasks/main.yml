@@ -7,7 +7,7 @@
 
 - name: Configure SELinux
   when:
-    - zbxserver_configure_selinux
+    - _zbxserver_configure_selinux
   ansible.builtin.include_tasks: selinux.yml
 
 - name: Configure Zabbix

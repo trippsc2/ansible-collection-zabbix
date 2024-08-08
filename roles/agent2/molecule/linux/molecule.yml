@@ -36,7 +36,9 @@ provisioner:
         _zbxagent_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
       subjects:
+        zbxagent_install_ember_plus_plugin: true
         zbxagent_install_mongodb_plugin: true
+        zbxagent_install_mssql_plugin: true
         zbxagent_install_pgsql_plugin: true
         zbxagent_servers:
           - "{{ hostvars['zabbix'].ansible_host }}"

@@ -99,6 +99,180 @@ Plugins.SystemRun.LogRemoteCommands={{ zbxagent_systemrun_log_remote_commands | 
 Plugins.{{ plugin_name }}.{{ parameter_name }}={{ value }}
 {% endfor %}
 {% endfor %}
+{% if zbxagent_install_mongodb_plugin %}
+{% if zbxagent_mongodb_default_password is defined %}
+Plugins.MongoDB.Default.Password={{ zbxagent_mongodb_default_password }}
+{% endif %}
+{% if zbxagent_mongodb_default_uri is defined %}
+Plugins.MongoDB.Default.Uri={{ zbxagent_mongodb_default_uri }}
+{% endif %}
+{% if zbxagent_mongodb_default_user is defined %}
+Plugins.MongoDB.Default.User={{ zbxagent_mongodb_default_user }}
+{% endif %}
+{% if zbxagent_mongodb_keepalive is defined %}
+Plugins.MongoDB.KeepAlive={{ zbxagent_mongodb_keepalive }}
+{% endif %}
+{% for session in zbxagent_mongodb_sessions %}
+{% if session.password is defined %}
+Plugins.MongoDB.{{ session.name }}.Password={{ session.password }}
+{% endif %}
+{% if session.tls_ca_file is defined %}
+Plugins.MongoDB.{{ session.name }}.TLSCAFile={{ session.tls_ca_file }}
+{% endif %}
+{% if session.tls_cert_file is defined %}
+Plugins.MongoDB.{{ session.name }}.TLSCertFile={{ session.tls_cert_file }}
+{% endif %}
+{% if session.tls_connect is defined %}
+Plugins.MongoDB.{{ session.name }}.TLSKeyFile={{ session.tls_connect }}
+{% endif %}
+{% if session.tls_key_file is defined %}
+Plugins.MongoDB.{{ session.name }}.TLSKeyFile={{ session.tls_key_file }}
+{% endif %}
+{% endfor %}
+{% if zbxagent_mongodb_system_path is defined %}
+Plugins.MongoDB.System.Path={{ zbxagent_mongodb_system_path }}
+{% endif %}
+{% if zbxagent_mongodb_timeout is defined %}
+Plugins.MongoDB.Timeout={{ zbxagent_mongodb_timeout }}
+{% endif %}
+{% endif %}
+{% if zbxagent_install_mssql_plugin %}
+{% if zbxagent_mssql_custom_queries_dir is defined %}
+Plugins.MSSQL.CustomQueriesDir={{ zbxagent_mssql_custom_queries_dir }}
+{% endif %}
+{% if zbxagent_mssql_default_ca_cert_path is defined %}
+Plugins.MSSQL.Default.CACertPath={{ zbxagent_mssql_default_ca_cert_path }}
+{% endif %}
+{% if zbxagent_mssql_default_database is defined %}
+Plugins.MSSQL.Default.Database={{ zbxagent_mssql_default_database }}
+{% endif %}
+{% if zbxagent_mssql_default_encrypt is defined %}
+Plugins.MSSQL.Default.Encrypt={{ zbxagent_mssql_default_encrypt }}
+{% endif %}
+{% if zbxagent_mssql_default_host_name_in_certificate is defined %}
+Plugins.MSSQL.Default.HostNameInCertificate={{ zbxagent_mssql_default_host_name_in_certificate | lower }}
+{% endif %}
+{% if zbxagent_mssql_default_password is defined %}
+Plugins.MSSQL.Default.Password={{ zbxagent_mssql_default_password }}
+{% endif %}
+{% if zbxagent_mssql_default_tls_min_version is defined %}
+Plugins.MSSQL.Default.TLSMinVersion={{ zbxagent_mssql_default_tls_min_version }}
+{% endif %}
+{% if zbxagent_mssql_default_uri is defined %}
+Plugins.MSSQL.Default.Uri={{ zbxagent_mssql_default_uri }}
+{% endif %}
+{% if zbxagent_mssql_default_user is defined %}
+Plugins.MSSQL.Default.User={{ zbxagent_mssql_default_user }}
+{% endif %}
+{% if zbxagent_mssql_keepalive is defined %}
+Plugins.MSSQL.KeepAlive={{ zbxagent_mssql_keepalive }}
+{% endif %}
+{% for session in zbxagent_mssql_sessions %}
+{% if session.ca_cert_path is defined %}
+Plugins.MSSQL.{{ session.name }}.CACertPath={{ session.ca_cert_path }}
+{% endif %}
+{% if session.database is defined %}
+Plugins.MSSQL.{{ session.name }}.Database={{ session.database }}
+{% endif %}
+{% if session.encrypt is defined %}
+Plugins.MSSQL.{{ session.name }}.Encrypt={{ session.encrypt }}
+{% endif %}
+{% if session.host_name_in_certificate is defined %}
+Plugins.MSSQL.{{ session.name }}.HostNameInCertificate={{ session.host_name_in_certificate | lower }}
+{% endif %}
+{% if session.password is defined %}
+Plugins.MSSQL.{{ session.name }}.Password={{ session.password }}
+{% endif %}
+{% if session.tls_min_version is defined %}
+Plugins.MSSQL.{{ session.name }}.TLSMinVersion={{ session.tls_min_version }}
+{% endif %}
+{% if session.uri is defined %}
+Plugins.MSSQL.{{ session.name }}.Uri={{ session.uri }}
+{% endif %}
+{% if session.user is defined %}
+Plugins.MSSQL.{{ session.name }}.User={{ session.user }}
+{% endif %}
+{% endfor %}
+{% if zbxagent_mssql_system_path is defined %}
+Plugins.MSSQL.System.Path={{ zbxagent_mssql_system_path }}
+{% endif %}
+{% if zbxagent_mssql_timeout is defined %}
+Plugins.MSSQL.Timeout={{ zbxagent_mssql_timeout }}
+{% endif %}
+{% endif %}
+{% if zbxagent_install_pgsql_plugin %}
+{% if zbxagent_pgsql_call_timeout is defined %}
+Plugins.PostgreSQL.CallTimeout={{ zbxagent_pgsql_call_timeout }}
+{% endif %}
+{% if zbxagent_pgsql_custom_queries_path is defined %}
+Plugins.PostgreSQL.CustomQueriesDir={{ zbxagent_pgsql_custom_queries_path }}
+{% endif %}
+{% if zbxagent_pgsql_default_cache_mode is defined %}
+Plugins.PostgreSQL.Default.CacheMode={{ zbxagent_pgsql_default_cache_mode }}
+{% endif %}
+{% if zbxagent_pgsql_default_database is defined %}
+Plugins.PostgreSQL.Default.Database={{ zbxagent_pgsql_default_database }}
+{% endif %}
+{% if zbxagent_pgsql_default_password is defined %}
+Plugins.PostgreSQL.Default.Password={{ zbxagent_pgsql_default_password }}
+{% endif %}
+{% if zbxagent_pgsql_default_tls_ca_file is defined %}
+Plugins.PostgreSQL.Default.TLSCAFile={{ zbxagent_pgsql_default_tls_ca_file }}
+{% endif %}
+{% if zbxagent_pgsql_default_tls_cert_file is defined %}
+Plugins.PostgreSQL.Default.TLSCertFile={{ zbxagent_pgsql_default_tls_cert_file }}
+{% endif %}
+{% if zbxagent_pgsql_default_tls_connect is defined %}
+Plugins.PostgreSQL.Default.TLSConnect={{ zbxagent_pgsql_default_tls_connect }}
+{% endif %}
+{% if zbxagent_pgsql_default_tls_key_file is defined %}
+Plugins.PostgreSQL.Default.TLSKeyFile={{ zbxagent_pgsql_default_tls_key_file }}
+{% endif %}
+{% if zbxagent_pgsql_default_uri is defined %}
+Plugins.PostgreSQL.Default.Uri={{ zbxagent_pgsql_default_uri }}
+{% endif %}
+{% if zbxagent_pgsql_default_user is defined %}
+Plugins.PostgreSQL.Default.User={{ zbxagent_pgsql_default_user }}
+{% endif %}
+{% if zbxagent_pgsql_keepalive is defined %}
+Plugins.PostgreSQL.KeepAlive={{ zbxagent_pgsql_keepalive }}
+{% endif %}
+{% for session in zbxagent_pgsql_sessions %}
+{% if session.cache_mode is defined %}
+Plugins.PostgreSQL.{{ session.name }}.CacheMode={{ session.cache_mode }}
+{% endif %}
+{% if session.database is defined %}
+Plugins.PostgreSQL.{{ session.name }}.Database={{ session.database }}
+{% endif %}
+{% if session.password is defined %}
+Plugins.PostgreSQL.{{ session.name }}.Password={{ session.password }}
+{% endif %}
+{% if session.tls_ca_file is defined %}
+Plugins.PostgreSQL.{{ session.name }}.TLSCAFile={{ session.tls_ca_file }}
+{% endif %}
+{% if session.tls_cert_file is defined %}
+Plugins.PostgreSQL.{{ session.name }}.TLSCertFile={{ session.tls_cert_file }}
+{% endif %}
+{% if session.tls_connect is defined %}
+Plugins.PostgreSQL.{{ session.name }}.TLSConnect={{ session.tls_connect }}
+{% endif %}
+{% if session.tls_key_file is defined %}
+Plugins.PostgreSQL.{{ session.name }}.TLSKeyFile={{ session.tls_key_file }}
+{% endif %}
+{% if session.uri is defined %}
+Plugins.PostgreSQL.{{ session.name }}.Uri={{ session.uri }}
+{% endif %}
+{% if session.user is defined %}
+Plugins.PostgreSQL.{{ session.name }}.User={{ session.user }}
+{% endif %}
+{% endfor %}
+{% if zbxagent_pgsql_system_path is defined %}
+Plugins.PostgreSQL.System.Path={{ zbxagent_pgsql_system_path }}
+{% endif %}
+{% if zbxagent_pgsql_timeout is defined %}
+Plugins.PostgreSQL.Timeout={{ zbxagent_pgsql_timeout }}
+{% endif %}
+{% endif %}
 {% for allow_key in zbxagent_allow_keys %}
 AllowKey={{ allow_key }}
 {% endfor %}
