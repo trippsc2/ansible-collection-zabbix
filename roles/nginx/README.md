@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.nginx
-Version: 1.1.0
+Version: 1.1.1
 
 This role installs NGINX as a web frontend for Zabbix Server on a Linux machine.
 
