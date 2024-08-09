@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.agent2
-Version: 1.0.0
+Version: 1.1.0
 
 This role installs the Zabbix Agent 2 on a Linux or Windows machine.
 
@@ -12,6 +12,7 @@ This role installs the Zabbix Agent 2 on a Linux or Windows machine.
 | Debian | <ul><li>bullseye</li><li>bookworm</li></ul> |
 | EL | <ul><li>8</li><li>9</li></ul> |
 | Ubuntu | <ul><li>focal</li><li>jammy</li><li>noble</li></ul> |
+| Windows | <ul><li>2019</li><li>2022</li></ul> |
 
 ## Dependencies
 
@@ -27,31 +28,18 @@ This role installs the Zabbix Agent 2 on a Linux or Windows machine.
 ## Role Arguments
 |Option|Description|Type|Required|Choices|Default|
 |---|---|---|---|---|---|
-| vmware_hostname | <p>The hostname or IP address of the vCenter server or standalone ESXi host.</p><p>Required if *zbxagent_configure_vmware_monitoring* is `true`.</p> | str | no |  |  |
-| vmware_username | <p>The username to use for connecting to the vCenter server or standalone ESXi host.</p><p>Required if *zbxagent_configure_vmware_monitoring* is `true`.</p> | str | no |  |  |
-| vmware_password | <p>The password to use for connecting to the vCenter server or standalone ESXi host.</p><p>Required if *zbxagent_configure_vmware_monitoring* is `true`.</p> | str | no |  |  |
-| vmware_datacenter | <p>The name of the datacenter in which the VM is located.</p><p>If using a standalone ESXi host, this should be set to `ha-datacenter`.</p><p>Required if *zbxagent_configure_vmware_monitoring* is `true`.</p> | str | no |  |  |
-| vmware_vm_name | <p>The name of the VM to monitor.</p><p>If *zbxagent_configure_vmware_monitoring* is `true`, this is required if *vmware_vm_uuid* is not specified.</p> | str | no |  |  |
-| vmware_vm_uuid | <p>The UUID of the VM to monitor.</p><p>If *zbxagent_configure_vmware_monitoring* is `true`, this is required if *vmware_vm_name* is not specified.</p> | str | no |  |  |
-| vmware_vm_folder | <p>The folder in which the VM is located.</p><p>If *zbxagent_configure_vmware_monitoring* is `true`, this is required if *vmware_vm_name* is specified.</p><p>For formatting, see https://docs.ansible.com/ansible/latest/collections/community/vmware/vmware_guest_info_module.html#parameter-folder.</p> | str | no |  |  |
-| zabbix_host | <p>The hostname or IP address of the Zabbix server for API requests.</p> | str | yes |  |  |
-| zabbix_port | <p>The port on which to connect to Zabbix server for API requests.</p> | int | yes |  |  |
-| zabbix_ssl | <p>Whether to use SSL for API requests.</p> | bool | no |  | false |
-| zabbix_validate_certs | <p>Whether to validate SSL certificates for API requests.</p><p>If not specified, the default behavior is to validate certificates.</p> | bool | no |  | false |
-| zabbix_url_path | <p>The URL path for the Zabbix API.</p><p>If using Apache for web frontend, this should be set to `zabbix` unless configured otherwise.</p><p>If using NGINX for web frontend, this should be set to an empty string unless configured otherwise.</p> | str | no |  |  |
-| zabbix_username | <p>The username to use for API requests.</p> | str | yes |  |  |
-| zabbix_password | <p>The password to use for API requests.</p> | str | yes |  |  |
 | zbxagent_major_version | <p>The major version of the Zabbix Agent 2 to install.</p><p>This is ignored on Windows systems, as Chocolatey installs the latest version always.</p> | str | no | <ul><li>7.0</li><li>6.4</li></ul> | 7.0 |
 | zbxagent_configure_logrotate | <p>Whether to configure logrotate for the Zabbix Agent 2 log file.</p><p>This is ignored on Windows systems.</p><p>If *zbxagent_log_type* is set to `file`, this is `true` by default.  Otherwise, it is `false`.</p><p>If set to `true`, the *zbxagent_log_size* should be set to `0` to prevent conflicts.</p> | bool | no |  | true |
-| zbxagent_configure_firewalld | <p>Whether to configure firewalld for the Zabbix Agent 2.</p><p>This is ignored on Windows systems.</p><p>For EL and Debian systems, this is `true` by default.</p><p>For other systems, this is `false` by default.</p> | bool | no |  | true |
-| zbxagent_configure_ufw | <p>Whether to configure ufw for the Zabbix Agent 2.</p><p>This is ignored on Windows systems.</p><p>For Ubuntu systems, this is `true` by default.</p><p>For other systems, this is `false` by default.</p> | bool | no |  | true |
-| zbxagent_configure_windows_firewall | <p>Whether to configure the Windows Firewall for the Zabbix Agent 2.</p><p>This is ignored on non-Windows systems.</p> | bool | no |  | true |
-| zbxagent_configure_vmware_monitoring | <p>Whether to configure VMware monitoring for the Zabbix Agent 2.</p> | bool | no |  | false |
+| zbxagent_configure_firewall | <p>Whether to configure the host firewall for use with Zabbix Agent 2.</p> | bool | no |  | true |
+| zbxagent_install_ember_plus_plugin | <p>Whether to install the Ember+ plugin for the Zabbix Agent 2 on Linux systems.</p><p>This is ignored on Windows systems.</p> | bool | no |  | false |
+| zbxagent_install_mongodb_plugin | <p>Whether to install the MongoDB plugin for the Zabbix Agent 2.</p> | bool | no |  | false |
+| zbxagent_install_mssql_plugin | <p>Whether to install the MSSQL plugin for the Zabbix Agent 2.</p> | bool | no |  | false |
+| zbxagent_install_pgsql_plugin | <p>Whether to install the PostgreSQL plugin for the Zabbix Agent 2.</p> | bool | no |  | false |
 | zbxagent_user | <p>The user as which the Zabbix Agent 2 service will run.</p><p>This is ignored on Windows systems.</p><p>If not set to `zabbix`, the user must be created before running this role.</p> | str | no |  | zabbix |
 | zbxagent_group | <p>The primary group of the user as which the Zabbix Agent 2 service will run.</p><p>This is ignored on Windows systems.</p><p>If not set to `zabbix`, the group must be created before running this role.</p> | str | no |  | zabbix |
 | zbxagent_pid_file | <p>The path to the PID file for the Zabbix Agent 2 service.</p><p>This is ignored on Windows systems.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pidfile</p> | str | no |  | /run/zabbix/zabbix_agent2.pid |
 | zbxagent_log_type | <p>The type of logging to use for the Zabbix Agent 2.</p><p>The value `system` is only supported on Linux systems.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logtype</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logtype</p> | str | no | <ul><li>file</li><li>console</li><li>system</li></ul> | file |
-| zbxagent_log_file | <p>The path to the log file for the Zabbix Agent 2.</p><p>For Linux systems, this is `/var/log/zabbix/zabbix_agent2.log` by default.</p><p>For Windows systems, this is `C:\ProgramData\Zabbix Agent 2\zabbix_agent2.log` by default.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logfile</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logfile</p> | path | no |  | OS specific |
+| zbxagent_log_file | <p>The path to the log file for the Zabbix Agent 2.</p><p>For Linux systems, this is `/var/log/zabbix/zabbix_agent2.log` by default.</p><p>For Windows systems, this is `C:\ProgramData\Zabbix Agent 2\zabbix_agent2.log` by default.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logfile</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logfile</p> | path | no |  |  |
 | zbxagent_log_file_size | <p>The maximum size of the log file in MB.</p><p>Valid values are between `0` and `1024`.</p><p>If set to `0`, the log file will not be rotated.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logfilesize</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logfilesize</p> | int | no |  | 0 |
 | zbxagent_source_ip | <p>The IP address to use as the source IP for active checks.</p><p>If not specified, the default behavior is to use the IP address of the default route.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#sourceip</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#sourceip</p> | str | no |  |  |
 | zbxagent_servers | <p>A list of Zabbix servers for which the agent will allow connections.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#server</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#server</p> | list of 'str' | yes |  |  |
@@ -79,7 +67,7 @@ This role installs the Zabbix Agent 2 on a Linux or Windows machine.
 | zbxagent_plugin_timeout | <p>The timeout for plugin execution in seconds.</p><p>If not specified, the *zbxagent_timeout* value will be used.</p><p>Valid values are between `1` and `30`.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#plugintimeout</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#plugintimeout</p> | int | no |  |  |
 | zbxagent_plugin_socket | <p>The path to the control socket for plugin execution.</p><p>This is ignored on Windows systems.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pluginsocket</p> | path | no |  |  |
 | zbxagent_unsafe_user_parameters | <p>Whether to allow parameters without sanitization.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#unsafeuserparameters</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#unsafeuserparameters</p> | bool | no |  | false |
-| zbxagent_user_parameters | <p>A dictionary of user parameters.</p><p>The key is the user parameter name and the value is the command to execute. (e.g. UserParameter=`name`,`command`)</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#userparameters</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#userparameter</p> | dict | no |  |  |
+| zbxagent_user_parameters | <p>A dictionary of user parameters.</p><p>The key is the user parameter name and the value is the command to execute. (e.g. UserParameter=<name>,<command>)</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#userparameters</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#userparameter</p> | dict | no |  |  |
 | zbxagent_user_parameter_dir | <p>The working directory when executing scripts for user parameters.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#userparameterdir</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#userparameterdir</p> | path | no |  |  |
 | zbxagent_control_socket | <p>The path to the control socket for the Zabbix Agent 2.</p><p>This is ignored on Windows systems.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#controlsocket</p> | path | no |  | /tmp/agent.sock |
 | zbxagent_tls_connect | <p>The type of connection to use for connections to the Zabbix server for active checks.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsconnect</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsconnect</p> | str | no | <ul><li>unencrypted</li><li>psk</li><li>cert</li></ul> | unencrypted |
@@ -95,6 +83,47 @@ This role installs the Zabbix Agent 2 on a Linux or Windows machine.
 | zbxagent_log_max_lines_per_second | <p>The maximum number of log lines per second to send to the Zabbix server/proxy for monitoring.</p><p>Valid values are between `1` and `1000`.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logmaxlinespersecond</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logmaxlinespersecond</p> | int | no |  | 20 |
 | zbxagent_systemrun_log_remote_commands | <p>Whether to log remote commands in the systemrun log.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#systemrunlogremotecommands</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#systemrunlogremotecommands</p> | bool | no |  | false |
 | zbxagent_plugin_parameters | <p>A dictionary of parameters for plugins.</p><p>The key is the plugin name and the value is a dictionary of parameters.</p><p>See individual plugin documentation for valid parameters.</p> | dict | no |  |  |
+| zbxagent_ember_plus_default_uri | <p>The default URI for the Ember+ plugin.</p><p>This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin</p> | str | no |  |  |
+| zbxagent_ember_plus_keepalive | <p>The interval at which the Ember+ plugin will send keepalive messages in seconds.</p><p>Valid values are between `60` and `900`.</p><p>This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin</p> | int | no |  |  |
+| zbxagent_ember_plus_sessions | <p>A list of Ember+ sessions to configure.</p><p>This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin</p> | list of dicts of 'zbxagent_ember_plus_sessions' options | no |  |  |
+| zbxagent_ember_plus_system_path | <p>The path to the Ember+ system file.</p><p>This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin</p> | path | no |  |  |
+| zbxagent_ember_plus_timeout | <p>The timeout for Ember+ plugin requests in seconds.</p><p>Valid values are between `1` and `30`.</p><p>This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin</p> | int | no |  |  |
+| zbxagent_mongodb_default_password | <p>The default password for the MongoDB plugin.</p><p>This is ignored if *zbxagent_install_mongodb_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | str | no |  |  |
+| zbxagent_mongodb_default_uri | <p>The default URI for the MongoDB plugin.</p><p>This is ignored if *zbxagent_install_mongodb_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | str | no |  |  |
+| zbxagent_mongodb_default_user | <p>The default user for the MongoDB plugin.</p><p>This is ignored if *zbxagent_install_mongodb_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | str | no |  |  |
+| zbxagent_mongodb_keepalive | <p>The interval at which the MongoDB plugin will send keepalive messages in seconds.</p><p>Valid values are between `60` and `900`.</p><p>This is ignored if *zbxagent_install_mongodb_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | int | no |  |  |
+| zbxagent_mongodb_sessions | <p>A list of MongoDB sessions to configure.</p><p>This is ignored if *zbxagent_install_mongodb_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | list of dicts of 'zbxagent_mongodb_sessions' options | no |  |  |
+| zbxagent_mongodb_system_path | <p>The path to the MongoDB system file.</p><p>This is ignored if *zbxagent_install_mongodb_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | path | no |  |  |
+| zbxagent_mongodb_timeout | <p>The timeout for MongoDB plugin requests in seconds.</p><p>Valid values are between `1` and `30`.</p><p>This is ignored if *zbxagent_install_mongodb_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | int | no |  |  |
+| zbxagent_mssql_custom_queries_dir | <p>The path to the directory containing custom queries for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | path | no |  |  |
+| zbxagent_mssql_default_ca_cert_path | <p>The path to the default CA certificate file for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | path | no |  |  |
+| zbxagent_mssql_default_database | <p>The default database for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+| zbxagent_mssql_default_encrypt | <p>The default encryption setting for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no | <ul><li>true</li><li>false</li><li>strict</li><li>disable</li></ul> |  |
+| zbxagent_mssql_default_host_name_in_certificate | <p>Whether to use the host name in the certificate for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | bool | no |  | false |
+| zbxagent_mssql_default_password | <p>The default password for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+| zbxagent_mssql_default_tls_min_version | <p>The default TLS minimum version for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no | <ul><li>1.0</li><li>1.1</li><li>1.2</li><li>1.3</li></ul> |  |
+| zbxagent_mssql_default_trust_server_certificate | <p>Whether to trust the server certificate for the MSSQL plugin without verifying it.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | bool | no |  | false |
+| zbxagent_mssql_default_uri | <p>The default URI for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+| zbxagent_mssql_default_user | <p>The default user for the MSSQL plugin.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+| zbxagent_mssql_keepalive | <p>The interval at which the MSSQL plugin will send keepalive messages in seconds.</p><p>Valid values are between `60` and `900`.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | int | no |  |  |
+| zbxagent_mssql_sessions | <p>A list of MSSQL sessions to configure.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | list of dicts of 'zbxagent_mssql_sessions' options | no |  |  |
+| zbxagent_mssql_system_path | <p>The path to the MSSQL system file.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | path | no |  |  |
+| zbxagent_mssql_timeout | <p>The timeout for MSSQL plugin requests in seconds.</p><p>Valid values are between `1` and `30`.</p><p>This is ignored if *zbxagent_install_mssql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | int | no |  |  |
+| zbxagent_pgsql_call_timeout | <p>The timeout for PostgreSQL plugin requests.</p><p>Valid values are between `1` and `30`.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | int | no |  |  |
+| zbxagent_pgsql_custom_queries_dir | <p>The path to the directory containing custom queries for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| zbxagent_pgsql_default_cache_mode | <p>The default cache mode for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no | <ul><li>prepare</li><li>describe</li></ul> |  |
+| zbxagent_pgsql_default_database | <p>The default database for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
+| zbxagent_pgsql_default_password | <p>The default password for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
+| zbxagent_pgsql_default_tls_ca_file | <p>The default CA certificate file for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| zbxagent_pgsql_default_tls_cert_file | <p>The default certificate file for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| zbxagent_pgsql_default_tls_connect | <p>The default TLS connection setting for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no | <ul><li>required</li><li>verify_ca</li><li>verify_full</li></ul> |  |
+| zbxagent_pgsql_default_tls_key_file | <p>The default key file for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| zbxagent_pgsql_default_uri | <p>The default URI for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
+| zbxagent_pgsql_default_user | <p>The default user for the PostgreSQL plugin.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
+| zbxagent_pgsql_keepalive | <p>The interval at which the PostgreSQL plugin will send keepalive messages in seconds.</p><p>Valid values are between `60` and `900`.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | int | no |  |  |
+| zbxagent_pgsql_sessions | <p>A list of PostgreSQL sessions to configure.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | list of dicts of 'zbxagent_pgsql_sessions' options | no |  |  |
+| zbxagent_pgsql_system_path | <p>The path to the PostgreSQL system file.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| zbxagent_pgsql_timeout | <p>The timeout for PostgreSQL plugin requests in seconds.</p><p>Valid values are between `1` and `30`.</p><p>This is ignored if *zbxagent_install_pgsql_plugin* is `false`.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | int | no |  |  |
 | zbxagent_allow_keys | <p>A list of keys to allow for passive checks.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#allowkey</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#allowkey</p> | list of 'str' | no |  |  |
 | zbxagent_deny_keys | <p>A list of keys to deny for passive checks.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#denykey</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#denykey</p> | list of 'str' | no |  |  |
 | zbxagent_force_active_checks_on_start | <p>Whether to force active checks on start.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#forceactivechecksonstart</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#forceactivechecksonstart</p> | bool | no |  | false |
@@ -102,50 +131,58 @@ This role installs the Zabbix Agent 2 on a Linux or Windows machine.
 | zbxagent_logrotate_retention | <p>The number of rotated log files to retain.</p><p>This is ignored on Windows systems.</p> | int | no |  | 14 |
 | zbxagent_logrotate_mode | <p>The mode of the rotated log files.</p><p>This is ignored on Windows systems.</p> | str | no |  | 0640 |
 | zbxagent_local_scripts | <p>A list of local scripts to be used by the Zabbix Agent 2.</p> | list of dicts of 'zbxagent_local_scripts' options | no |  |  |
-| zbx_host_name | <p>The name of the host on the Zabbix Server.</p><p>On Linux systems, this will default to *inventory_hostname* in lower case.</p><p>On Windows systems, this will default to *inventory_hostname* in upper case.</p> | str | no |  | OS specific |
-| zbx_host_visible_name | <p>The visible name of the host on the Zabbix Server.</p><p>If not specified, this will default to *inventory_hostname* in upper case, if that is different from *zbx_host_name*.</p> | str | no |  |  |
-| zbx_host_groups | <p>A list of host groups to which the host on the Zabbix Server belongs.</p> | list of 'str' | yes |  |  |
-| zbx_host_interfaces | <p>A list of interfaces for the host on the Zabbix Server.</p> | list of dicts of 'zbx_host_interfaces' options | yes |  |  |
-| zbx_host_templates | <p>A list of templates to link to the host on the Zabbix Server.</p> | list of 'str' | yes |  |  |
-| zbx_host_macros | <p>A dictionary of macros to set for the host on the Zabbix Server.</p> | list of dicts of 'zbx_host_macros' options | no |  |  |
+| zbxagent_firewall_type | <p>The type of host firewall to configure for use with Zabbix Agent 2.</p><p>This is ignored on Windows systems.</p> | str | no | <ul><li>firewalld</li><li>ufw</li></ul> |  |
+
+### Options for zbxagent_ember_plus_sessions
+|Option|Description|Type|Required|Choices|Default|
+|---|---|---|---|---|---|
+| name | <p>The name of the session.</p> | str | yes |  |  |
+| uri | <p>The URI for the session.</p> | str | yes |  |  |
+
+### Options for zbxagent_mongodb_sessions
+|Option|Description|Type|Required|Choices|Default|
+|---|---|---|---|---|---|
+| name | <p>The name of the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | str | yes |  |  |
+| tls_ca_file | <p>The path to the CA certificate file for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | path | no |  |  |
+| tls_cert_file | <p>The path to the certificate file for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | path | no |  |  |
+| tls_connect | <p>Whether to use and verify TLS for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | str | no | <ul><li>required</li><li>verify_ca</li><li>verify_full</li></ul> |  |
+| tls_key_file | <p>The path to the key file for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | path | no |  |  |
+| uri | <p>The URI for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | str | no |  |  |
+| user | <p>The user for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin</p> | str | no |  |  |
+
+### Options for zbxagent_mssql_sessions
+|Option|Description|Type|Required|Choices|Default|
+|---|---|---|---|---|---|
+| name | <p>The name of the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | yes |  |  |
+| ca_cert_path | <p>The path to the CA certificate file for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | path | no |  |  |
+| database | <p>The default database for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+| encrypt | <p>The encryption setting for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no | <ul><li>true</li><li>false</li><li>strict</li><li>disable</li></ul> |  |
+| host_name_in_certificate | <p>Whether to use the host name in the certificate for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | bool | no |  | false |
+| password | <p>The password for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+| tls_min_version | <p>The TLS minimum version for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no | <ul><li>1.0</li><li>1.1</li><li>1.2</li><li>1.3</li></ul> |  |
+| trust_server_certificate | <p>Whether to trust the server certificate for the session without verifying it.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | bool | no |  | false |
+| uri | <p>The URI for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+| user | <p>The user for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin</p> | str | no |  |  |
+
+### Options for zbxagent_pgsql_sessions
+|Option|Description|Type|Required|Choices|Default|
+|---|---|---|---|---|---|
+| name | <p>The name of the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | yes |  |  |
+| cache_mode | <p>The cache mode for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no | <ul><li>prepare</li><li>describe</li></ul> |  |
+| database | <p>The default database for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
+| password | <p>The password for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
+| tls_ca_file | <p>The CA certificate file for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| tls_cert_file | <p>The certificate file for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| tls_connect | <p>The TLS connection setting for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no | <ul><li>required</li><li>verify_ca</li><li>verify_full</li></ul> |  |
+| tls_key_file | <p>The key file for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | path | no |  |  |
+| uri | <p>The URI for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
+| user | <p>The user for the session.</p><p>Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin</p> | str | no |  |  |
 
 ### Options for zbxagent_local_scripts
 |Option|Description|Type|Required|Choices|Default|
 |---|---|---|---|---|---|
 | src | <p>The path to the script on the control node.</p> | path | yes |  |  |
 | dest | <p>The destination path for the script on the target node.</p> | path | yes |  |  |
-
-### Options for zbx_host_interfaces
-|Option|Description|Type|Required|Choices|Default|
-|---|---|---|---|---|---|
-| type | <p>Interface type to add.</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/type</p> | str | no | <ul><li>agent</li><li>snmp</li><li>ipmi</li><li>jmx</li></ul> | agent |
-| main | <p>Whether the interface is used as default.</p><p>If multiple interfaces with the same type are provided, only one can be default.</p><p>`0` (not default), `1` (default)</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/main</p> | int | yes | <ul><li>0</li><li>1</li></ul> |  |
-| useip | <p>Connect to host interface with IP address instead of DNS name.</p><p>`0` (don’t use ip), `1` (use ip)</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/useip</p> | int | yes | <ul><li>0</li><li>1</li></ul> |  |
-| ip | <p>IP address used by host interface.</p><p>Required if useip=`1`.</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/ip</p> | str | no |  |  |
-| dns | <p>DNS name of the host interface.</p><p>Required if useip=`0`.</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/dns</p> | str | no |  |  |
-| port | <p>Port used by host interface.</p><p>If not specified, default port for each type of interface is used</p><p>`10050` if type=”agent”</p><p>`161` if type=”snmp”</p><p>`623` if type=”ipmi”</p><p>`12345` if type=”jmx”</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/port</p> | int | no |  |  |
-| details | <p>Additional details for SNMP host interfaces.</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details</p> | dict of 'details' options | no |  |  |
-
-### Options for zbx_host_interfaces > details
-|Option|Description|Type|Required|Choices|Default|
-|---|---|---|---|---|---|
-| authpassphrase | <p>SNMPv3 authentication passphrase.</p><p>Used when securitylevel=`1`(authNoPriv) or securitylevel=`2`(AuthPriv).</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/authpassphrase</p> | str | no |  |  |
-| authprotocol | <p>SNMPv3 authentication protocol.</p><p>Used when securitylevel=1(authNoPriv) or securitylevel=2(AuthPriv).</p><p>`0` (MD5), `1` (SHA1), `2` (SHA224), `3` (SHA256), `4` (SHA384), `5` (SHA512)</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/authprotocol</p> | int | no | <ul><li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul> | 0 |
-| bulk | <p>Whether to use bulk SNMP requests.</p><p>`0` (don’t use bulk requests), `1` (use bulk requests)</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/bulk</p> | int | no | <ul><li>0</li><li>1</li></ul> | 1 |
-| community | <p>SNMPv1 and SNMPv2 community string.</p><p>Required when version=`1` or version=`2`.</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/community</p> | str | no |  |  |
-| contextname | <p>SNMPv3 context name.</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/contextname</p> | str | no |  |  |
-| privpassphrase | <p>SNMPv3 privacy passphrase.</p><p>Used when securitylevel=`2`(AuthPriv).</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/privpassphrase</p> | str | no |  |  |
-| privprotocol | <p>SNMPv3 privacy protocol.</p><p>Used when securitylevel=`2`(AuthPriv).</p><p>`0` (DES), `1` (AES128), `2` (AES192), `3` (AES256), `4` (AES192C), `5` (AES256C)</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/privprotocol</p> | int | no | <ul><li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul> | 0 |
-| securitylevel | <p>SNMPv3 security level.</p><p>`0` (noAuthNoPriv), `1` (authNoPriv), `2` (AuthPriv)</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/securitylevel</p> | int | no | <ul><li>0</li><li>1</li><li>2</li></ul> | 0 |
-| securityname | <p>SNMPv3 security name.</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/securityname</p> | str | no |  |  |
-| version | <p>SNMP version.</p><p>`1` (SNMPv1), `2` (SNMPv2c), `3` (SNMPv3)</p><p>Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/version</p> | int | no | <ul><li>1</li><li>2</li><li>3</li></ul> | 2 |
-
-### Options for zbx_host_macros
-|Option|Description|Type|Required|Choices|Default|
-|---|---|---|---|---|---|
-| name | <p>The macro name.</p> | str | yes |  |  |
-| type | <p>The macro type.</p> | str | no | <ul><li>text</li><li>secret</li><li>vault</li></ul> | text |
-| value | <p>The macro value.</p> | str | yes |  |  |
 
 
 ## License

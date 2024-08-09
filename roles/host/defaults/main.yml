@@ -1,0 +1,4 @@
+---
+zbxhost_configure_vmware_monitoring: false
+
+zbxhost_macros: []

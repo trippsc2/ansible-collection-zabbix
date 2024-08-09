@@ -1,0 +1,49 @@
+---
+- name: Validate VMware
+  when:
+    - zbxhost_configure_vmware_monitoring
+    - zbxhost_vmware_uuid is not defined
+  block:
+    - name: Validate VMware hostname
+      ansible.builtin.assert:
+        that:
+          - vmware_hostname is defined
+          - vmware_hostname is community.general.fqdn_valid or
+            vmware_hostname is ansible.utils.ip_address
+        fail_msg: "The 'vmware_hostname' variable is not defined or is not a valid FQDN or IP address."
+        success_msg: "The 'vmware_hostname' variable is valid."
+
+    - name: Validate VMware username is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_username is defined
+        fail_msg: "The 'vmware_username' variable is not defined."
+        success_msg: "The 'vmware_username' variable is defined."
+    
+    - name: Validate VMware password is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_password is defined
+        fail_msg: "The 'vmware_password' variable is not defined."
+        success_msg: "The 'vmware_password' variable is defined."
+
+    - name: Validate VMware datacenter is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_datacenter is defined
+        fail_msg: "The 'vmware_datacenter' variable is not defined."
+        success_msg: "The 'vmware_datacenter' variable is defined."
+
+    - name: Validate VMware VM name or UUID is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_vm_name is defined
+        fail_msg: "The 'vmware_vm_name' variable is not defined."
+        success_msg: "The 'vmware_vm_name' variable is defined."
+    
+    - name: Validate VMware VM Folder is defined when VM name is defined
+      ansible.builtin.assert:
+        that:
+          - vmware_vm_folder is defined
+        fail_msg: "The 'vmware_vm_folder' variable is not defined."
+        success_msg: "The 'vmware_vm_folder' variable is defined."

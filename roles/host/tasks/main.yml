@@ -1,0 +1,21 @@
+---
+- name: Validate
+  ansible.builtin.import_tasks: validate.yml
+
+- name: Configure host in Zabbix Server
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_host: "{{ zabbix_host }}"
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(true) }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  ansible.builtin.include_tasks: host.yml
+
+- name: Configure VMware host macros
+  when:
+    - zbxhost_configure_vmware_monitoring
+  ansible.builtin.include_tasks: vmware.yml

@@ -1,0 +1,355 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix Host
+    description:
+      - This role configures a host within Zabbix Server.
+    author:
+      - Jim Tarpley
+    options:
+      vmware_hostname:
+        type: str
+        required: false
+        description:
+          - The hostname or IP address of the vCenter server or standalone ESXi host.
+          - If *zbxhost_vmware_uuid* is not defined and *zbxhost_configure_vmware_monitoring* is `true`, this is required.
+      vmware_username:
+        type: str
+        required: false
+        description:
+          - The username to use for connecting to the vCenter server or standalone ESXi host.
+          - If *zbxhost_vmware_uuid* is not defined and *zbxhost_configure_vmware_monitoring* is `true`, this is required.
+      vmware_password:
+        type: str
+        required: false
+        description:
+          - The password to use for connecting to the vCenter server or standalone ESXi host.
+          - If *zbxhost_vmware_uuid* is not defined and *zbxhost_configure_vmware_monitoring* is `true`, this is required.
+      vmware_datacenter:
+        type: str
+        required: false
+        description:
+          - The name of the datacenter in which the VM is located.
+          - If using a standalone ESXi host, this should be set to `ha-datacenter`.
+          - If *zbxhost_vmware_uuid* is not defined and *zbxhost_configure_vmware_monitoring* is `true`, this is required.
+      vmware_vm_folder:
+        type: str
+        required: false
+        description:
+          - The folder in which the VM is located.
+          - If *zbxhost_vmware_uuid* is not defined and *zbxhost_configure_vmware_monitoring* is `true`, this is required.
+          - For formatting, see https://docs.ansible.com/ansible/latest/collections/community/vmware/vmware_guest_info_module.html#parameter-folder.
+      vmware_vm_name:
+        type: str
+        required: false
+        description:
+          - The name of the VM to monitor.
+          - If *zbxhost_vmware_uuid* is not defined and *zbxhost_configure_vmware_monitoring* is `true`, this is required.
+      zabbix_host:
+        type: str
+        required: true
+        description:
+          - The hostname or IP address of the Zabbix server for API requests.
+      zabbix_port:
+        type: int
+        required: true
+        description:
+          - The port on which to connect to Zabbix server for API requests.
+      zabbix_url_path:
+        type: str
+        required: false
+        default: ''
+        description:
+          - The URL path for the Zabbix API.
+          - If using Apache for web frontend, this should be set to `zabbix` unless configured otherwise.
+          - If using NGINX for web frontend, this should be set to an empty string unless configured otherwise.
+      zabbix_ssl:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to use SSL for API requests.
+      zabbix_validate_certs:
+        type: bool
+        required: false
+        description:
+          - Whether to validate SSL certificates for API requests.
+          - If not specified, the default behavior is to validate certificates.
+      zabbix_username:
+        type: str
+        required: true
+        description:
+          - The username to use for API requests.
+      zabbix_password:
+        type: str
+        required: true
+        description:
+          - The password to use for API requests.
+      zbxhost_configure_vmware_monitoring:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to configure VMware monitoring for the host.
+      zbxagent_tls_connect:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - psk
+          - cert
+        description:
+          - The type of connection to use for connections to the Zabbix server for active checks.
+          - This should not be supplied when not using a Zabbix agent interface.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsconnect'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsconnect'
+      zbxagent_tls_accept:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - psk
+          - cert
+        description:
+          - The type of connection to accept for connections from the Zabbix server.
+          - This should not be supplied when not using a Zabbix agent interface.
+          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsaccept'
+          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsaccept'
+      zbxhost_name:
+        type: str
+        required: true
+        description:
+          - The name of the host on the Zabbix Server.
+      zbxhost_visible_name:
+        type: str
+        required: false
+        description:
+          - The visible name of the host on the Zabbix Server.
+          - If not specified, the visible name will not be set on the host.
+      zbxhost_groups:
+        type: list
+        required: true
+        elements: str
+        description:
+          - A list of host groups to which the host on the Zabbix Server belongs.
+      zbxhost_interfaces:
+        type: list
+        required: true
+        elements: dict
+        description:
+          - A list of interfaces for the host on the Zabbix Server.
+        options:
+          type:
+            type: str
+            required: false
+            default: agent
+            choices:
+              - agent
+              - snmp
+              - ipmi
+              - jmx
+            description:
+              - Interface type to add.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/type'
+          main:
+            type: int
+            required: true
+            choices:
+              - 0
+              - 1
+            description:
+              - Whether the interface is used as default.
+              - If multiple interfaces with the same type are provided, only one can be default.
+              - '`0` (not default), `1` (default)'
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/main'
+          useip:
+            type: int
+            required: true
+            choices:
+              - 0
+              - 1
+            description:
+              - Connect to host interface with IP address instead of DNS name.
+              - '`0` (don’t use ip), `1` (use ip)'
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/useip'
+          ip:
+            type: str
+            required: false
+            description:
+              - IP address used by host interface.
+              - Required if useip=`1`.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/ip'
+          dns:
+            type: str
+            required: false
+            description:
+              - DNS name of the host interface.
+              - Required if useip=`0`.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/dns'
+          port:
+            type: int
+            required: false
+            description:
+              - Port used by host interface.
+              - If not specified, default port for each type of interface is used
+              - '`10050` if type=”agent”'
+              - '`161` if type=”snmp”'
+              - '`623` if type=”ipmi”'
+              - '`12345` if type=”jmx”'
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/port'
+          details:
+            type: dict
+            required: false
+            description:
+              - Additional details for SNMP host interfaces.
+              - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details'
+            options:
+              authpassphrase:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 authentication passphrase.
+                  - Used when securitylevel=`1`(authNoPriv) or securitylevel=`2`(AuthPriv).
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/authpassphrase'
+              authprotocol:
+                type: int
+                required: false
+                default: 0
+                choices:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                description:
+                  - SNMPv3 authentication protocol.
+                  - Used when securitylevel=1(authNoPriv) or securitylevel=2(AuthPriv).
+                  - '`0` (MD5), `1` (SHA1), `2` (SHA224), `3` (SHA256), `4` (SHA384), `5` (SHA512)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/authprotocol'
+              bulk:
+                type: int
+                required: false
+                default: 1
+                choices:
+                  - 0
+                  - 1
+                description:
+                  - Whether to use bulk SNMP requests.
+                  - '`0` (don’t use bulk requests), `1` (use bulk requests)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/bulk'
+              community:
+                type: str
+                required: false
+                description:
+                  - SNMPv1 and SNMPv2 community string.
+                  - Required when version=`1` or version=`2`.
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/community'
+              contextname:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 context name.
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/contextname'
+              privpassphrase:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 privacy passphrase.
+                  - Used when securitylevel=`2`(AuthPriv).
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/privpassphrase'
+              privprotocol:
+                type: int
+                required: false
+                default: 0
+                choices:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                description:
+                  - SNMPv3 privacy protocol.
+                  - Used when securitylevel=`2`(AuthPriv).
+                  - '`0` (DES), `1` (AES128), `2` (AES192), `3` (AES256), `4` (AES192C), `5` (AES256C)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/privprotocol'
+              securitylevel:
+                type: int
+                required: false
+                default: 0
+                choices:
+                  - 0
+                  - 1
+                  - 2
+                description:
+                  - SNMPv3 security level.
+                  - '`0` (noAuthNoPriv), `1` (authNoPriv), `2` (AuthPriv)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/securitylevel'
+              securityname:
+                type: str
+                required: false
+                description:
+                  - SNMPv3 security name.
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/securityname'
+              version:
+                type: int
+                required: false
+                default: 2
+                choices:
+                  - 1
+                  - 2
+                  - 3
+                description:
+                  - SNMP version.
+                  - '`1` (SNMPv1), `2` (SNMPv2c), `3` (SNMPv3)'
+                  - 'Reference: https://docs.ansible.com/ansible/latest/collections/community/zabbix/zabbix_host_module.html#parameter-interfaces/details/version'
+      zbxhost_templates:
+        type: list
+        required: true
+        elements: str
+        description:
+          - A list of templates to link to the host on the Zabbix Server.
+      zbxhost_proxy:
+        type: str
+        required: false
+        description:
+          - The name of the Zabbix proxy to use for the host.
+          - If not specified, the host will not use a proxy.
+      zbxhost_macros:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - A dictionary of macros to set for the host on the Zabbix Server.
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - The macro name.
+          type:
+            type: str
+            required: false
+            default: text
+            choices:
+              - text
+              - secret
+              - vault
+            description:
+              - The macro type.
+          value:
+            type: str
+            required: true
+            description:
+              - The macro value.
+      zbxhost_vmware_uuid:
+        type: str
+        required: false
+        description:
+          - The UUID of the VM to monitor.
+          - If *zbxhost_configure_vmware_monitoring* is `false`, this is ignored.
+          - Otherwise, this value will be used to set the VM UUID host macro, instead of querying the vCenter server or standalone ESXi host.

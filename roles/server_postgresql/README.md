@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.server_postgresql
-Version: 1.0.0
+Version: 1.1.0
 
 ['This role installs PostgreSQL server for use by a Zabbix server.', 'This role uses trippsc2.postgresql.install to install PostgreSQL.']
 
@@ -31,7 +31,7 @@ Version: 1.0.0
 |---|---|---|---|---|---|
 | vault_url | <p>The URL for accessing HashiCorp Vault.</p><p>Alternatively, this can be configured through ansible.cfg or environment variables.</p> | str | no |  |  |
 | vault_token | <p>The token for accessing HashiCorp Vault.</p><p>Alternatively, this (or any other authentication method) can be configured through ansible.cfg or environment variables.</p> | str | no |  |  |
-| zbxserver_major_version | <p>The major version of Zabbix to install.</p><p>This defaults to the latest supported version for the OS.</p> | str | no | <ul><li>7.0</li><li>6.4</li></ul> | OS specific |
+| zbxserver_major_version | <p>The major version of Zabbix to install.</p><p>This defaults to the latest supported version for the OS.</p> | str | no | <ul><li>7.0</li><li>6.4</li></ul> |  |
 | zbxserver_pgsql_standalone | <p>Whether the PostgreSQL server is separate from the Zabbix server.</p><p>If set to `true`, *pgsql_listen_on_local_only* defaults to `false` (and must be `false`) and *pgsql_listen_on_all_addresses* defaults to `true`.</p><p>If set to `false`, *pgsql_listen_on_local_only* defaults to `true` and *pgsql_listen_on_all_addresses* defaults to `false`.</p> | bool | no |  | false |
 | zbxserver_pgsql_additional_hba_entries | <p>Additional host-based authentication entries to add to the pg_hba.conf file.</p><p>These entries are in addition to the default entries from the **trippsc2.postgresql.install** role and the entries added by this role.</p> | list of dicts of 'zbxserver_pgsql_additional_hba_entries' options | no |  |  |
 | zbxserver_ip_addresses | <p>The IP addresses of the Zabbix servers.</p><p>If *zbxserver_pgsql_standalone* is `true`, this is required.</p><p>A pg_hba.conf entry will be created to access the Zabbix server database authenticated with the Zabbix server user via scram-sha-256 for each IP address.</p> | list of 'str' | no |  |  |
@@ -44,7 +44,7 @@ Version: 1.0.0
 | zbxserver_group | <p>The Linux primary group of the *zbxserver_user* user.</p> | str | no |  | zabbix |
 | zbxserver_database_name | <p>The name of the Zabbix Server database.</p> | str | no |  | zabbix-server |
 | zbxserver_use_timescaledb | <p>Whether to initialize TimescaleDB schema hypertables for Zabbix server.</p><p>If set to `true`, the *pgsql_install_timescaledb* variable defaults to `true`.</p><p>If set to `true` and *pgsql_install_timescaledb* is set to `false`, TimescaleDB needs to be installed and configured in PostgreSQL through other means.</p> | bool | no |  | true |
-| zbxserver_timescaledb_schema_done_file_path | <p>The filesystem path where a file will be created to indicate that the TimescaleDB schema has been applied.</p><p>On Debian-based systems, the default is /var/lib/postgresql/zbx_timescaledb_schema.done.</p><p>On EL systems, the default is /var/lib/pgsql/zbx_timescaledb_schema.done.</p> | str | no |  | OS specific |
+| zbxserver_timescaledb_schema_done_file_path | <p>The filesystem path where a file will be created to indicate that the TimescaleDB schema has been applied.</p><p>On Debian-based systems, the default is /var/lib/postgresql/zbx_timescaledb_schema.done.</p><p>On EL systems, the default is /var/lib/pgsql/zbx_timescaledb_schema.done.</p> | str | no |  |  |
 
 ### Options for zbxserver_pgsql_additional_hba_entries
 |Option|Description|Type|Required|Choices|Default|

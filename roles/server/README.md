@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.server
-Version: 1.0.0
+Version: 1.1.0
 
 This role installs and configures the Zabbix server on a Linux machine.
 
@@ -37,16 +37,16 @@ This role installs and configures the Zabbix server on a Linux machine.
 | zabbix_url_path | <p>The URL path for the Zabbix API.</p><p>If using Apache for web frontend, this should be set to `zabbix` unless configured otherwise.</p><p>If using NGINX for web frontend, this should be set to an empty string unless configured otherwise.</p> | str | no |  |  |
 | zabbix_username | <p>The username to use for API requests.</p> | str | yes |  |  |
 | zabbix_password | <p>The password to use for API requests.</p> | str | yes |  |  |
-| zbxserver_major_version | <p>The major version of Zabbix to install.</p><p>This defaults to the latest supported version for the OS.</p> | str | no | <ul><li>7.0</li><li>6.4</li></ul> | OS specific |
-| zbxserver_configure_selinux | <p>Whether to manage SELinux settings for the Zabbix server.</p><p>For EL systems, this defaults to true.</p><p>For other systems, this defaults to false.</p> | bool | no |  | true |
-| zbxserver_configure_firewalld | <p>Whether to manage firewalld settings for the Zabbix server.</p><p>For EL and Debian systems, this defaults to true.</p><p>For Ubuntu systems, this defaults to false.</p> | bool | no |  | true |
-| zbxserver_configure_ufw | <p>Whether to manage ufw settings for the Zabbix server.</p><p>For Ubuntu systems, this defaults to true.</p><p>For EL and Debian systems, this defaults to false.</p> | bool | no |  | true |
+| zbxserver_major_version | <p>The major version of Zabbix to install.</p><p>This defaults to the latest supported version for the OS.</p> | str | no | <ul><li>7.0</li><li>6.4</li></ul> |  |
+| zbxserver_configure_selinux | <p>Whether to manage SELinux settings for the Zabbix server.</p><p>For EL systems, this defaults to true.</p><p>For other systems, this defaults to false.</p> | bool | no |  | false |
+| zbxserver_configure_firewall | <p>Whether to manage the host firewall for use with Zabbix server.</p> | bool | no |  | true |
 | zbxserver_configure_logrotate | <p>Whether to manage logrotate settings for the Zabbix server.</p> | bool | no |  | true |
 | zbxserver_configure_vault | <p>Whether to configure the Zabbix server to use HashiCorp Vault for database credentials and storing user credentials.</p> | bool | no |  | true |
-| zbxserver_configure_mssql_odbc | <p>Whether to configure the Zabbix server to use the Microsoft SQL Server ODBC drivers for monitoring.</p><p>If the OS is supported, this defaults to true.</p> | bool | no |  | true |
+| zbxserver_configure_mssql_odbc | <p>Whether to configure the Zabbix server to use the Microsoft SQL Server ODBC drivers for monitoring.</p><p>If the OS is supported, this defaults to true.</p> | bool | no |  | false |
 | zbxserver_user | <p>The Linux user as which the Zabbix server will run.</p><p>If *zbxserver_configure_vault* is set to false, this user will be used to connect to a PostgreSQL database.</p><p>This user will be created, if it does not already exist.</p> | str | no |  | zabbix |
 | zbxserver_group | <p>The primary Linux group of the *zbxserver_user* user.</p><p>This group will be created, if it does not already exist.</p> | str | no |  | zabbix |
-| zbxserver_additional_groups | <p>A list of additional Linux groups to which the *zbxserver_user* user will belong.</p><p>On Debian-based systems, this defaults to `ssl-cert`.</p><p>On EL systems, this will not be defined.</p> | list of 'str' | no |  | "OS specific" |
+| zbxserver_additional_groups | <p>A list of additional Linux groups to which the *zbxserver_user* user will belong.</p><p>On Debian-based systems, this defaults to `ssl-cert`.</p><p>On EL systems, this will not be defined.</p> | list of 'str' | no |  |  |
+| zbxserver_firewall_type | <p>The type of host firewall to configure for use with Zabbix server.</p><p>For Debian and EL systems, this defaults to `firewalld`.</p><p>For Ubuntu systems, this defaults to `ufw`.</p> | str | no | <ul><li>firewalld</li><li>ufw</li></ul> |  |
 | zbxserver_database_type | <p>The database type of the Zabbix server.</p> | str | no | <ul><li>postgresql</li><li>mysql</li></ul> | postgresql |
 | zbxserver_database_name | <p>The name of the database of the Zabbix server.</p> | str | no |  | zabbix-server |
 | zbxserver_allow_root | <p>Whether the Zabbix server daemon should run as the root user.</p><p>Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#allowroot</p> | bool | no |  | false |
@@ -165,10 +165,10 @@ This role installs and configures the Zabbix server on a Linux machine.
 | zbxserver_min_password_length | <p>The minimum length of a user's password.</p> | int | no |  | 8 |
 | zbxserver_password_complexity | <p>The complexity level of a user's password.</p> | list of 'str' | no | <ul><li>contain_uppercase_and_lowercase_letters</li><li>contain_digits</li><li>contain_special_characters</li><li>avoid_easy_to_guess</li></ul> | ["avoid_easy_to_guess"] |
 | zbxserver_jit_provisioning_interval | <p>The interval in seconds at which just-in-time provisioning should be performed.</p> | str | no |  | 1h |
-| zbxserver_ldap_enabled | <p>Whether LDAP authentication is enabled.</p><p>If *zbxserver_ldap_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.</p> | bool | no |  | true |
+| zbxserver_ldap_enabled | <p>Whether LDAP authentication is enabled.</p><p>If *zbxserver_ldap_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.</p> | bool | no |  | false |
 | zbxserver_ldap_jit_status | <p>Whether just-in-time provisioning is enabled for LDAP users.</p> | bool | no |  | false |
 | zbxserver_active_ldap_directory | <p>The name of the LDAP directory to use for authentication.</p><p>If *zbxserver_ldap_enabled* is set to `true`, this is required.</p> | str | no |  |  |
-| zbxserver_saml_enabled | <p>Whether SAML authentication is enabled.</p><p>If *zbxserver_saml_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.</p> | bool | no |  | true |
+| zbxserver_saml_enabled | <p>Whether SAML authentication is enabled.</p><p>If *zbxserver_saml_directories* is specified, this will default to `true`. Otherwise, it will default to `false`.</p> | bool | no |  | false |
 | zbxserver_saml_jit_status | <p>Whether just-in-time provisioning is enabled for SAML users.</p> | bool | no |  | false |
 | zbxserver_logrotate_period | <p>The period at which logrotate should rotate the Zabbix server's log file.</p> | str | no | <ul><li>daily</li><li>weekly</li><li>monthly</li></ul> | daily |
 | zbxserver_logrotate_retention | <p>The number of rotated log files to retain.</p> | int | no |  | 14 |

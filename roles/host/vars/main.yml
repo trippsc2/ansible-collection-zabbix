@@ -1,0 +1,10 @@
+---
+_zbxhost_tls_encryption_values:
+  cert: 4
+  psk: 2
+  unencrypted: 1
+
+_zbxhost_tls_accept: >-
+  {{ _zbxhost_tls_encryption_values[zbxagent_tls_accept] if zbxagent_tls_accept is defined else omit }}
+_zbxhost_tls_connect: >-
+  {{ _zbxhost_tls_encryption_values[zbxagent_tls_connect] if zbxagent_tls_connect is defined else omit }}

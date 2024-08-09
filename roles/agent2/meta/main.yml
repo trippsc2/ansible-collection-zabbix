@@ -22,6 +22,10 @@ galaxy_info:
           - focal
           - jammy
           - noble
+      - name: Windows
+        versions:
+          - '2019'
+          - '2022'
 
 collections:
   - ansible.posix

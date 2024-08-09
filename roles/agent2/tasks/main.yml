@@ -10,21 +10,3 @@
 
 - name: Install Zabbix Agent 2
   ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
-
-- name: Configure Zabbix Server for host
-  vars:
-    ansible_network_os: community.zabbix.zabbix
-    ansible_connection: httpapi
-    ansible_host: "{{ zabbix_host }}"
-    ansible_httpapi_port: "{{ zabbix_port }}"
-    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
-    ansible_httpapi_use_ssl: "{{ zabbix_ssl }}"
-    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(true) }}"
-    ansible_user: "{{ zabbix_username }}"
-    ansible_httpapi_pass: "{{ zabbix_password }}"
-  ansible.builtin.include_tasks: server.yml
-
-- name: Configure VMware monitoring
-  when:
-    - zbxagent_configure_vmware_monitoring
-  ansible.builtin.include_tasks: vmware.yml

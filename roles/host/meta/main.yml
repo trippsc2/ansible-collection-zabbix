@@ -1,0 +1,19 @@
+---
+galaxy_info:
+    author: Jim Tarpley
+    namespace: trippsc2
+    role_name: host
+    description: This role configures a host within Zabbix Server.
+    license: MIT
+
+    platforms: []
+
+    min_ansible_version: '2.14'
+
+collections:
+  - ansible.utils
+  - community.general
+  - community.vmware
+  - community.zabbix
+
+dependencies: []

@@ -1,7 +1,7 @@
 ---
 namespace: trippsc2
 name: zabbix
-version: 1.0.0
+version: 1.1.0
 readme: README.md
 authors:
   - Jim Tarpley
@@ -13,7 +13,8 @@ tags: []
 
 dependencies:
   ansible.posix: ">=1.0.0"
-  community.general: ">=1.0.0"
+  ansible.utils: ">=2.2.0"
+  community.general: ">=8.1.0"
   community.hashi_vault: ">=4.2.0"
   community.postgresql: ">=1.0.0"
   community.vmware: ">=1.0.0"
