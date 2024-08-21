@@ -12,12 +12,16 @@ platforms:
     box: jtarpley/rocky8_cis
     memory: 2048
     cpus: 2
+    provider_options:
+      default_prefix: zabbix_host_linux_
     groups:
       - zabbix_server
   - name: linux
     box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
     memory: 2048
     cpus: 2
+    provider_options:
+      default_prefix: zabbix_host_linux_
     groups:
       - subjects
 provisioner:

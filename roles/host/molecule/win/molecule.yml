@@ -12,12 +12,16 @@ platforms:
     box: jtarpley/rocky8_cis
     memory: 2048
     cpus: 2
+    provider_options:
+      default_prefix: zabbix_host_win_
     groups:
       - zabbix_server
   - name: win
     box: jtarpley/${MOLECULE_BOX:-w2022_cis}
     memory: 2048
     cpus: 2
+    provider_options:
+      default_prefix: zabbix_host_win_
     groups:
       - subjects
       - windows
