@@ -57,6 +57,7 @@ argument_specs:
       zabbix_password:
         type: str
         required: true
+        no_log: true
         description:
           - The password to use for API requests.
       zbxserver_major_version:
@@ -373,6 +374,7 @@ argument_specs:
       zbxserver_database_password:
         type: str
         required: false
+        no_log: true
         description:
           - The password for the Zabbix server to connect to the database.
           - If *zbxserver_configure_vault* is set to `true`, this option will be ignored.
@@ -1063,6 +1065,7 @@ argument_specs:
           password:
             type: str
             required: false
+            no_log: true
             description:
               - The password of the user.
               - If not specified, the password will be generated before storing in HashiCorp Vault.
@@ -1218,6 +1221,7 @@ argument_specs:
           password:
             type: str
             required: true
+            no_log: true
             description:
               - The password of the user.
           name:
@@ -1414,6 +1418,7 @@ argument_specs:
           bind_password:
             type: str
             required: false
+            no_log: true
             description:
               - The password to use for binding to the LDAP server.
               - If anonymous binding is allowed and desired, this should not be set.

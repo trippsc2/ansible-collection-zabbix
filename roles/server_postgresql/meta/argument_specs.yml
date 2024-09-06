@@ -129,6 +129,7 @@ argument_specs:
       zabbix_database_password:
         type: str
         required: false
+        no_log: true
         description:
           - The password for the Zabbix database user.
           - If *zbxserver_configure_vault* is true and HashiCorp Vault already stores the secret, this value is ignored.

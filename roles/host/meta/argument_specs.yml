@@ -22,6 +22,7 @@ argument_specs:
       vmware_password:
         type: str
         required: false
+        no_log: true
         description:
           - The password to use for connecting to the vCenter server or standalone ESXi host.
           - If *zbxhost_vmware_uuid* is not defined and *zbxhost_configure_vmware_monitoring* is `true`, this is required.
@@ -83,6 +84,7 @@ argument_specs:
       zabbix_password:
         type: str
         required: true
+        no_log: true
         description:
           - The password to use for API requests.
       zbxhost_configure_vmware_monitoring:
