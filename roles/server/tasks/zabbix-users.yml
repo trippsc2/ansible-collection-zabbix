@@ -92,6 +92,9 @@
   vars:
     _zbxserver_vault_user:
       username: Admin
+      groups:
+        - Internal
+        - Zabbix administrators
   ansible.builtin.include_tasks: zabbix-vault-user.yml
 
 - name: Configure LDAP directory
