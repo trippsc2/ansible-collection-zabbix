@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.server_postgresql
-Version: 1.1.2
+Version: 1.1.3
 
 ['This role installs PostgreSQL server for use by a Zabbix server.', 'This role uses trippsc2.postgresql.install to install PostgreSQL.']
 

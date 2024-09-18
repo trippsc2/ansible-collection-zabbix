@@ -1,7 +1,7 @@
 ---
 - name: Get VM UUID from vCenter/ESXi
   when:
-    - vmware_vm_uuid is not defined
+    - zbxhost_vmware_uuid is not defined
   block:
     - name: Get VM info
       delegate_to: localhost
