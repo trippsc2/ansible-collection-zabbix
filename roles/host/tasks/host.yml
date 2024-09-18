@@ -1,6 +1,7 @@
 ---
 - name: Create Zabbix host groups
   delegate_to: localhost
+  throttle: 1
   community.zabbix.zabbix_group:
     host_groups: "{{ zbxhost_groups }}"
     state: present
