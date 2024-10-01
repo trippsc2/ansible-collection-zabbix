@@ -2,7 +2,7 @@
 _zbxagent_install_plugins: >-
   {{ zbxagent_install_mongodb_plugin or
      zbxagent_install_mssql_plugin or
-     zbxagent_install_pgsql_plugin }} 
+     zbxagent_install_pgsql_plugin }}
 
 _zbxagent_firewall_type: >-
   {{ zbxagent_firewall_type | default(_zbxagent_default_firewall_type) }}
