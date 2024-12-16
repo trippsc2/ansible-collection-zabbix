@@ -18,7 +18,7 @@ platforms:
       - windows
       - windows_domain
   - name: linux
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
     cpus: 2
     provider_options:
@@ -51,7 +51,7 @@ provisioner:
         pgsql_log_to_syslog: true
         pgsql_vault_ssl_mode: verify-full
         pgsql_vault_access_hostname: '127.0.0.1'
-        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.0}'
+        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
         zbxserver_pgsql_standalone: false
         zbxserver_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-postgresql}
         zbxserver_database_host: localhost
@@ -73,9 +73,13 @@ provisioner:
           {{ '/etc/pki/tls/private/zabbix-server.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-server.key' }}
         zbxserver_server_host: '127.0.0.1'
         zbxserver_allow_unsupported_db_versions: true # TimescaleDB can give false positives
+        zbxserver_vault_database_mount_point: zabbix
+        zbxserver_vault_database_path: database
         zbxserver_db_tls_connect: verify_full
         zbxserver_db_tls_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxserver_vault_users_mount_point: zabbix
+        zbxserver_vault_users_base_path: users
         zbxserver_user_groups:
           - name: LDAP
             gui_access: default

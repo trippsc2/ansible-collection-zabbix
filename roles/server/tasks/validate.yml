@@ -57,6 +57,42 @@
     fail_msg: Zabbix database port must be between 1024 and 65535.
     success_msg: Zabbix database port is valid.
 
+- name: Validate Vault variables
+  when:
+    - zbxserver_configure_vault
+  block:
+    - name: Validate Vault database mount point is defined
+      ansible.builtin.assert:
+        that:
+          - zbxserver_vault_database_mount_point is defined
+        fail_msg: Zabbix Vault database mount point must be defined.
+        success_msg: Zabbix Vault database mount point is defined.
+    
+    - name: Validate Vault database path is defined
+      ansible.builtin.assert:
+        that:
+          - zbxserver_vault_database_path is defined
+        fail_msg: Zabbix Vault database path must be defined.
+        success_msg: Zabbix Vault database path is defined.
+
+    - name: Validate Vault user variables
+      when:
+        - zbxserver_vault_managed_users | length > 0
+      block:
+        - name: Validate Vault users mount point is defined
+          ansible.builtin.assert:
+            that:
+              - zbxserver_vault_users_mount_point is defined
+            fail_msg: Zabbix Vault users mount point must be defined.
+            success_msg: Zabbix Vault users mount point is defined.
+
+        - name: Validate Vault users base path is defined
+          ansible.builtin.assert:
+            that:
+              - zbxserver_vault_users_base_path is defined
+            fail_msg: Zabbix Vault users base path must be defined.
+            success_msg: Zabbix Vault users base path is defined.
+
 - name: Validate start pollers
   ansible.builtin.assert:
     that:
@@ -64,6 +100,46 @@
       - zbxserver_start_pollers <= 1000
     fail_msg: Zabbix start pollers must be between 0 and 1000.
     success_msg: Zabbix start pollers is valid.
+
+- name: Validate start agent pollers
+  when:
+    - zbxserver_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxserver_start_agent_pollers >= 0
+      - zbxserver_start_agent_pollers <= 1000
+    fail_msg: Zabbix start agent pollers must be between 0 and 1000.
+    success_msg: Zabbix start agent pollers is valid.
+
+- name: Validate start browser pollers
+  when:
+    - zbxserver_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxserver_start_browser_pollers >= 0
+      - zbxserver_start_browser_pollers <= 1000
+    fail_msg: Zabbix start browser pollers must be between 0 and 1000.
+    success_msg: Zabbix start browser pollers is valid.
+
+- name: Validate start HTTP agent pollers
+  when:
+    - zbxserver_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxserver_start_http_agent_pollers >= 0
+      - zbxserver_start_http_agent_pollers <= 1000
+    fail_msg: Zabbix start HTTP agent pollers must be between 0 and 1000.
+    success_msg: Zabbix start HTTP agent pollers is valid.
+
+- name: Validate start SNMP pollers
+  when:
+    - zbxserver_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxserver_start_snmp_pollers >= 0
+      - zbxserver_start_snmp_pollers <= 1000
+    fail_msg: Zabbix start SNMP pollers must be between 0 and 1000.
+    success_msg: Zabbix start SNMP pollers is valid.
 
 - name: Validate start IPMI pollers
   ansible.builtin.assert:
@@ -128,6 +204,14 @@
       - zbxserver_start_http_pollers <= 1000
     fail_msg: Zabbix start HTTP pollers must be between 0 and 1000.
     success_msg: Zabbix start HTTP pollers is valid.
+
+- name: Validate start connectors
+  ansible.builtin.assert:
+    that:
+      - zbxserver_start_connectors >= 0
+      - zbxserver_start_connectors <= 1000
+    fail_msg: Zabbix start connectors must be between 0 and 1000.
+    success_msg: Zabbix start connectors is valid.
 
 - name: Validate start timers
   ansible.builtin.assert:
@@ -218,6 +302,16 @@
       - zbxserver_start_odbc_pollers <= 1000
     fail_msg: Zabbix start ODBC pollers must be between 0 and 1000.
     success_msg: Zabbix start ODBC pollers is valid.
+
+- name: Validate max concurrent checks per poller
+  when:
+    - zbxserver_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxserver_max_concurrent_checks_per_poller >= 1
+      - zbxserver_max_concurrent_checks_per_poller <= 1000
+    fail_msg: Zabbix max concurrent checks per poller must be between 1 and 1000.
+    success_msg: Zabbix max concurrent checks per poller is valid.
 
 - name: Validate Java gateway port
   when:

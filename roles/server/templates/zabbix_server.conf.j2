@@ -1,6 +1,10 @@
 {{ ansible_managed | comment }}
 
 AllowRoot={{ zbxserver_allow_root | ternary('1', '0') }}
+{% if zbxserver_major_version != '6.4' %}
+AllowSoftwareUpdateCheck={{ zbxserver_allow_software_update_check | ternary('1', '0') }}
+EnableGlobalScripts={{ zbxserver_enable_global_scripts | ternary('1', '0') }}
+{% endif %}
 User={{ zbxserver_user }}
 ListenPort={{ zbxserver_listen_port }}
 {% if zbxserver_listen_ip is defined %}
@@ -17,7 +21,7 @@ ServiceManagerSyncFrequency={{ zbxserver_service_manager_sync_frequency }}
 {% if zbxserver_web_service_url is defined %}
 WebServiceURL={{ zbxserver_web_service_url }}
 {% endif %}
-{% if zbxserver_web_driver_url is defined %}
+{% if zbxserver_major_version != '6.4' and zbxserver_web_driver_url is defined %}
 WebDriverURL={{ zbxserver_web_driver_url }}
 {% endif %}
 {% if zbxserver_tls_ca_file is defined %}
@@ -32,23 +36,23 @@ TLSCertFile={{ zbxserver_tls_cert_file }}
 {% if zbxserver_tls_key_file is defined %}
 TLSKeyFile={{ zbxserver_tls_key_file }}
 {% endif %}
-{% if zbxserver_tls_cipher_cert_13 is defined %}
-TLSCipherCert13={{ zbxserver_tls_cipher_cert_13 }}
-{% endif %}
 {% if zbxserver_tls_cipher_cert is defined %}
 TLSCipherCert={{ zbxserver_tls_cipher_cert }}
 {% endif %}
-{% if zbxserver_tls_cipher_psk_13 is defined %}
-TLSCipherPSK13={{ zbxserver_tls_cipher_psk_13 }}
+{% if zbxserver_tls_cipher_cert_13 is defined %}
+TLSCipherCert13={{ zbxserver_tls_cipher_cert_13 }}
 {% endif %}
 {% if zbxserver_tls_cipher_psk is defined %}
 TLSCipherPSK={{ zbxserver_tls_cipher_psk }}
 {% endif %}
-{% if zbxserver_tls_cipher_all_13 is defined %}
-TLSCipherAll13={{ zbxserver_tls_cipher_all_13 }}
+{% if zbxserver_tls_cipher_psk_13 is defined %}
+TLSCipherPSK13={{ zbxserver_tls_cipher_psk_13 }}
 {% endif %}
 {% if zbxserver_tls_cipher_all is defined %}
 TLSCipherAll={{ zbxserver_tls_cipher_all }}
+{% endif %}
+{% if zbxserver_tls_cipher_all_13 is defined %}
+TLSCipherAll13={{ zbxserver_tls_cipher_all_13 }}
 {% endif %}
 {% if zbxserver_ha_node_name is defined %}
 HANodeName={{ zbxserver_ha_node_name }}
@@ -66,6 +70,9 @@ SocketDir={{ zbxserver_socket_dir }}
 DBHost={{ zbxserver_database_host }}
 {% if zbxserver_database_type == 'mysql' and zbxserver_database_socket is defined %}
 DBSocket={{ zbxserver_database_socket }}
+{% endif %}
+{% if zbxserver_database_type == 'postgresql' and zbxserver_database_schema is defined %}
+DBSchema={{ zbxserver_database_schema }}
 {% endif %}
 DBName={{ zbxserver_database_name }}
 {% if not zbxserver_configure_vault %}
@@ -86,6 +93,12 @@ DBTLSCertFile={{ zbxserver_db_tls_cert_file }}
 {% if zbxserver_db_tls_key_file is defined %}
 DBTLSKeyFile={{ zbxserver_db_tls_key_file }}
 {% endif %}
+{% if zbxserver_db_tls_cipher is defined %}
+DBTLSCipher={{ zbxserver_db_tls_cipher }}
+{% endif %}
+{% if zbxserver_db_tls_cipher_13 is defined %}
+DBTLSCipher13={{ zbxserver_db_tls_cipher_13 }}
+{% endif %}
 {% if zbxserver_configure_vault %}
 Vault=HashiCorp
 VaultToken={{ zbxserver_vault_token }}
@@ -103,6 +116,12 @@ ExportFileSize={{ zbxserver_export_file_size }}
 ExportType={{ zbxserver_export_type | join(',') }}
 {% endif %}
 StartPollers={{ zbxserver_start_pollers }}
+{% if zbxserver_major_version != '6.4' %}
+StartAgentPollers={{ zbxserver_start_agent_pollers }}
+StartBrowserPollers={{ zbxserver_start_browser_pollers }}
+StartHTTPAgentPollers={{ zbxserver_start_http_agent_pollers }}
+StartSNMPPollers={{ zbxserver_start_snmp_pollers }}
+{% endif %}
 StartIPMIPollers={{ zbxserver_start_ipmi_pollers }}
 StartPreprocessors={{ zbxserver_start_preprocessors }}
 StartPollersUnreachable={{ zbxserver_start_pollers_unreachable }}
@@ -111,6 +130,7 @@ StartTrappers={{ zbxserver_start_trappers }}
 StartPingers={{ zbxserver_start_pingers }}
 StartDiscoverers={{ zbxserver_start_discoverers }}
 StartHTTPPollers={{ zbxserver_start_http_pollers }}
+StartConnectors={{ zbxserver_start_connectors }}
 StartTimers={{ zbxserver_start_timers }}
 StartEscalators={{ zbxserver_start_escalators }}
 StartAlerters={{ zbxserver_start_alerters }}
@@ -131,6 +151,9 @@ TrendCacheSize={{ zbxserver_trend_cache_size }}
 TrendFunctionCacheSize={{ zbxserver_trend_function_cache_size }}
 ValueCacheSize={{ zbxserver_value_cache_size }}
 VMwareCacheSize={{ zbxserver_vmware_cache_size }}
+{% if zbxserver_major_version != '6.4' %}
+MaxConcurrentChecksPerPoller={{ zbxserver_max_concurrent_checks_per_poller }}
+{% endif %}
 {% if zbxserver_use_java_gateway %}
 JavaGateway={{ zbxserver_java_gateway }}
 JavaGatewayPort={{ zbxserver_java_gateway_port }}
@@ -158,6 +181,9 @@ SSHKeyLocation={{ zbxserver_ssh_key_location }}
 TmpDir={{ zbxserver_tmp_dir }}
 ProxyConfigFrequency={{ zbxserver_proxy_config_frequency }}
 ProxyDataFrequency={{ zbxserver_proxy_data_frequency }}
+{% if zbxserver_sms_devices | default([]) | length > 0 %}
+SMSDevices={{ zbxserver_sms_devices | join(',') }}
+{% endif %}
 {% for include_file in zbxserver_include_files | default([]) %}
 Include={{ include_file }}
 {% endfor %}
@@ -172,7 +198,7 @@ SSLCertLocation={{ zbxserver_ssl_cert_location }}
 SSLKeyLocation={{ zbxserver_ssl_key_location }}
 {% endif %}
 {% if zbxserver_ssl_ca_location is defined %}
-SSLKeyLocation={{ zbxserver_ssl_ca_location }}
+SSLCALocation={{ zbxserver_ssl_ca_location }}
 {% endif %}
 {% if zbxserver_load_module_path is defined %}
 LoadModulePath={{ zbxserver_load_module_path }}

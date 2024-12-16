@@ -8,6 +8,15 @@
     - ansible_os_family != 'Windows'
   ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution }}.yml"
 
+- name: Validate Zabbix major version is defined
+  when:
+    - ansible_os_family != 'Windows'
+  ansible.builtin.assert:
+    that:
+      - zbxagent_major_version is defined
+    fail_msg: "The 'zbxagent_major_version' variable is not defined."
+    success_msg: "The 'zbxagent_major_version' variable is defined."
+
 - name: Validate maximum log size
   when:
     - zbxagent_log_type == 'file'

@@ -11,6 +11,8 @@ zbxserver_database_name: zabbix-server
 zbxserver_database_type: postgresql
 
 zbxserver_allow_root: false
+zbxserver_allow_software_update_check: true
+zbxserver_enable_global_scripts: true
 
 zbxserver_listen_port: 10051
 zbxserver_listen_ip:
@@ -35,9 +37,6 @@ zbxserver_db_tls_connect: unencrypted
 
 zbxserver_allow_unsupported_db_versions: false
 
-zbxserver_vault_database_mount_point: zabbix
-zbxserver_vault_database_path: database
-
 zbxserver_history_storage: false
 zbxserver_history_storage_types:
   - uint
@@ -56,14 +55,19 @@ zbxserver_export_type:
   - trends
 
 zbxserver_start_pollers: 5
+zbxserver_start_agent_pollers: 1
+zbxserver_start_browser_pollers: 1
+zbxserver_start_http_agent_pollers: 1
+zbxserver_start_snmp_pollers: 1
 zbxserver_start_ipmi_pollers: 0
 zbxserver_start_pollers_unreachable: 1
-zbxserver_start_preprocessors: 3
+zbxserver_start_preprocessors: 16
 zbxserver_start_history_pollers: 5
 zbxserver_start_trappers: 5
 zbxserver_start_pingers: 1
 zbxserver_start_discoverers: 5
 zbxserver_start_http_pollers: 1
+zbxserver_start_connectors: 0
 zbxserver_start_timers: 1
 zbxserver_start_escalators: 1
 zbxserver_start_alerters: 3
@@ -83,6 +87,8 @@ zbxserver_trend_cache_size: 4M
 zbxserver_trend_function_cache_size: 4M
 zbxserver_value_cache_size: 8M
 zbxserver_vmware_cache_size: 8M
+
+zbxserver_max_concurrent_checks_per_poller: 1000
 
 zbxserver_use_java_gateway: false
 zbxserver_java_gateway_port: 10052
@@ -115,9 +121,6 @@ zbxserver_tmp_dir: /tmp
 
 zbxserver_proxy_config_frequency: 10
 zbxserver_proxy_data_frequency: 1
-
-zbxserver_vault_users_mount_point: zabbix
-zbxserver_vault_users_base_path: users
 
 zbxserver_user_groups: []
 
@@ -152,7 +155,5 @@ zbxserver_global_macros: []
 zbxserver_logrotate_period: daily
 zbxserver_logrotate_retention: 14
 zbxserver_logrotate_mode: '0640'
-
-zbxserver_mssql_odbc_connections: []
 
 zbxserver_templates: []

@@ -11,6 +11,3 @@ zbxserver_database_name: zabbix-server
 
 zbxserver_configure_vault: true
 zbxserver_vault_create_mount_points: true
-
-zbxserver_vault_database_mount_point: zabbix
-zbxserver_vault_database_path: database

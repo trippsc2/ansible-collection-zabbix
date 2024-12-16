@@ -19,7 +19,3 @@ _zbx_supported_ubuntu_releases:
 _zbx_el_supported_major_versions:
   - '8'
   - '9'
-
-_zbx_supported_zabbix_major_versions:
-  - '7.0'
-  - '6.4'

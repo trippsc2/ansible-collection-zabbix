@@ -1,5 +1,5 @@
 ---
-- name: Ensure Zabbix SQL scripts package is installed
+- name: Ensure Zabbix server packages are installed
   become: true
   ansible.builtin.apt:
     name:

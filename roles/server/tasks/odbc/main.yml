@@ -1,9 +1,0 @@
----
-- name: Install Microsoft ODBC drivers
-  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
-
-- name: Configure ODBC connection
-  loop: "{{ zbxserver_mssql_odbc_connections }}"
-  loop_control:
-    loop_var: _zbxserver_mssql_odbc_connection
-  ansible.builtin.include_tasks: configure.yml

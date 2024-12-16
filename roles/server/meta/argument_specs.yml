@@ -64,6 +64,7 @@ argument_specs:
         type: str
         required: false
         choices:
+          - '7.2'
           - '7.0'
           - '6.4'
         description:
@@ -94,12 +95,6 @@ argument_specs:
         default: true
         description:
           - Whether to configure the Zabbix server to use HashiCorp Vault for database credentials and storing user credentials.
-      zbxserver_configure_mssql_odbc:
-        type: bool
-        required: false
-        description:
-          - Whether to configure the Zabbix server to use the Microsoft SQL Server ODBC drivers for monitoring.
-          - If the OS is supported, this defaults to true.
       zbxserver_user:
         type: str
         required: false
@@ -155,6 +150,22 @@ argument_specs:
         description:
           - Whether the Zabbix server daemon should run as the root user.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#allowroot'
+      zbxserver_allow_software_update_check:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether the Zabbix server should check for software updates.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#allowsoftwareupdatecheck'
+      zbxserver_enable_global_scripts:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to enable global scripts for the Zabbix server.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#enableglobalscripts'
       zbxserver_listen_port:
         type: int
         required: false
@@ -216,6 +227,7 @@ argument_specs:
         description:
           - The URL of the Zabbix web driver.
           - If not specified, the server will not use the web driver.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#webdriverurl'
       zbxserver_tls_ca_file:
         type: path
@@ -363,6 +375,13 @@ argument_specs:
           - The path to the MySQL Unix socket file for accessing the database.
           - This is only used if *zbxserver_database_type* is set to `mysql`.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#dbsocket'
+      zbxserver_database_schema:
+        type: str
+        required: false
+        description:
+          - The schema to use for the Zabbix server database.
+          - This is only used if *zbxproxy_database_type* is set to `postgresql`.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#dbschema'
       zbxserver_database_port:
         type: int
         required: false
@@ -391,16 +410,16 @@ argument_specs:
       zbxserver_vault_database_mount_point:
         type: str
         required: false
-        default: zabbix
         description:
           - The HashiCorp Vault KV2 mount point where the Zabbix server database secret is stored.
+          - If *zbxserver_configure_vault* is set to `true`, this is required.  Otherwise, it will be ignored.
       zbxserver_vault_database_path:
         type: str
         required: false
-        default: database
         description:
           - The path within the HashiCorp Vault KV2 mount point where the Zabbix server database secret is stored.
           - The secret at this path must have the keys `username` and `password` defined.
+          - If *zbxserver_configure_vault* is set to `true`, this is required.  Otherwise, it will be ignored.
       zbxserver_db_tls_connect:
         type: str
         required: false
@@ -440,6 +459,20 @@ argument_specs:
           - If client certificate authentication is not being used, this option should not be set.
           - If *zbxserver_db_tls_cert_file* is set, this option must also be set.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#dbtlskeyfile'
+      zbxserver_db_tls_cipher:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS connections to the database.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#dbtlscipher'
+      zbxserver_db_tls_cipher_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS 1.3 connections to the database.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#dbtlscipher13'
       zbxserver_vault_token:
         type: str
         required: false
@@ -540,6 +573,42 @@ argument_specs:
           - The number of poller processes to start.
           - Valid values are between 0 and 1000.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startpollers'
+      zbxserver_start_agent_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of agent poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startagentpollers'
+      zbxserver_start_browser_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of browser poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startbrowserpollers'
+      zbxserver_start_http_agent_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of HTTP agent poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#starthttpagentpollers'
+      zbxserver_start_snmp_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of asynchronous SNMP poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startsnmppollers'
       zbxserver_start_ipmi_pollers:
         type: int
         required: false
@@ -559,7 +628,7 @@ argument_specs:
       zbxserver_start_preprocessors:
         type: int
         required: false
-        default: 3
+        default: 16
         description:
           - The number of preprocessor processes to start.
           - Valid values are between 0 and 1000.
@@ -604,6 +673,14 @@ argument_specs:
           - The number of HTTP poller processes to start.
           - Valid values are between 0 and 1000.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#starthttppollers'
+      zbxserver_start_connecctors:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of connector processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startconnectors'
       zbxserver_start_timers:
         type: int
         required: false
@@ -742,6 +819,15 @@ argument_specs:
         description:
           - The size of the VMware cache in memory.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#vmwarecachesize'
+      zbxserver_max_concurrent_checks_per_poller:
+        type: int
+        required: false
+        default: 1000
+        description:
+          - The maximum number of checks that can be processed concurrently by a poller process.
+          - Valid values are between 1 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#maxconcurrentchecksperpoller'
       zbxserver_use_java_gateway:
         type: bool
         required: false
@@ -925,6 +1011,13 @@ argument_specs:
           - The frequency in seconds at which the Zabbix server will synchronize with the proxy data.
           - Valid values are between 1 and 3600.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#proxydatafrequency'
+      zbxserver_sms_devices:
+        type: list
+        required: false
+        elements: str
+        description:
+          - A list of SMS modem devices to use for sending notifications.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#smsdevices'
       zbxserver_include_files:
         type: list
         elements: path
@@ -971,13 +1064,11 @@ argument_specs:
       zbxserver_vault_users_mount_point:
         type: str
         required: false
-        default: zabbix
         description:
           - The HashiCorp Vault KV2 mount point where the Zabbix server user secrets are stored.
       zbxserver_vault_users_base_path:
         type: str
         required: false
-        default: users
         description:
           - The base path within the HashiCorp Vault KV2 mount point where the Zabbix server user secrets are stored.
           - The value should not include a trailing slash.
@@ -1705,36 +1796,6 @@ argument_specs:
         default: '0640'
         description:
           - The permissions to set on the rotated log files.
-      zbxserver_mssql_odbc_connections:
-        type: list
-        required: false
-        default: []
-        elements: dict
-        description:
-          - A list of ODBC entries for Microsoft SQL Server.
-        options:
-          name:
-            type: str
-            required: true
-            description:
-              - The name of the ODBC entry.
-          driver:
-            type: str
-            required: false
-            default: ODBC Driver 18 for SQL Server
-            description:
-              - The driver to use for the ODBC entry.
-          uri:
-            type: str
-            required: true
-            description:
-              - The server URI for the ODBC entry.
-          encrypt:
-            type: bool
-            required: false
-            default: true
-            description:
-              - Whether to encrypt the connection.
       zbxserver_templates:
         type: list
         required: false

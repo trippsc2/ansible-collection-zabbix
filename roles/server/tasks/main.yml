@@ -25,11 +25,6 @@
     - _zbxserver_firewall_type == 'ufw'
   ansible.builtin.include_tasks: ufw.yml
 
-- name: Configure MSSQL ODBC
-  when:
-    - _zbxserver_configure_mssql_odbc
-  ansible.builtin.include_tasks: odbc/main.yml
-
 - name: Ensure Zabbix is configured and started
   ansible.builtin.import_tasks: configure.yml
 

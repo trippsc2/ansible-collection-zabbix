@@ -24,6 +24,7 @@ argument_specs:
         type: str
         required: false
         choices:
+          - '7.2'
           - '7.0'
           - '6.4'
         description:
@@ -136,13 +137,11 @@ argument_specs:
       zbxserver_vault_database_mount_point:
         type: str
         required: false
-        default: zabbix
         description:
           - The HashiCorp Vault mount point where the Zabbix KV2 database secret is to be stored.
       zbxserver_vault_database_path:
         type: str
         required: false
-        default: database
         description:
           - The path in HashiCorp Vault where the Zabbix KV2 database secret is to be stored.
       zbxserver_user:

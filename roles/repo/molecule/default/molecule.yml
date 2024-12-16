@@ -9,7 +9,7 @@ driver:
   parallel: true
 platforms:
   - name: linux
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
     cpus: 2
     provider_options:
@@ -21,6 +21,6 @@ provisioner:
   inventory:
     group_vars:
       subjects:
-        zbx_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.0}'
+        zbx_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
 verifier:
   name: ansible

@@ -1,9 +1,7 @@
 ---
 _zbxserver_supported_major_versions:
+  - '7.2'
   - '7.0'
   - '6.4'
 
 _zbxserver_default_firewall_type: ufw
-
-_zbxserver_microsoft_apt_repo_config: deb [arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/prod jammy main
-_zbxserver_default_configure_mssql_odbc: true

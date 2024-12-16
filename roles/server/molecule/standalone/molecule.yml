@@ -18,7 +18,7 @@ platforms:
       - windows
       - windows_domain
   - name: linux
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
     cpus: 2
     provider_options:
@@ -26,7 +26,7 @@ platforms:
     groups:
       - subjects
   - name: database
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
     cpus: 2
     provider_options:
@@ -34,7 +34,7 @@ platforms:
     groups:
       - zabbix_database
   - name: web
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
     cpus: 2
     provider_options:
@@ -54,12 +54,14 @@ provisioner:
         zabbix_validate_certs: false
         zabbix_username: test
         zabbix_password: SecurePassword1234!
-        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.0}'
+        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
         zbxserver_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-postgresql}
         zbxserver_database_host: "{{ hostvars['database'].ansible_host }}"
         zbxserver_database_port: 5432
         zbxserver_vault_url: "{{ vault_url }}"
         zbxserver_vault_token: "{{ vault_token }}"
+        zbxserver_vault_database_mount_point: zabbix
+        zbxserver_vault_database_path: database
         _zbxserver_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
         _zbxserver_web_frontend_type: ${MOLECULE_ZABBIX_WEB_FRONTEND_TYPE:-nginx}
@@ -72,6 +74,8 @@ provisioner:
         zbxserver_tls_key_file: >-
           {{ '/etc/pki/tls/private/zabbix-server.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-server.key' }}
         zbxserver_allow_unsupported_db_versions: true # TimescaleDB can give false positives
+        zbxserver_vault_users_mount_point: zabbix
+        zbxserver_vault_users_base_path: users
         zbxserver_user_groups:
           - name: LDAP
             gui_access: default

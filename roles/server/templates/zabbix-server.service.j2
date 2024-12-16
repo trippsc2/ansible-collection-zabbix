@@ -2,17 +2,21 @@
 Description=Zabbix Server
 After=syslog.target
 After=network.target
-{%- if zbxserver_database_type == 'postgresql' %}
+After=mysql.service
+After=mysqld.service
+After=mariadb.service
 After=postgresql.service
+After=pgbouncer.service
+After=postgresql-9.4.service
+After=postgresql-9.5.service
+After=postgresql-9.6.service
+After=postgresql-10.service
+After=postgresql-11.service
+After=postgresql-12.service
 After=postgresql-13.service
 After=postgresql-14.service
 After=postgresql-15.service
 After=postgresql-16.service
-{%- elif zbxserver_database_type == 'mysql' %}
-After=mysql.service
-After=mysqld.service
-After=mariadb.service
-{% endif %}
 
 [Service]
 Environment="CONFFILE=/etc/zabbix/zabbix_server.conf"
@@ -25,6 +29,7 @@ ExecStart=/usr/sbin/zabbix_server -c $CONFFILE
 ExecStop={{ _zbxserver_exec_stop_command }}
 RestartSec=10s
 TimeoutSec=0
+LimitNOFILE=65536:1048576
 
 [Install]
 WantedBy=multi-user.target

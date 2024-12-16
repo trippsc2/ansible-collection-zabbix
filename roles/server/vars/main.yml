@@ -7,8 +7,6 @@ _zbxserver_major_version: >-
 
 _zbxserver_configure_selinux: >-
   {{ zbxserver_configure_selinux | default(_zbxserver_default_configure_selinux) }}
-_zbxserver_configure_mssql_odbc: >-
-  {{ zbxserver_configure_mssql_odbc | default(_zbxserver_default_configure_mssql_odbc) }}
 
 _zbxserver_additional_groups: >-
   {{ zbxserver_additional_groups | default(_zbxserver_default_additional_groups) }}

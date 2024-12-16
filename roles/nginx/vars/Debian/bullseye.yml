@@ -9,3 +9,6 @@ _zbxserver_php_packages:
 
 _zbxserver_php_postgresql_packages:
   - php7.4-pgsql
+
+_zbxserver_web_server_root_by_major_versions:
+  '6.4': /usr/share/zabbix

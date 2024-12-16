@@ -11,6 +11,7 @@ argument_specs:
         type: str
         required: false
         choices:
+          - '7.2'
           - '7.0'
           - '6.4'
         description:

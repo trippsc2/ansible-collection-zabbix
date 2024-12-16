@@ -11,4 +11,3 @@ _zbxserver_default_firewall_type: firewalld
 
 _zbxserver_env_file_path: /etc/sysconfig/zabbix-server
 _zbxserver_exec_stop_command: /bin/kill -SIGTERM $MAINPID
-_zbxserver_default_configure_mssql_odbc: true

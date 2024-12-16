@@ -46,7 +46,7 @@
         login_user: "{{ zbxserver_user }}"
         db: "{{ zbxserver_database_name }}"
         state: restore
-        target: /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz
+        target: "{{ _zbxserver_pgsql_schema_script_path }}"
 
 - name: Ensure TimescaleDB is configured
   when:

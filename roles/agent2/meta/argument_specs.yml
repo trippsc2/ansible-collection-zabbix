@@ -10,20 +10,21 @@ argument_specs:
       zbxagent_major_version:
         type: str
         required: false
-        default: '7.0'
         choices:
+          - '7.2'
           - '7.0'
           - '6.4'
         description:
           - The major version of the Zabbix Agent 2 to install.
-          - This is ignored on Windows systems, as Chocolatey installs the latest version always.
+          - On Linux systems, this is required.
+          - On Windows systems, this is ignored and the latest version is always installed.  If this becomes an issue, the role will be ammended to allow for version selection.
       zbxagent_configure_logrotate:
         type: bool
         required: false
         default: true
         description:
           - Whether to configure logrotate for the Zabbix Agent 2 log file.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
           - If *zbxagent_log_type* is set to `file`, this is `true` by default.  Otherwise, it is `false`.
           - If set to `true`, the *zbxagent_log_size* should be set to `0` to prevent conflicts.
       zbxagent_configure_firewall:
@@ -38,7 +39,8 @@ argument_specs:
         default: false
         description:
           - Whether to install the Ember+ plugin for the Zabbix Agent 2 on Linux systems.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
+          - If *zbxagnet_major_version* is set to `6.4`, this is ignored because this plugin is not available for that version.
       zbxagent_install_mongodb_plugin:
         type: bool
         required: false
@@ -63,7 +65,7 @@ argument_specs:
         default: zabbix
         description:
           - The user as which the Zabbix Agent 2 service will run.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
           - If not set to `zabbix`, the user must be created before running this role.
       zbxagent_group:
         type: str
@@ -71,7 +73,7 @@ argument_specs:
         default: zabbix
         description:
           - The primary group of the user as which the Zabbix Agent 2 service will run.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
           - If not set to `zabbix`, the group must be created before running this role.
       zbxagent_pid_file:
         type: str
@@ -79,7 +81,7 @@ argument_specs:
         default: /run/zabbix/zabbix_agent2.pid
         description:
           - The path to the PID file for the Zabbix Agent 2 service.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
           - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pidfile'
       zbxagent_log_type:
         type: str
@@ -323,7 +325,7 @@ argument_specs:
         required: false
         description:
           - The path to the control socket for plugin execution.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
           - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pluginsocket'
       zbxagent_unsafe_user_parameters:
         type: bool
@@ -354,7 +356,7 @@ argument_specs:
         default: /tmp/agent.sock
         description:
           - The path to the control socket for the Zabbix Agent 2.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
           - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#controlsocket'
       zbxagent_tls_connect:
         type: str
@@ -1019,21 +1021,21 @@ argument_specs:
           - monthly
         description:
           - The period at which to rotate the log file.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
       zbxagent_logrotate_retention:
         type: int
         required: false
         default: 14
         description:
           - The number of rotated log files to retain.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
       zbxagent_logrotate_mode:
         type: str
         required: false
         default: '0640'
         description:
           - The mode of the rotated log files.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.
       zbxagent_local_scripts:
         type: list
         required: false
@@ -1060,4 +1062,4 @@ argument_specs:
           - ufw
         description:
           - The type of host firewall to configure for use with Zabbix Agent 2.
-          - This is ignored on Windows systems.
+          - On Windows, this is ignored.

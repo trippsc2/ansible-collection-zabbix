@@ -9,7 +9,7 @@ driver:
   parallel: true
 platforms:
   - name: linux
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
     cpus: 2
     provider_options:
@@ -17,7 +17,7 @@ platforms:
     groups:
       - subjects
   - name: database
-    box: jtarpley/${MOLECULE_BOX:-rocky8_cis}
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
     cpus: 2
     provider_options:
@@ -31,9 +31,13 @@ provisioner:
       all:
         vault_token: 47542cbc-6bf8-4fba-8eda-02e0a0d29a0a
         vault_url: "http://{{ hostvars['linux'].ansible_host }}:8200"
-        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.0}'
+        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
         zbxserver_configure_vault: true
         zbxserver_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-postgresql}
+        zbxserver_vault_database_mount_point: zabbix
+        zbxserver_vault_database_path: database
+        zbxserver_vault_users_mount_point: zabbix
+        zbxserver_vault_users_base_path: users
         _zbxserver_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
       subjects:
