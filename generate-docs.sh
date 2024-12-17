@@ -16,6 +16,14 @@ cd ../repo
 
 aar_doc . markdown
 
+cd ../proxy
+
+aar_doc . markdown
+
+cd ../proxy_postgresql
+
+aar_doc . markdown
+
 cd ../server
 
 aar_doc . markdown

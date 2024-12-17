@@ -1,0 +1,50 @@
+---
+- name: Create Zabbix server database
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_db:
+    name: "{{ zbxproxy_database_name }}"
+    owner: "{{ zbxproxy_user }}"
+    encoding: UTF8
+    lc_collate: en_US.UTF-8
+    lc_ctype: en_US.UTF-8
+    template: template0
+    state: present
+
+- name: Provide user with database permissions
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_privs:
+    database: postgres
+    type: database
+    objs: "{{ zbxproxy_database_name }}"
+    roles: "{{ zbxproxy_user }}"
+    privs: ALL
+
+- name: Ensure schema is imported
+  block:
+    - name: Query PostgreSQL for schema version
+      become: true
+      become_user: "{{ zbxproxy_user }}"
+      vars:
+        ansible_ssh_pipelining: true
+      community.postgresql.postgresql_query:
+        login_user: "{{ zbxproxy_user }}"
+        db: "{{ zbxproxy_database_name }}"
+        query: SELECT mandatory FROM dbversion
+
+  rescue:
+    - name: Import schema
+      become: true
+      become_user: "{{ zbxproxy_user }}"
+      vars:
+        ansible_ssh_pipelining: true
+      community.postgresql.postgresql_db:
+        login_user: "{{ zbxproxy_user }}"
+        db: "{{ zbxproxy_database_name }}"
+        state: restore
+        target: "{{ _zbxproxy_pgsql_schema_script_path }}"

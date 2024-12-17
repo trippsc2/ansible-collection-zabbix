@@ -16,6 +16,14 @@ platforms:
       default_prefix: zabbix_host_linux_
     groups:
       - zabbix_server
+  - name: proxy
+    box: jtarpley/rocky9_cis
+    memory: 2048
+    cpus: 2
+    provider_options:
+      default_prefix: zabbix_host_linux_
+    groups:
+      - zabbix_proxy
   - name: linux
     box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
@@ -37,6 +45,15 @@ provisioner:
         zabbix_validate_certs: false
         zabbix_username: test
         zabbix_password: SecurePassword1234!
+        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
+        pgsql_ssl: true
+        pgsql_ssl_ca_file: "{{ _zbxagent_ca_file }}"
+        pgsql_ssl_cert_file: >-
+          {{ '/etc/pki/tls/certs/pgsql.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/pgsql.crt' }}
+        pgsql_ssl_key_file: >-
+          {{ '/etc/pki/tls/private/pgsql.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/pgsql.key' }}
+        pgsql_log_to_csvlog: true
+        pgsql_log_to_syslog: true
         _zbxagent_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
       subjects:
@@ -68,19 +85,35 @@ provisioner:
             port: '10050'
         zbxhost_templates:
           - Linux by Zabbix agent
+        zbxhost_proxy: "${MOLECULE_ZABBIX_PROXY:-{{ omit }}}"
         _zbxagent_cert_file: /tmp/zabbix-agent.crt
+      zabbix_proxy:
+        zbxproxy_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
+        zbxproxy_pgsql_standalone: false
+        zbxproxy_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-postgresql}
+        zbxproxy_database_host: localhost
+        zbxproxy_database_port: 5432
+        zbxproxy_database_use_ssl: true
+        zbxproxy_database_ca_file: "{{ _zbxagent_ca_file }}"
+        zbxproxy_vault_token: "{{ vault_token }}"
+        zbxproxy_vault_url: "{{ vault_url }}"
+        zbxproxy_vault_database_mount_point: zabbix
+        zbxproxy_vault_database_path: database
+        zbxproxy_tls_ca_file: "{{ _zbxagent_ca_file }}"
+        zbxproxy_tls_cert_file: >-
+          {{ '/etc/pki/tls/certs/zabbix-proxy.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-proxy.crt' }}
+        zbxproxy_tls_key_file: >-
+          {{ '/etc/pki/tls/private/zabbix-proxy.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-proxy.key' }}
+        zbxproxy_db_tls_connect: verify_full
+        zbxproxy_db_tls_ca_file: "{{ _zbxagent_ca_file }}"
+        zbxproxy_servers:
+          - "{{ hostvars['zabbix'].ansible_host }}"
+        zbxproxy_name: "{{ inventory_hostname | upper }}"
+        zbxproxy_active: false
+        zbxproxy_address: "{{ hostvars['proxy'].ansible_host }}"
+        zbxproxy_tls_accept: cert
+        zbxproxy_tls_connect: cert
       zabbix_server:
-        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
-        pgsql_ssl: true
-        pgsql_ssl_ca_file: "{{ _zbxagent_ca_file }}"
-        pgsql_ssl_cert_file: >-
-          {{ '/etc/pki/tls/certs/pgsql.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/pgsql.crt' }}
-        pgsql_ssl_key_file: >-
-          {{ '/etc/pki/tls/private/pgsql.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/pgsql.key' }}
-        pgsql_log_to_csvlog: true
-        pgsql_log_to_syslog: true
-        pgsql_vault_ssl_mode: verify-full
-        pgsql_vault_access_hostname: '127.0.0.1'
         zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
         zbxserver_pgsql_standalone: false
         zbxserver_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-postgresql}

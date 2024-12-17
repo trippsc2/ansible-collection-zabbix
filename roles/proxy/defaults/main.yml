@@ -1,0 +1,117 @@
+---
+zbxproxy_configure_firewall: true
+zbxproxy_configure_logrotate: "{{ zbxproxy_log_type == 'file' }}"
+zbxproxy_configure_vault: true
+
+zbxproxy_user: zabbix
+zbxproxy_group: zabbix
+
+zbxproxy_database_name: zabbix-proxy
+
+zbxproxy_database_type: postgresql
+
+zbxproxy_allow_root: false
+zbxproxy_enable_remote_commands: false
+
+zbxproxy_listen_port: 10051
+zbxproxy_listen_ip:
+  - '0.0.0.0'
+
+zbxproxy_stats_allowed_ip:
+  - '127.0.0.1'
+
+zbxproxy_log_type: file
+zbxproxy_log_file: /var/log/zabbix/zabbix_proxy.log
+zbxproxy_log_file_size: >-
+  {{ (0 if zbxproxy_configure_logrotate else 1) | int }}
+
+zbxproxy_pid_file: /run/zabbix/zabbix_proxy.pid
+zbxproxy_socket_dir: /run/zabbix
+
+zbxproxy_database_host: localhost
+zbxproxy_database_port: 5432
+zbxproxy_db_tls_connect: unencrypted
+
+zbxproxy_allow_unsupported_db_versions: false
+
+zbxproxy_buffer_mode: disk
+
+zbxproxy_proxy_config_frequency: 10
+zbxproxy_data_sender_frequency: 1
+
+zbxproxy_active: false
+
+zbxproxy_history_storage: false
+zbxproxy_history_storage_types:
+  - uint
+  - dbl
+  - str
+  - log
+  - text
+
+zbxproxy_history_storage_date_index: false
+
+zbxproxy_export: false
+zbxproxy_export_file_size: 1G
+zbxproxy_export_type:
+  - events
+  - history
+  - trends
+
+zbxproxy_start_pollers: 5
+zbxproxy_start_agent_pollers: 1
+zbxproxy_start_browser_pollers: 1
+zbxproxy_start_http_agent_pollers: 1
+zbxproxy_start_snmp_pollers: 1
+zbxproxy_start_ipmi_pollers: 0
+zbxproxy_start_preprocessors: 16
+zbxproxy_start_pollers_unreachable: 1
+zbxproxy_start_trappers: 5
+zbxproxy_start_pingers: 1
+zbxproxy_start_discoverers: 5
+zbxproxy_start_http_pollers: 1
+zbxproxy_start_java_pollers: 0
+zbxproxy_start_vmware_collectors: 0
+zbxproxy_start_snmp_trapper: 0
+zbxproxy_start_db_syncers: 4
+zbxproxy_start_odbc_pollers: 1
+
+zbxproxy_cache_size: 32M
+zbxproxy_history_cache_size: 16M
+zbxproxy_history_index_cache_size: 4M
+zbxproxy_vmware_cache_size: 8M
+
+zbxproxy_max_concurrent_checks_per_poller: 1000
+
+zbxproxy_use_java_gateway: false
+zbxproxy_java_gateway_port: 10052
+
+zbxproxy_vmware_frequency: 60
+zbxproxy_vmware_perf_frequency: 60
+zbxproxy_vmware_timeout: 10
+
+zbxproxy_snmp_trapper_file: /tmp/zabbix_traps.tmp
+
+zbxproxy_housekeeping_frequency: 1
+
+zbxproxy_timeout: 3
+zbxproxy_trapper_timeout: 300
+
+zbxproxy_unreachable_period: 45
+zbxproxy_unavailable_delay: 60
+zbxproxy_unreachable_delay: 15
+
+zbxproxy_external_scripts: /usr/lib/zabbix/externalscripts
+zbxproxy_fping_location: /usr/sbin/fping
+zbxproxy_fping6_location: /usr/sbin/fping6
+
+zbxproxy_tmp_dir: /tmp
+
+zbxproxy_name: "{{ inventory_hostname | upper }}"
+
+zbxproxy_tls_accept: unencrypted
+zbxproxy_tls_connect: unencrypted
+
+zbxproxy_logrotate_period: daily
+zbxproxy_logrotate_retention: 14
+zbxproxy_logrotate_mode: '0640'

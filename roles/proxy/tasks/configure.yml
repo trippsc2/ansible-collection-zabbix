@@ -1,0 +1,76 @@
+---
+- name: Create Zabbix PSK file
+  when:
+    - zbxproxy_tls_psk_file is defined
+  become: true
+  ansible.builtin.copy:
+    content: "{{ zbxproxy_tls_psk }}"
+    dest: "{{ zbxproxy_tls_psk_file }}"
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0400'
+
+- name: Ensure Zabbix proxy config file matches desired configuration
+  become: true
+  ansible.builtin.template:
+    src: zabbix_proxy.conf.j2
+    dest: /etc/zabbix/zabbix_proxy.conf
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0640'
+  notify:
+    - _zbxproxy_restart_zabbix_proxy
+
+- name: Ensure all 'include' directories existed and are permissioned correctly
+  loop: "{{ zbxproxy_include_directories | default([]) }}"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0750'
+  notify:
+    - _zbxproxy_restart_zabbix_proxy
+
+- name: Ensure systemd unit file is properly configured
+  become: true
+  ansible.builtin.template:
+    src: zabbix-proxy.service.j2
+    dest: /usr/lib/systemd/system/zabbix-proxy.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - _zbxproxy_daemon_reload
+    - _zbxproxy_restart_zabbix_proxy
+
+- name: Ensure log file directory exists
+  when:
+    - zbxproxy_log_file | dirname != '/var/log'
+  become: true
+  ansible.builtin.file:
+    path: "{{ zbxproxy_log_file | dirname }}"
+    state: directory
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0750'
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure Zabbix Proxy systemd service is enabled and started
+  become: true
+  ansible.builtin.systemd_service:
+    name: zabbix-proxy.service
+    state: started
+    enabled: true
+
+- name: Configure logrotate for Zabbix Proxy
+  become: true
+  ansible.builtin.template:
+    src: zabbix-proxy.logrotate.j2
+    dest: /etc/logrotate.d/zabbix-proxy
+    owner: root
+    group: root
+    mode: '0644'

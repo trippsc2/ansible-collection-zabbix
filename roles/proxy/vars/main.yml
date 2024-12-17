@@ -1,0 +1,35 @@
+---
+_zbxproxy_tls_encryption_values:
+  unencrypted: no_encryption
+  psk: PSK
+  cert: certificate
+
+_zbxproxy_default_major_version: >-
+  {{ _zbxproxy_supported_major_versions[0] }}
+
+_zbxproxy_major_version: >-
+  {{ zbxproxy_major_version | default(_zbxproxy_default_major_version) }}
+
+_zbxproxy_configure_selinux: >-
+  {{ zbxproxy_configure_selinux | default(_zbxproxy_default_configure_selinux) }}
+
+_zbxproxy_additional_groups: >-
+  {{ zbxproxy_additional_groups | default(_zbxproxy_default_additional_groups) }}
+
+_zbxproxy_firewall_type: >-
+  {{ zbxproxy_firewall_type | default(_zbxproxy_default_firewall_type) }}
+
+_zbxproxy_package_name_by_database_type:
+  postgresql: zabbix-proxy-pgsql
+  mysql: zabbix-proxy-mysql
+
+_zbxproxy_package_name: >-
+  {{ _zbxproxy_package_name_by_database_type[zbxproxy_database_type] }}
+
+_zbxproxy_tls_accept: >-
+  {{ _zbxproxy_tls_encryption_values[zbxproxy_tls_accept] }}
+
+_zbxproxy_tls_connect: >-
+  {{ _zbxproxy_tls_encryption_values[zbxproxy_tls_connect] }}
+
+zbx_major_version: "{{ _zbxproxy_major_version }}"

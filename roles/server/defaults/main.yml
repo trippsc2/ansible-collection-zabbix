@@ -124,12 +124,7 @@ zbxserver_proxy_data_frequency: 1
 
 zbxserver_user_groups: []
 
-zbxserver_vault_managed_users:
-  - username: ansible
-    role_name: Super admin role
-    groups:
-      - Internal
-
+zbxserver_vault_managed_users: []
 zbxserver_unmanaged_users: []
 
 zbxserver_ldap_directories: []

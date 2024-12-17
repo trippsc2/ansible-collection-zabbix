@@ -1,0 +1,207 @@
+{{ ansible_managed | comment }}
+
+AllowRoot={{ zbxproxy_allow_root | ternary('1', '0') }}
+EnableRemoteCommands={{ zbxproxy_enable_remote_commands | ternary('1', '0') }}
+User={{ zbxproxy_user }}
+ListenPort={{ zbxproxy_listen_port }}
+{% if zbxproxy_listen_ip is defined %}
+ListenIP={{ zbxproxy_listen_ip | join(',') }}
+{% endif %}
+{% if zbxproxy_source_ip is defined %}
+SourceIP={{ zbxproxy_source_ip }}
+{% endif %}
+{% if zbxproxy_hostname is defined %}
+Hostname={{ zbxproxy_hostname }}
+{% endif %}
+{% if zbxproxy_hostname_item is defined %}
+HostnameItem={{ zbxproxy_hostname_item }}
+{% endif %}
+StatsAllowedIP={{ zbxproxy_stats_allowed_ip | join(',') }}
+{% if zbxproxy_listen_backlog is defined %}
+ListenBacklog={{ zbxproxy_listen_backlog }}
+{% endif %}
+{% if zbxproxy_major_version != '6.4' and zbxproxy_web_driver_url is defined %}
+WebDriverURL={{ zbxproxy_web_driver_url }}
+{% endif %}
+{% if zbxproxy_tls_ca_file is defined %}
+TLSCAFile={{ zbxproxy_tls_ca_file }}
+{% endif %}
+{% if zbxproxy_tls_crl_file is defined %}
+TLSCRLFile={{ zbxproxy_tls_crl_file }}
+{% endif %}
+{% if zbxproxy_tls_cert_file is defined %}
+TLSCertFile={{ zbxproxy_tls_cert_file }}
+{% endif %}
+{% if zbxproxy_tls_key_file is defined %}
+TLSKeyFile={{ zbxproxy_tls_key_file }}
+{% endif %}
+{% if zbxproxy_tls_cipher_cert is defined %}
+TLSCipherCert={{ zbxproxy_tls_cipher_cert }}
+{% endif %}
+{% if zbxproxy_tls_cipher_cert_13 is defined %}
+TLSCipherCert13={{ zbxproxy_tls_cipher_cert_13 }}
+{% endif %}
+{% if zbxproxy_tls_cipher_psk is defined %}
+TLSCipherPSK={{ zbxproxy_tls_cipher_psk }}
+{% endif %}
+{% if zbxproxy_tls_cipher_psk_13 is defined %}
+TLSCipherPSK13={{ zbxproxy_tls_cipher_psk_13 }}
+{% endif %}
+{% if zbxproxy_tls_cipher_all is defined %}
+TLSCipherAll={{ zbxproxy_tls_cipher_all }}
+{% endif %}
+{% if zbxproxy_tls_cipher_all_13 is defined %}
+TLSCipherAll13={{ zbxproxy_tls_cipher_all_13 }}
+{% endif %}
+{% if zbxproxy_tls_psk_file is defined %}
+TLSPSKFile={{ zbxproxy_tls_psk_file }}
+{% endif %}
+{% if zbxproxy_tls_psk_identity is defined %}
+TLSPSKIdentity={{ zbxproxy_tls_psk_identity }}
+{% endif %}
+{% if zbxproxy_tls_server_cert_issuer is defined %}
+TLSServerCertIssuer={{ zbxproxy_tls_server_cert_issuer }}
+{% endif %}
+{% if zbxproxy_tls_server_cert_subject is defined %}
+TLSServerCertSubject={{ zbxproxy_tls_server_cert_subject }}
+{% endif %}
+{% if zbxproxy_active %}
+TLSConnect={{ zbxproxy_tls_connect }}
+{% else %}
+TLSAccept={{ zbxproxy_tls_accept }}
+{% endif %}
+LogType={{ zbxproxy_log_type }}
+{% if zbxproxy_log_type == 'file' %}
+LogFile={{ zbxproxy_log_file }}
+LogFileSize={{ zbxproxy_log_file_size }}
+{% endif %}
+PidFile={{ zbxproxy_pid_file }}
+SocketDir={{ zbxproxy_socket_dir }}
+DBHost={{ zbxproxy_database_host }}
+{% if zbxproxy_database_type == 'mysql' and zbxproxy_database_socket is defined %}
+DBSocket={{ zbxproxy_database_socket }}
+{% endif %}
+{% if zbxproxy_database_type == 'postgresql' and zbxproxy_database_schema is defined %}
+DBSchema={{ zbxproxy_database_schema }}
+{% endif %}
+DBName={{ zbxproxy_database_name }}
+{% if not zbxproxy_configure_vault %}
+DBUser={{ zbxproxy_user }}
+DBPassword={{ zbxproxy_database_password }}
+{% endif %}
+DBPort={{ zbxproxy_database_port }}
+AllowUnsupportedDBVersions={{ zbxproxy_allow_unsupported_db_versions | ternary('1', '0') }}
+{% if zbxproxy_db_tls_connect != 'unencrypted' %}
+DBTLSConnect={{ zbxproxy_db_tls_connect }}
+{% endif %}
+{% if zbxproxy_db_tls_ca_file is defined %}
+DBTLSCAFile={{ zbxproxy_db_tls_ca_file }}
+{% endif %}
+{% if zbxproxy_db_tls_cert_file is defined %}
+DBTLSCertFile={{ zbxproxy_db_tls_cert_file }}
+{% endif %}
+{% if zbxproxy_db_tls_key_file is defined %}
+DBTLSKeyFile={{ zbxproxy_db_tls_key_file }}
+{% endif %}
+{% if zbxproxy_db_tls_cipher is defined %}
+DBTLSCipher={{ zbxproxy_db_tls_cipher }}
+{% endif %}
+{% if zbxproxy_db_tls_cipher_13 is defined %}
+DBTLSCipher13={{ zbxproxy_db_tls_cipher_13 }}
+{% endif %}
+{% if zbxproxy_configure_vault %}
+Vault=HashiCorp
+VaultToken={{ zbxproxy_vault_token }}
+VaultURL={{ zbxproxy_vault_url }}
+VaultDBPath={{ zbxproxy_vault_database_mount_point }}/{{ zbxproxy_vault_database_path }}
+{% endif %}
+{% if zbxproxy_major_version != '6.4' %}
+ProxyBufferMode={{ zbxproxy_buffer_mode }}
+{% endif %}
+{% if zbxproxy_local_buffer_in_hours is defined %}
+ProxyLocalBuffer={{ zbxproxy_local_buffer_in_hours }}
+{% endif %}
+{% if zbxproxy_major_version != '6.4' and zbxproxy_memory_buffer_age_in_seconds is defined %}
+ProxyMemoryBufferAge={{ zbxproxy_memory_buffer_age_in_seconds }}
+{% endif %}
+{% if zbxproxy_major_version != '6.4' and zbxproxy_memory_buffer_size is defined %}
+ProxyMemoryBufferSize={{ zbxproxy_memory_buffer_size }}
+{% endif %}
+{% if zbxproxy_offline_buffer_in_hours is defined %}
+ProxyOfflineBuffer={{ zbxproxy_offline_buffer_in_hours }}
+{% endif %}
+ProxyConfigFrequency={{ zbxproxy_proxy_config_frequency }}
+DataSenderFrequency={{ zbxproxy_data_sender_frequency }}
+ProxyMode={{ zbxproxy_active | ternary('0', '1') }}
+Server={{ zbxproxy_servers | join(',') }}
+StartPollers={{ zbxproxy_start_pollers }}
+{% if zbxproxy_major_version != '6.4' %}
+StartAgentPollers={{ zbxproxy_start_agent_pollers }}
+StartBrowserPollers={{ zbxproxy_start_browser_pollers }}
+StartHTTPAgentPollers={{ zbxproxy_start_http_agent_pollers }}
+StartSNMPPollers={{ zbxproxy_start_snmp_pollers }}
+{% endif %}
+StartIPMIPollers={{ zbxproxy_start_ipmi_pollers }}
+StartPreprocessors={{ zbxproxy_start_preprocessors }}
+StartPollersUnreachable={{ zbxproxy_start_pollers_unreachable }}
+StartTrappers={{ zbxproxy_start_trappers }}
+StartPingers={{ zbxproxy_start_pingers }}
+StartDiscoverers={{ zbxproxy_start_discoverers }}
+StartHTTPPollers={{ zbxproxy_start_http_pollers }}
+{% if zbxproxy_use_java_gateway %}
+StartJavaPollers={{ zbxproxy_start_java_pollers }}
+{% endif %}
+StartVMwareCollectors={{ zbxproxy_start_vmware_collectors }}
+StartSNMPTrapper={{ zbxproxy_start_snmp_trapper }}
+StartDBSyncers={{ zbxproxy_start_db_syncers }}
+StartODBCPollers={{ zbxproxy_start_odbc_pollers }}
+CacheSize={{ zbxproxy_cache_size }}
+HistoryCacheSize={{ zbxproxy_history_cache_size }}
+HistoryIndexCacheSize={{ zbxproxy_history_index_cache_size }}
+VMwareCacheSize={{ zbxproxy_vmware_cache_size }}
+{% if zbxproxy_major_version != '6.4' %}
+MaxConcurrentChecksPerPoller={{ zbxproxy_max_concurrent_checks_per_poller }}
+{% endif %}
+{% if zbxproxy_use_java_gateway %}
+JavaGateway={{ zbxproxy_java_gateway }}
+JavaGatewayPort={{ zbxproxy_java_gateway_port }}
+{% endif %}
+VMwareFrequency={{ zbxproxy_vmware_frequency }}
+VMwarePerfFrequency={{ zbxproxy_vmware_perf_frequency }}
+VMwareTimeout={{ zbxproxy_vmware_timeout }}
+SNMPTrapperFile={{ zbxproxy_snmp_trapper_file }}
+HousekeepingFrequency={{ zbxproxy_housekeeping_frequency }}
+Timeout={{ zbxproxy_timeout }}
+TrapperTimeout={{ zbxproxy_trapper_timeout }}
+UnreachablePeriod={{ zbxproxy_unreachable_period }}
+UnavailableDelay={{ zbxproxy_unavailable_delay }}
+UnreachableDelay={{ zbxproxy_unreachable_delay }}
+ExternalScripts={{ zbxproxy_external_scripts }}
+FpingLocation={{ zbxproxy_fping_location }}
+Fping6Location={{ zbxproxy_fping6_location }}
+{% if zbxproxy_ssh_key_location is defined %}
+SSHKeyLocation={{ zbxproxy_ssh_key_location }}
+{% endif %}
+TmpDir={{ zbxproxy_tmp_dir }}
+{% for include_file in zbxproxy_include_files | default([]) %}
+Include={{ include_file }}
+{% endfor %}
+{% for include_directory in zbxproxy_include_directories | default([]) %}
+Include={{ include_directory }}/
+Include={{ include_directory }}/*.conf
+{% endfor %}
+{% if zbxproxy_ssl_cert_location is defined %}
+SSLCertLocation={{ zbxproxy_ssl_cert_location }}
+{% endif %}
+{% if zbxproxy_ssl_key_location is defined %}
+SSLKeyLocation={{ zbxproxy_ssl_key_location }}
+{% endif %}
+{% if zbxproxy_ssl_ca_location is defined %}
+SSLCALocation={{ zbxproxy_ssl_ca_location }}
+{% endif %}
+{% if zbxproxy_load_module_path is defined %}
+LoadModulePath={{ zbxproxy_load_module_path }}
+{% endif %}
+{% for load_module_item in zbxproxy_load_modules | default([]) %}
+LoadModule={{ load_module_item }}
+{% endfor %}

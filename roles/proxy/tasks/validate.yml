@@ -1,0 +1,450 @@
+---
+- name: Include OS family variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/main.yml"
+
+- name: Include non-EL release variables
+  when:
+    - ansible_os_family != 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
+
+- name: Include EL major version variables
+  when:
+    - ansible_os_family == 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
+
+- name: Validate Zabbix major version
+  when:
+    - zbxproxy_major_version is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_major_version in _zbxproxy_supported_major_versions
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is not supported running Zabbix {{ zbxproxy_major_version }}. Supported versions for this OS are: {{ _zbxproxy_supported_major_versions | join(', ') }}"
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is supported running Zabbix {{ zbxproxy_major_version }}."
+
+- name: Validate PSK variables
+  when:
+    - zbxproxy_tls_accept == 'psk' or zbxproxy_tls_connect == 'psk'
+  block:
+    - name: Validate that PSK is defined
+      ansible.builtin.assert:
+        that:
+          - zbxproxy_tls_psk is defined
+        fail_msg: Zabbix PSK must be defined.
+        success_msg: Zabbix PSK is defined.
+
+    - name: Validate that PSK identity is defined
+      ansible.builtin.assert:
+        that:
+          - zbxproxy_tls_psk_identity is defined
+        fail_msg: Zabbix PSK identity must be defined.
+        success_msg: Zabbix PSK identity is defined.
+
+    - name: Validate that PSK file is defined
+      ansible.builtin.assert:
+        that:
+          - zbxproxy_tls_psk_file is defined
+        fail_msg: Zabbix PSK file must be defined.
+        success_msg: Zabbix PSK file is defined.
+
+- name: Validate PSK is defined when PSK file is defined
+  when:
+    - zbxproxy_tls_psk_file is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_tls_psk is defined
+    fail_msg: Zabbix PSK must be defined when PSK file is defined.
+    success_msg: Zabbix PSK is defined when PSK file is defined.
+
+- name: Validate that PSK is valid
+  when:
+    - zbxproxy_tls_psk is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_tls_psk | length >= 32
+      - zbxproxy_tls_psk | length <= 512
+      - zbxproxy_tls_psk | regex_match('^[a-fA-F0-9]+$')
+    fail_msg: Zabbix PSK must be between 32 and 512 hexadecimal characters.
+    success_msg: Zabbix PSK is valid.
+
+- name: Validate listen port
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_listen_port >= 1024
+      - zbxproxy_listen_port <= 32767
+    fail_msg: Zabbix listen port must be between 1024 and 32767.
+    success_msg: Zabbix listen port is valid.
+
+- name: Validate log file size
+  when:
+    - zbxproxy_log_type == 'file'
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_log_file_size | int >= 0
+      - zbxproxy_log_file_size | int <= 1024
+    fail_msg: Zabbix log file size must be between 0 and 1024 MB.
+    success_msg: Zabbix log file size is valid.
+
+- name: Validate database port
+  when:
+    - zbxproxy_database_port is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_database_port >= 1024
+      - zbxproxy_database_port <= 65535
+    fail_msg: Zabbix database port must be between 1024 and 65535.
+    success_msg: Zabbix database port is valid.
+
+- name: Validate Vault variables
+  when:
+    - zbxproxy_configure_vault
+  block:
+    - name: Validate Vault database mount point is defined
+      ansible.builtin.assert:
+        that:
+          - zbxproxy_vault_database_mount_point is defined
+        fail_msg: Zabbix Vault database mount point must be defined.
+        success_msg: Zabbix Vault database mount point is defined.
+    
+    - name: Validate Vault database path is defined
+      ansible.builtin.assert:
+        that:
+          - zbxproxy_vault_database_path is defined
+        fail_msg: Zabbix Vault database path must be defined.
+        success_msg: Zabbix Vault database path is defined.
+
+- name: Validate proxy local buffer time
+  when:
+    - zbxproxy_local_buffer is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_local_buffer >= 0
+      - zbxproxy_local_buffer <= 720
+    fail_msg: Zabbix proxy local buffer time must be between 0 and 720 seconds.
+    success_msg: Zabbix proxy local buffer time is valid.
+
+- name: Validate proxy memory buffer age
+  when:
+    - zbxproxy_major_version != '6.4'
+    - zbxproxy_memory_buffer_age_in_seconds is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_memory_buffer_age_in_seconds == 0 or
+        (zbxproxy_memory_buffer_age_in_seconds >= 600 and
+        zbxproxy_memory_buffer_age_in_seconds <= 864000)
+    fail_msg: Zabbix proxy memory buffer age must be either 0 or between 600 and 864000 seconds and less than or equal to the proxy offline buffer.
+    success_msg: Zabbix proxy memory buffer age is valid.
+
+- name: Validate proxy memory buffer age is less than or equal to proxy offline buffer
+  when:
+    - zbxproxy_major_version != '6.4'
+    - zbxproxy_memory_buffer_age_in_seconds is defined
+    - zbxproxy_offline_buffer_in_hours is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_memory_buffer_age_in_seconds <= (zbxproxy_offline_buffer_in_hours * 3600)
+    fail_msg: Zabbix proxy memory buffer age must be less than or equal to the proxy offline buffer.
+    success_msg: Zabbix proxy memory buffer age is valid.
+
+- name: Validate proxy offline buffer
+  when:
+    - zbxproxy_offline_buffer_in_hours is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_offline_buffer_in_hours >= 1
+      - zbxproxy_offline_buffer_in_hours <= 720
+    fail_msg: Zabbix proxy offline buffer must be between 1 and 720 hours.
+    success_msg: Zabbix proxy offline buffer is valid.
+
+- name: Validate proxy config frequency
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_proxy_config_frequency >= 1
+      - zbxproxy_proxy_config_frequency <= 604800
+    fail_msg: Zabbix proxy config frequency must be between 1 and 604800 seconds.
+    success_msg: Zabbix proxy config frequency is valid.
+
+- name: Validate data sender frequency
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_data_sender_frequency >= 1
+      - zbxproxy_data_sender_frequency <= 3600
+    fail_msg: Zabbix data sender frequency must be between 1 and 3600 seconds.
+    success_msg: Zabbix data sender frequency is valid.
+
+- name: Validate servers are defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_servers | length > 0
+    fail_msg: Zabbix servers must be defined and at least one server must be present.
+    success_msg: Zabbix servers are defined.
+
+- name: Validate start pollers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_pollers >= 0
+      - zbxproxy_start_pollers <= 1000
+    fail_msg: Zabbix start pollers must be between 0 and 1000.
+    success_msg: Zabbix start pollers is valid.
+
+- name: Validate start agent pollers
+  when:
+    - zbxproxy_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_agent_pollers >= 0
+      - zbxproxy_start_agent_pollers <= 1000
+    fail_msg: Zabbix start agent pollers must be between 0 and 1000.
+    success_msg: Zabbix start agent pollers is valid.
+
+- name: Validate start browser pollers
+  when:
+    - zbxproxy_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_browser_pollers >= 0
+      - zbxproxy_start_browser_pollers <= 1000
+    fail_msg: Zabbix start browser pollers must be between 0 and 1000.
+    success_msg: Zabbix start browser pollers is valid.
+
+- name: Validate start HTTP agent pollers
+  when:
+    - zbxproxy_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_http_agent_pollers >= 0
+      - zbxproxy_start_http_agent_pollers <= 1000
+    fail_msg: Zabbix start HTTP agent pollers must be between 0 and 1000.
+    success_msg: Zabbix start HTTP agent pollers is valid.
+
+- name: Validate start SNMP pollers
+  when:
+    - zbxproxy_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_snmp_pollers >= 0
+      - zbxproxy_start_snmp_pollers <= 1000
+    fail_msg: Zabbix start SNMP pollers must be between 0 and 1000.
+    success_msg: Zabbix start SNMP pollers is valid.
+
+- name: Validate start IPMI pollers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_ipmi_pollers >= 0
+      - zbxproxy_start_ipmi_pollers <= 1000
+    fail_msg: Zabbix start IPMI pollers must be between 0 and 1000.
+    success_msg: Zabbix start IPMI pollers is valid.
+
+- name: Validate start preprocessors
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_preprocessors >= 0
+      - zbxproxy_start_preprocessors <= 1000
+    fail_msg: Zabbix start preprocessors must be between 0 and 1000.
+    success_msg: Zabbix start preprocessors is valid.
+
+- name: Validate start pollers unreachable
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_pollers_unreachable >= 0
+      - zbxproxy_start_pollers_unreachable <= 1000
+    fail_msg: Zabbix start pollers unreachable must be between 0 and 1000.
+    success_msg: Zabbix start pollers unreachable is valid.
+
+- name: Validate start trappers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_trappers >= 0
+      - zbxproxy_start_trappers <= 1000
+    fail_msg: Zabbix start trappers must be between 0 and 1000.
+    success_msg: Zabbix start trappers is valid.
+
+- name: Validate start pingers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_pingers >= 0
+      - zbxproxy_start_pingers <= 1000
+    fail_msg: Zabbix start pingers must be between 0 and 1000.
+    success_msg: Zabbix start pingers is valid.
+
+- name: Validate start discoverers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_discoverers >= 0
+      - zbxproxy_start_discoverers <= 1000
+    fail_msg: Zabbix start discoverers must be between 0 and 1000.
+    success_msg: Zabbix start discoverers is valid.
+
+- name: Validate start HTTP pollers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_http_pollers >= 0
+      - zbxproxy_start_http_pollers <= 1000
+    fail_msg: Zabbix start HTTP pollers must be between 0 and 1000.
+    success_msg: Zabbix start HTTP pollers is valid.
+
+- name: Validate start Java pollers
+  when:
+    - zbxproxy_use_java_gateway
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_java_pollers >= 0
+      - zbxproxy_start_java_pollers <= 1000
+    fail_msg: Zabbix start Java pollers must be between 0 and 1000.
+    success_msg: Zabbix start Java pollers is valid.
+
+- name: Validate start VMware collectors
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_vmware_collectors >= 0
+      - zbxproxy_start_vmware_collectors <= 250
+    fail_msg: Zabbix start VMware collectors must be between 0 and 250.
+    success_msg: Zabbix start VMware collectors is valid.
+
+- name: Validate start SNMP trapper
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_snmp_trapper >= 0
+      - zbxproxy_start_snmp_trapper <= 1
+    fail_msg: Zabbix start SNMP trapper must be between 0 and 1.
+    success_msg: Zabbix start SNMP trapper is valid.
+
+- name: Validate start DB syncers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_db_syncers >= 1
+      - zbxproxy_start_db_syncers <= 100
+    fail_msg: Zabbix start DB syncers must be between 1 and 100.
+    success_msg: Zabbix start DB syncers is valid.
+
+- name: Validate start ODBC pollers
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_start_odbc_pollers >= 0
+      - zbxproxy_start_odbc_pollers <= 1000
+    fail_msg: Zabbix start ODBC pollers must be between 0 and 1000.
+    success_msg: Zabbix start ODBC pollers is valid.
+
+- name: Validate max concurrent checks per poller
+  when:
+    - zbxproxy_major_version != '6.4'
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_max_concurrent_checks_per_poller >= 1
+      - zbxproxy_max_concurrent_checks_per_poller <= 1000
+    fail_msg: Zabbix max concurrent checks per poller must be between 1 and 1000.
+    success_msg: Zabbix max concurrent checks per poller is valid.
+
+- name: Validate Java gateway port
+  when:
+    - zbxproxy_use_java_gateway
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_java_gateway_port >= 1024
+      - zbxproxy_java_gateway_port <= 32767
+    fail_msg: Zabbix Java gateway port must be between 1024 and 32767.
+    success_msg: Zabbix Java gateway port is valid.
+
+- name: Validate VMware frequency
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_vmware_frequency >= 10
+      - zbxproxy_vmware_frequency <= 86400
+    fail_msg: Zabbix VMware frequency must be between 10 and 86400 seconds.
+    success_msg: Zabbix VMware frequency is valid.
+
+- name: Validate VMware perf frequency
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_vmware_perf_frequency >= 10
+      - zbxproxy_vmware_perf_frequency <= 86400
+    fail_msg: Zabbix VMware perf frequency must be between 10 and 86400 seconds.
+    success_msg: Zabbix VMware perf frequency is valid.
+
+- name: Validate VMware timeout
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_vmware_timeout >= 1
+      - zbxproxy_vmware_timeout <= 300
+    fail_msg: Zabbix VMware timeout must be between 1 and 300 seconds.
+    success_msg: Zabbix VMware timeout is valid.
+
+- name: Validate housekeeping frequency
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_housekeeping_frequency >= 1
+      - zbxproxy_housekeeping_frequency <= 24
+    fail_msg: Zabbix housekeeping frequency must be between 1 and 24 hours.
+    success_msg: Zabbix housekeeping frequency is valid.
+
+- name: Validate timeout
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_timeout >= 1
+      - zbxproxy_timeout <= 30
+    fail_msg: Zabbix timeout must be between 1 and 30 seconds.
+    success_msg: Zabbix timeout is valid.
+
+- name: Validate trapper timeout
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_trapper_timeout >= 1
+      - zbxproxy_trapper_timeout <= 300
+    fail_msg: Zabbix trapper timeout must be between 1 and 300 seconds.
+    success_msg: Zabbix trapper timeout is valid.
+
+- name: Validate unreachable period
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_unreachable_period >= 1
+      - zbxproxy_unreachable_period <= 3600
+    fail_msg: Zabbix unreachable period must be between 1 and 3600 seconds.
+    success_msg: Zabbix unreachable period is valid.
+
+- name: Validate unreachable delay
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_unavailable_delay >= 1
+      - zbxproxy_unavailable_delay <= 3600
+    fail_msg: Zabbix unavailable delay must be between 1 and 3600 seconds.
+    success_msg: Zabbix unavailable delay is valid.
+
+- name: Validate unavailable delay
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_unavailable_delay >= 1
+      - zbxproxy_unavailable_delay <= 3600
+    fail_msg: Zabbix unavailable delay must be between 1 and 3600 seconds.
+    success_msg: Zabbix unavailable delay is valid.
+
+- name: Validate address is defined
+  when:
+    - not zbxproxy_active
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_address is defined
+    fail_msg: Zabbix proxy address must be defined.
+    success_msg: Zabbix proxy address is defined.
+
+- name: Validate addresses are defined
+  when:
+    - zbxproxy_active
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_addresses is defined
+      - zbxproxy_addresses | length > 0
+    fail_msg: Zabbix proxy addresses must be defined and at least one address must be present.
+    success_msg: Zabbix proxy addresses are defined.
+
+- name: Set variable indicating whether the address is an IP address
+  when:
+    - not zbxproxy_active
+    - zbxproxy_major_version == '6.4'
+  ansible.builtin.set_fact:
+    _zbxproxy_address_is_ip: "{{ zbxproxy_address | ansible.utils.ipaddr }}"
+
+- name: Validate logrotate retention
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_logrotate_retention >= 1
+    fail_msg: Zabbix logrotate retention must be at least 1.
+    success_msg: Zabbix logrotate retention is valid.

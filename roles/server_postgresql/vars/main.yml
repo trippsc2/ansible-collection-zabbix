@@ -1,16 +1,10 @@
 ---
-_zbxserver_default_major_version: >-
-  {{ _zbxserver_supported_major_versions[0] }}
-
 _zbxserver_default_pgsql_listen_on_local_only: "{{ not zbxserver_pgsql_standalone }}"
 _zbxserver_default_pgsql_listen_on_all_addresses: "{{ zbxserver_pgsql_standalone }}"
 _zbxserver_default_pgsql_install_timescaledb: "{{ zbxserver_use_timescaledb }}"
 
 _zbxserver_default_timescaledb_schema_done_file_path: >-
   {{ _zbxserver_pgsql_base_directory }}/zbx_timescaledb_schema.done
-
-_zbxserver_major_version: >-
-  {{ zbxserver_major_version | default(_zbxserver_default_major_version) }}
 
 _zbxserver_pgsql_listen_on_local_only: >-
   {{ pgsql_listen_on_local_only | default(_zbxserver_default_pgsql_listen_on_local_only) }}
@@ -44,12 +38,12 @@ _zbxserver_timescaledb_schema_script_path_by_zabbix_major_version:
   '6.4': /usr/share/zabbix-sql-scripts/postgresql/timescaledb.sql
 
 _zbxserver_pgsql_schema_script_path: >-
-  {{ _zbxserver_pgsql_schema_script_path_by_zabbix_major_version[_zbxserver_major_version] }}
+  {{ _zbxserver_pgsql_schema_script_path_by_zabbix_major_version[zbxserver_major_version] }}
 
 _zbxserver_timescaledb_schema_script_path: >-
-  {{ _zbxserver_timescaledb_schema_script_path_by_zabbix_major_version[_zbxserver_major_version] }}
+  {{ _zbxserver_timescaledb_schema_script_path_by_zabbix_major_version[zbxserver_major_version] }}
 
 _zbxserver_timescaledb_schema_done_file_path: >-
   {{ zbxserver_timescaledb_schema_done_file_path | default(_zbxserver_default_timescaledb_schema_done_file_path) }}
 
-zbx_major_version: "{{ _zbxserver_major_version }}"
+zbx_major_version: "{{ zbxserver_major_version }}"

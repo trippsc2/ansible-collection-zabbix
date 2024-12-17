@@ -1,0 +1,38 @@
+---
+galaxy_info:
+  author: Jim Tarpley
+  namespace: trippsc2
+  role_name: proxy_postgresql
+  description:
+    - This role installs PostgreSQL server for use by a Zabbix Proxy.
+    - This role uses trippsc2.postgresql.install to install PostgreSQL.
+  license: MIT
+
+  min_ansible_version: '2.15'
+
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: EL
+      versions:
+        - '8'
+        - '9'
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+
+  galaxy_tags: []
+
+collections:
+  - ansible.posix
+  - community.hashi_vault
+  - community.postgresql
+  - trippsc2.hashi_vault
+  - trippsc2.postgresql
+
+dependencies:
+  - role: trippsc2.zabbix.repo

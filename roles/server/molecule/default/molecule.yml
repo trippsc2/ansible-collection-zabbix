@@ -83,6 +83,11 @@ provisioner:
         zbxserver_user_groups:
           - name: LDAP
             gui_access: default
+        zbxserver_vault_managed_users:
+          - username: ansible
+            role_name: Super admin role
+            groups:
+              - Internal
         zbxserver_unmanaged_users:
           - username: "{{ zabbix_username }}"
             password: "{{ zabbix_password }}"

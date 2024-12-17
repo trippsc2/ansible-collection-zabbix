@@ -1,0 +1,13 @@
+---
+- name: Reload systemd daemon
+  listen: _zbxproxy_daemon_reload
+  become: true
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Restart Zabbix Proxy
+  listen: _zbxproxy_restart_zabbix_proxy
+  become: true
+  ansible.builtin.systemd_service:
+    name: zabbix-proxy.service
+    state: restarted

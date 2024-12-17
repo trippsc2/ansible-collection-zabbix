@@ -1,0 +1,218 @@
+---
+- name: Verify
+  hosts:
+    - subjects
+  tasks:
+    - name: Set OS variables (Debian-based)
+      when:
+        - ansible_os_family == 'Debian'
+      ansible.builtin.set_fact:
+        _pgsql_package_name: postgresql-16
+        _pgsql_service_name: postgresql.service
+        _pgsql_config_file: /etc/postgresql/16/main/postgresql.conf
+        _pgsql_hba_config_file: /etc/postgresql/16/main/pg_hba.conf
+        _pgsql_data_directory: /var/lib/postgresql/16/main
+        _pgsql_ident_file: /etc/postgresql/16/main/pg_ident.conf
+
+    - name: Set OS variables (EL)
+      when:
+        - ansible_os_family == 'RedHat'
+      ansible.builtin.set_fact:
+        _pgsql_package_name: postgresql16-server
+        _pgsql_service_name: postgresql-16.service
+        _pgsql_config_file: /var/lib/pgsql/16/data/postgresql.conf
+        _pgsql_hba_config_file: /var/lib/pgsql/16/data/pg_hba.conf
+        _pgsql_data_directory: /var/lib/pgsql/16/data
+        _pgsql_ident_file: /var/lib/pgsql/16/data/pg_ident.conf
+
+    - name: Set expected values
+      ansible.builtin.set_fact:
+        _pgsql_data_directory_expected: "data_directory = '{{ _pgsql_data_directory }}'"
+        _pgsql_hba_file_expected: "hba_file = '{{ _pgsql_hba_config_file }}'"
+        _pgsql_ident_file_expected: "ident_file = '{{ _pgsql_ident_file }}'"
+        _pgsql_listen_addresses_expected: "listen_addresses = '{{ '*' if zbxproxy_pgsql_standalone else 'localhost' }}'"
+        _pgsql_ssl_ca_file_expected: "ssl_ca_file = '{{ pgsql_ssl_ca_file }}'"
+        _pgsql_ssl_cert_file_expected: "ssl_cert_file = '{{ pgsql_ssl_cert_file }}'"
+        _pgsql_ssl_key_file_expected: "ssl_key_file = '{{ pgsql_ssl_key_file }}'"
+
+    - name: Set expected pg_hba.conf entries (non-standalone)
+      when:
+        - not zbxproxy_pgsql_standalone
+      ansible.builtin.set_fact:
+        _pgsql_hba_entries_expected:
+          - local all all peer
+          - host all all 127.0.0.1/32 scram-sha-256
+          - host all all ::1/128 scram-sha-256
+
+    - name: Set expected pg_hba.conf entries (standalone)
+      when:
+        - zbxproxy_pgsql_standalone
+      ansible.builtin.set_fact:
+        _pgsql_hba_entries_expected:
+          - local all all peer
+          - "host all {{ pgsql_vault_user | default('vault') }} {{ hostvars['linux'].ansible_host }}/32 scram-sha-256"
+          - "host {{ zbxproxy_database_name | default('zabbix-server') }} {{ zbxproxy_user | default('zabbix') }} {{ hostvars['linux'].ansible_host }}/32 scram-sha-256"
+          - host all all 127.0.0.1/32 scram-sha-256
+          - host all all ::1/128 scram-sha-256
+
+    - name: Check if PostgreSQL is installed
+      become: true
+      check_mode: true
+      ansible.builtin.package:
+        name:
+          - "{{ _pgsql_package_name }}"
+        state: present
+      register: _package_installed
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _package_installed.changed
+        fail_msg: PostgreSQL not installed
+        success_msg: PostgreSQL installed
+
+    - name: Check if PostgreSQL service is enabled
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: "{{ _pgsql_service_name }}"
+        enabled: true
+      register: _service_enabled
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_enabled.changed
+        fail_msg: PostgreSQL service not enabled
+        success_msg: PostgreSQL service enabled
+
+    - name: Check if PostgreSQL service is running
+      become: true
+      check_mode: true
+      ansible.builtin.systemd_service:
+        name: "{{ _pgsql_service_name }}"
+        state: started
+      register: _service_running
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - not _service_running.changed
+        fail_msg: PostgreSQL service not running
+        success_msg: PostgreSQL service running
+
+    - name: Show expected PostgreSQL data_directory
+      ansible.builtin.debug:
+        msg: "data_directory = '{{ _pgsql_data_directory }}'"
+
+    - name: Check if PostgreSQL data_directory is set
+      become: true
+      ansible.builtin.command:
+        cmd: "grep data_directory {{ _pgsql_config_file }}"
+      changed_when: false
+      register: _pgsql_config_data_directory
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - _pgsql_config_data_directory.stdout == _pgsql_data_directory_expected
+        fail_msg: "PostgreSQL data_directory is incorrect: {{ _pgsql_config_data_directory.stdout }}"
+        success_msg: "PostgreSQL data_directory is correct: {{ _pgsql_config_data_directory.stdout }}"
+
+    - name: Check if PostgreSQL hba_file is set
+      become: true
+      ansible.builtin.command:
+        cmd: "grep hba_file {{ _pgsql_config_file }}"
+      changed_when: false
+      register: _pgsql_config_hba_file
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - _pgsql_config_hba_file.stdout == _pgsql_hba_file_expected
+        fail_msg: "PostgreSQL hba_file is incorrect: {{ _pgsql_config_hba_file.stdout }}"
+        success_msg: "PostgreSQL hba_file is correct: {{ _pgsql_config_hba_file.stdout }}"
+
+    - name: Check if PostgreSQL ident_file is set
+      become: true
+      ansible.builtin.command:
+        cmd: "grep ident_file {{ _pgsql_config_file }}"
+      changed_when: false
+      register: _pgsql_config_ident_file
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - _pgsql_config_ident_file.stdout == _pgsql_ident_file_expected
+        fail_msg: "PostgreSQL ident_file is incorrect: {{ _pgsql_config_ident_file.stdout }}"
+        success_msg: "PostgreSQL ident_file is correct: {{ _pgsql_config_ident_file.stdout }}"
+
+    - name: Check if PostgreSQL listen_addresses is set
+      become: true
+      ansible.builtin.command:
+        cmd: "grep listen_addresses {{ _pgsql_config_file }}"
+      changed_when: false
+      register: _pgsql_config_listen_addresses
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - _pgsql_config_listen_addresses.stdout == _pgsql_listen_addresses_expected
+        fail_msg: "PostgreSQL listen_addresses is incorrect: {{ _pgsql_config_listen_addresses.stdout }}"
+        success_msg: "PostgreSQL listen_addresses is correct: {{ _pgsql_config_listen_addresses.stdout }}"
+
+    - name: Check if PostgreSQL ssl_ca_file is set
+      become: true
+      ansible.builtin.command:
+        cmd: "grep ssl_ca_file {{ _pgsql_config_file }}"
+      changed_when: false
+      register: _pgsql_config_ssl_ca_file
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - _pgsql_config_ssl_ca_file.stdout == _pgsql_ssl_ca_file_expected
+        fail_msg: "PostgreSQL ssl_ca_file is incorrect: {{ _pgsql_config_ssl_ca_file.stdout }}"
+        success_msg: "PostgreSQL ssl_ca_file is correct: {{ _pgsql_config_ssl_ca_file.stdout }}"
+
+    - name: Check if PostgreSQL ssl_cert_file is set
+      become: true
+      ansible.builtin.command:
+        cmd: "grep ssl_cert_file {{ _pgsql_config_file }}"
+      changed_when: false
+      register: _pgsql_config_ssl_cert_file
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - _pgsql_config_ssl_cert_file.stdout == _pgsql_ssl_cert_file_expected
+        fail_msg: "PostgreSQL ssl_cert_file is incorrect: {{ _pgsql_config_ssl_cert_file.stdout }}"
+        success_msg: "PostgreSQL ssl_cert_file is correct: {{ _pgsql_config_ssl_cert_file.stdout }}"
+
+    - name: Check if PostgreSQL ssl_key_file is set
+      become: true
+      ansible.builtin.command:
+        cmd: "grep ssl_key_file {{ _pgsql_config_file }}"
+      changed_when: false
+      register: _pgsql_config_ssl_key_file
+
+    - name: Assert
+      ansible.builtin.assert:
+        that:
+          - _pgsql_config_ssl_key_file.stdout == _pgsql_ssl_key_file_expected
+        fail_msg: "PostgreSQL ssl_key_file is incorrect: {{ _pgsql_config_ssl_key_file.stdout }}"
+        success_msg: "PostgreSQL ssl_key_file is correct: {{ _pgsql_config_ssl_key_file.stdout }}"
+    
+    - name: Get pg_hba.conf contents
+      become: true
+      ansible.builtin.slurp:
+        src: "{{ _pgsql_hba_config_file }}"
+      register: _pgsql_hba_contents
+
+    - name: Assert
+      loop: "{{ _pgsql_hba_entries_expected }}"
+      ansible.builtin.assert:
+        that:
+          - item in _pgsql_hba_contents.content | b64decode
+        fail_msg: "PostgreSQL hba entry '{{ item }}' not found"
+        success_msg: "PostgreSQL hba entry '{{ item }}' found"

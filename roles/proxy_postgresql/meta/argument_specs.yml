@@ -1,0 +1,166 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix Proxy PostgreSQL
+    description:
+      - This role installs PostgreSQL server for use by a Zabbix Proxy.
+      - This role uses **trippsc2.postgresql.install** to install PostgreSQL.
+      - The *pgsql_additional_hba_entries* variable is overridden by this role. The rest of the role variables can be set in the playbook or inventory.
+    author: Jim Tarpley
+    options:
+      vault_url:
+        type: str
+        required: false
+        description:
+          - The URL for accessing HashiCorp Vault.
+          - Alternatively, this can be configured through ansible.cfg or environment variables.
+      vault_token:
+        type: str
+        required: false
+        description:
+          - The token for accessing HashiCorp Vault.
+          - Alternatively, this (or any other authentication method) can be configured through ansible.cfg or environment variables.
+      zbxproxy_major_version:
+        type: str
+        required: false
+        choices:
+          - '7.2'
+          - '7.0'
+          - '6.4'
+        description:
+          - The major version of Zabbix to install.
+          - This defaults to the latest supported version for the OS.
+      zbxproxy_pgsql_standalone:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether the PostgreSQL server is separate from the Zabbix Proxy.
+          - If set to `true`, *pgsql_listen_on_local_only* defaults to `false` (and must be `false`) and *pgsql_listen_on_all_addresses* defaults to `true`.
+          - If set to `false`, *pgsql_listen_on_local_only* defaults to `true` and *pgsql_listen_on_all_addresses* defaults to `false`.
+      zbxproxy_pgsql_additional_hba_entries:
+        type: list
+        required: false
+        default: []
+        elements: dict
+        description:
+          - Additional host-based authentication entries to add to the pg_hba.conf file.
+          - These entries are in addition to the default entries from the **trippsc2.postgresql.install** role and the entries added by this role.
+        options:
+          type:
+            type: str
+            required: true
+            choices:
+              - local
+              - host
+              - hostssl
+              - hostnossl
+              - hostgssenc
+              - hostnogssenc
+            description:
+              - The type of host-based authentication entry.
+              - See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html#AUTH-PG-HBA-CONF for more information.
+          database:
+            type: str
+            required: true
+            description:
+              - The name of the database to which the entry applies.
+              - This can be `all` to apply to all databases.
+          user:
+            type: str
+            required: true
+            description:
+              - The name of the user to which the entry applies.
+              - This can be `all` to apply to all users.
+          address:
+            type: str
+            required: false
+            description:
+              - The CIDR range to which the entry applies.
+              - This must not be provided for `local` entries.
+          auth_method:
+            type: str
+            required: true
+            choices:
+              - trust
+              - reject
+              - scram-sha-256
+              - md5
+              - password
+              - gss
+              - ident
+              - peer
+              - ldap
+              - radius
+              - cert
+              - pam
+            description:
+              - The authentication method to use.
+              - See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html#AUTH-PG-HBA-CONF for more information.
+          auth_options:
+            type: str
+            required: false
+            description:
+              - Any additional options needed for the authentication method.
+              - For most common authentication methods, this should not be provided.
+              - See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html#AUTH-PG-HBA-CONF for more information.
+      zbxproxy_ip_addresses:
+        type: list
+        required: false
+        elements: str
+        description:
+          - The IP addresses of the Zabbix servers.
+          - If *zbxproxy_pgsql_standalone* is `true`, this is required.
+          - A pg_hba.conf entry will be created to access the Zabbix server database authenticated with the Zabbix server user via scram-sha-256 for each IP address.
+      zbxproxy_configure_vault:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure HashiCorp Vault for the Zabbix database secret.
+          - If `true`, the Zabbix database password will be stored in Vault.
+          - If *zabbix_database_password* is defined and an existing password is not stored in Vault, the supplied password will be stored there.
+          - If *zabbix_database_password* is not defined, a new password will be generated and stored in Vault.
+      zbxproxy_vault_create_mount_points:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to create HashiCorp Vault the expected mount points, if they do not exist.
+      zabbix_database_password:
+        type: str
+        required: false
+        no_log: true
+        description:
+          - The password for the Zabbix database user.
+          - If *zbxproxy_configure_vault* is true and HashiCorp Vault already stores the secret, this value is ignored.
+      zbxproxy_vault_database_mount_point:
+        type: str
+        required: false
+        description:
+          - The HashiCorp Vault mount point where the Zabbix KV2 database secret is to be stored.
+      zbxproxy_vault_database_path:
+        type: str
+        required: false
+        description:
+          - The path in HashiCorp Vault where the Zabbix KV2 database secret is to be stored.
+      zbxproxy_user:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The PostgreSQL user to be used by the Zabbix server.
+          - A Linux user with the same name will be created, if it does not exist.
+          - The Linux user will be used for peer authentication to the PostgreSQL server during initial configuration.
+      zbxproxy_group:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The Linux primary group of the *zbxproxy_user* user.
+      zbxproxy_database_name:
+        type: str
+        required: false
+        default: zabbix-server
+        description:
+          - The name of the Zabbix Server database.

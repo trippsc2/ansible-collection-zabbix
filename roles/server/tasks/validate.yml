@@ -13,8 +13,6 @@
   ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
 
 - name: Validate Zabbix major version
-  when:
-    - zbxserver_major_version is defined
   ansible.builtin.assert:
     that:
       - zbxserver_major_version in _zbxserver_supported_major_versions
@@ -75,23 +73,19 @@
         fail_msg: Zabbix Vault database path must be defined.
         success_msg: Zabbix Vault database path is defined.
 
-    - name: Validate Vault user variables
-      when:
-        - zbxserver_vault_managed_users | length > 0
-      block:
-        - name: Validate Vault users mount point is defined
-          ansible.builtin.assert:
-            that:
-              - zbxserver_vault_users_mount_point is defined
-            fail_msg: Zabbix Vault users mount point must be defined.
-            success_msg: Zabbix Vault users mount point is defined.
+    - name: Validate Vault users mount point is defined
+      ansible.builtin.assert:
+        that:
+          - zbxserver_vault_users_mount_point is defined
+        fail_msg: Zabbix Vault users mount point must be defined.
+        success_msg: Zabbix Vault users mount point is defined.
 
-        - name: Validate Vault users base path is defined
-          ansible.builtin.assert:
-            that:
-              - zbxserver_vault_users_base_path is defined
-            fail_msg: Zabbix Vault users base path must be defined.
-            success_msg: Zabbix Vault users base path is defined.
+    - name: Validate Vault users base path is defined
+      ansible.builtin.assert:
+        that:
+          - zbxserver_vault_users_base_path is defined
+        fail_msg: Zabbix Vault users base path must be defined.
+        success_msg: Zabbix Vault users base path is defined.
 
 - name: Validate start pollers
   ansible.builtin.assert:

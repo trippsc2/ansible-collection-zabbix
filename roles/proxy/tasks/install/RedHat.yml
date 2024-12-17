@@ -1,0 +1,8 @@
+---
+- name: Ensure Zabbix proxy packages are installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - "{{ _zbxproxy_package_name }}"
+      - zabbix-selinux-policy
+    state: present

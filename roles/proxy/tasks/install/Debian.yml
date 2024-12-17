@@ -1,0 +1,8 @@
+---
+- name: Ensure Zabbix proxy packages are installed
+  become: true
+  ansible.builtin.apt:
+    name:
+      - "{{ _zbxproxy_package_name }}"
+    state: present
+    update_cache: true

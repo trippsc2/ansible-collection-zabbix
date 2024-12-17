@@ -1,10 +1,4 @@
 ---
-_zbxserver_default_major_version: >-
-  {{ _zbxserver_supported_major_versions[0] }}
-
-_zbxserver_major_version: >-
-  {{ zbxserver_major_version | default(_zbxserver_default_major_version) }}
-
 _zbxserver_configure_selinux: >-
   {{ zbxserver_configure_selinux | default(_zbxserver_default_configure_selinux) }}
 
@@ -21,4 +15,4 @@ _zbxserver_package_name_by_database_type:
 _zbxserver_package_name: >-
   {{ _zbxserver_package_name_by_database_type[zbxserver_database_type] }}
 
-zbx_major_version: "{{ _zbxserver_major_version }}"
+zbx_major_version: "{{ zbxserver_major_version }}"

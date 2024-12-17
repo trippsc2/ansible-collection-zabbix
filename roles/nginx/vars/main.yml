@@ -4,12 +4,12 @@ _zbxserver_default_major_version: >-
 
 _zbxserver_default_nginx_module_version: >-
   {{ ((_zbxserver_nginx_module_versions_allowed |
-        default({}))[_zbxserver_major_version] |
+        default({}))[zbxserver_major_version] |
         default(['1.24']))[0] }}
 
 _zbxserver_default_php_module_version: >-
   {{ ((_zbxserver_php_module_versions_allowed |
-        default({}))[_zbxserver_major_version] |
+        default({}))[zbxserver_major_version] |
         default(['8.2']))[0] }}
 
 _zbxserver_web_package_names:
@@ -18,9 +18,6 @@ _zbxserver_web_package_names:
 
 _zbxserver_web_package_name: >-
   {{ _zbxserver_web_package_names[zbxserver_database_type] }}
-
-_zbxserver_major_version: >-
-  {{ zbxserver_major_version | default(_zbxserver_default_major_version) }}
 
 _zbxserver_configure_selinux: >-
   {{ zbxserver_configure_selinux | default(_zbxserver_default_configure_selinux) }}
@@ -31,9 +28,9 @@ _zbxserver_php_module_version: >-
   {{ zbxserver_php_module_version | default(_zbxserver_default_php_module_version) }}
 
 _zbxserver_web_server_root: >-
-  {{ _zbxserver_web_server_root_by_major_versions[_zbxserver_major_version] }}
+  {{ _zbxserver_web_server_root_by_major_versions[zbxserver_major_version] }}
 
-zbx_major_version: "{{ _zbxserver_major_version }}"
+zbx_major_version: "{{ zbxserver_major_version }}"
 
 _nginx_user: >-
   {{ nginx_user | default(_nginx_default_user) }}

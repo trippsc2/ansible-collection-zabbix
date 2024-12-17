@@ -22,7 +22,7 @@ argument_specs:
           - Alternatively, this (or any other authentication method) can be configured through ansible.cfg or environment variables.
       zbxserver_major_version:
         type: str
-        required: false
+        required: true
         choices:
           - '7.2'
           - '7.0'

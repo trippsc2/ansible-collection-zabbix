@@ -1,0 +1,41 @@
+---
+- name: Include OS family variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/main.yml"
+
+- name: Include non-EL release variables
+  when:
+    - ansible_os_family != 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
+
+- name: Include EL major version variables
+  when:
+    - ansible_os_family == 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
+
+- name: Validate Zabbix major version
+  when:
+    - zbxproxy_major_version is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_major_version in _zbxproxy_supported_major_versions
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is not supported running Zabbix {{ zbxproxy_major_version }}. Supported versions for this OS are: {{ _zbxproxy_supported_major_versions | join(', ') }}"
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is supported running Zabbix {{ zbxproxy_major_version }}."
+
+- name: Validate PostgreSQL listen addresses
+  when:
+    - zbxproxy_pgsql_standalone
+    - pgsql_listen_on_local_only is defined
+  ansible.builtin.assert:
+    that:
+      - not pgsql_listen_on_local_only | bool
+    fail_msg: PostgreSQL listen addresses must not be restricted to local only when PostgreSQL is standalone.
+    success_msg: PostgreSQL listen addresses are not restricted to local only.
+
+- name: Validate Zabbix server IP addresses are defined
+  when:
+    - zbxproxy_pgsql_standalone
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_ip_addresses is defined
+    fail_msg: Zabbix server IP addresses must be defined when PostgreSQL is standalone.
+    success_msg: Zabbix server IP addresses are defined.

@@ -1,0 +1,1015 @@
+---
+argument_specs:
+  main:
+    short_description: Zabbix Proxy
+    description:
+      - This role installs and configures the Zabbix Proxy on a Linux machine.
+    author:
+      - Jim Tarpley
+    options:
+      vault_url:
+        type: str
+        required: false
+        description:
+          - The URL for accessing HashiCorp Vault.
+          - Alternatively, this can be configured through ansible.cfg or environment variables.
+      vault_token:
+        type: str
+        required: false
+        description:
+          - The token for accessing HashiCorp Vault.
+          - Alternatively, this (or any other authentication method) can be configured through ansible.cfg or environment variables.
+      zabbix_host:
+        type: str
+        required: true
+        description:
+          - The hostname or IP address of the Zabbix Proxy for API requests.
+      zabbix_port:
+        type: int
+        required: true
+        description:
+          - The port on which to connect to Zabbix Proxy for API requests.
+      zabbix_ssl:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to use SSL for API requests.
+      zabbix_validate_certs:
+        type: bool
+        required: false
+        description:
+          - Whether to validate SSL certificates for API requests.
+          - If not specified, the default behavior is to validate certificates.
+      zabbix_url_path:
+        type: str
+        required: false
+        default: ''
+        description:
+          - The URL path for the Zabbix API.
+          - If using Apache for web frontend, this should be set to `zabbix` unless configured otherwise.
+          - If using NGINX for web frontend, this should be set to an empty string unless configured otherwise.
+      zabbix_username:
+        type: str
+        required: true
+        description:
+          - The username to use for API requests.
+      zabbix_password:
+        type: str
+        required: true
+        no_log: true
+        description:
+          - The password to use for API requests.
+      zbxproxy_major_version:
+        type: str
+        required: false
+        choices:
+          - '7.2'
+          - '7.0'
+          - '6.4'
+        description:
+          - The major version of Zabbix to install.
+          - This defaults to the latest supported version for the OS.
+      zbxproxy_configure_selinux:
+        type: bool
+        required: false
+        description:
+          - Whether to manage SELinux settings for the Zabbix Proxy.
+          - For EL systems, this defaults to true.
+          - For other systems, this defaults to false.
+      zbxproxy_configure_firewall:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to manage the host firewall for use with Zabbix Proxy.
+      zbxproxy_configure_logrotate:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to manage logrotate settings for the Zabbix Proxy.
+      zbxproxy_configure_vault:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to configure the Zabbix Proxy to use HashiCorp Vault for database credentials and storing user credentials.
+      zbxproxy_user:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The Linux user as which the Zabbix Proxy will run.
+          - If *zbxproxy_configure_vault* is set to false, this user will be used to connect to a PostgreSQL database.
+          - This user will be created, if it does not already exist.
+      zbxproxy_group:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The primary Linux group of the *zbxproxy_user* user.
+          - This group will be created, if it does not already exist.
+      zbxproxy_additional_groups:
+        type: list
+        required: false
+        elements: str
+        description:
+          - A list of additional Linux groups to which the *zbxproxy_user* user will belong.
+          - On Debian-based systems, this defaults to `ssl-cert`.
+          - On EL systems, this will not be defined.
+      zbxproxy_firewall_type:
+        type: str
+        required: false
+        choices:
+          - firewalld
+          - ufw
+        description:
+          - The type of host firewall to configure for use with Zabbix Proxy.
+          - For Debian and EL systems, this defaults to `firewalld`.
+          - For Ubuntu systems, this defaults to `ufw`.
+      zbxproxy_database_type:
+        type: str
+        required: false
+        default: postgresql
+        choices:
+          - postgresql
+          - mysql
+        description:
+          - The database type of the Zabbix Proxy.
+      zbxproxy_database_name:
+        type: str
+        required: false
+        default: zabbix-proxy
+        description:
+          - The name of the database of the Zabbix Proxy.
+      zbxproxy_tls_psk:
+        type: str
+        required: false
+        description:
+          - The pre-shared key for the Zabbix Proxy.
+          - If either *zbxproxy_tls_accept* or *zbxproxy_tls_connect* are set to `psk`, this is required.  If not, this is ignored.
+      zbxproxy_allow_root:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether the Zabbix Proxy daemon should run as the root user.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#allowroot'
+      zbxproxy_enable_remote_commands:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether the Zabbix Proxy should allow remote commands from the Zabbix server.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#enableremotecommands'
+      zbxproxy_listen_port:
+        type: int
+        required: false
+        default: 10051
+        description:
+          - The port on which the Zabbix Proxy will listen for agent connections.
+          - Valid values are between 1024 and 32767.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#listenport'
+      zbxproxy_listen_ip:
+        type: list
+        required: false
+        elements: str
+        description:
+          - The IP addresses on which the Zabbix Proxy will listen for incoming connections.
+          - If not specified, the server will listen on all available IP addresses.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#listenip'
+      zbxproxy_source_ip:
+        type: list
+        required: false
+        elements: str
+        description:
+          - The IP address to use as the source address for outgoing connections.
+          - If not specified, the OS TCP/IP stack will decide which address to use.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#sourceip'
+      zbxproxy_hostname:
+        type: str
+        required: false
+        description:
+          - The hostname of the Zabbix Proxy.
+          - If not specified, the server will use the `HostnameItem` setting will be used.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#hostname'
+      zbxproxy_hostname_item:
+        type: str
+        required: false
+        description:
+          - The item key to use for the hostname of the Zabbix Proxy.
+          - If not specified, the server will use the `system.hostname` item.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#hostnameitem'
+      zbxproxy_stats_allowed_ip:
+        type: list
+        elements: str
+        required: false
+        default:
+          - '127.0.0.1'
+        description:
+          - The IP addresses from which Zabbix Proxy statistics can be retrieved.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#statsallowedip'
+      zbxproxy_listen_backlog:
+        type: int
+        required: false
+        description:
+          - The maximum length of the queue of pending connections.
+          - If not specified, the OS default will be used.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#listenbacklog'
+      zbxproxy_web_driver_url:
+        type: str
+        required: false
+        description:
+          - The URL of the Zabbix web driver.
+          - If not specified, the server will not use the web driver.
+          - This feature was added in Zabbix 7.0 and will be ignored on older versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#webdriverurl'
+      zbxproxy_tls_ca_file:
+        type: path
+        required: false
+        description:
+          - The path to the CA certificate file used for validating the server certificate and any client certificate authentication attempts.
+          - If not specified, certificates will not be validated.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlscacertfile'
+      zbxproxy_tls_crl_file:
+        type: path
+        required: false
+        description:
+          - The path to the certificate revocation list file.
+          - If not specified, certificate revocation lists will not be checked.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlscrlfile'
+      zbxproxy_tls_cert_file:
+        type: path
+        required: false
+        description:
+          - The path to the server certificate file.
+          - If not specified, the server will not use TLS encryption.
+          - If specified, the *zbxproxy_tls_key_file* option must also be specified.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlscertfile'
+      zbxproxy_tls_key_file:
+        type: path
+        required: false
+        description:
+          - The path to the server private key file.
+          - If not specified, the server will not use TLS encryption.
+          - If specified, the *zbxproxy_tls_cert_file* option must also be specified.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlskeyfile'
+      zbxproxy_tls_cipher_cert_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS 1.3 connections with a certificate.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlsciphercert13'
+      zbxproxy_tls_cipher_cert:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS connections with a certificate.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlsciphercert'
+      zbxproxy_tls_cipher_psk_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS 1.3 connections with a pre-shared key.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlscipherpsk13'
+      zbxproxy_tls_cipher_psk:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for TLS connections with a pre-shared key.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlscipherpsk'
+      zbxproxy_tls_cipher_all_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for all TLS 1.3 connections.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlscipherall13'
+      zbxproxy_tls_cipher_all:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the server will accept for all TLS connections.
+          - If not specified, the server will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlscipherall'
+      zbxproxy_tls_psk_file:
+        type: path
+        required: false
+        description:
+          - The path to the pre-shared key file.
+          - If either *zbxproxy_tls_accept* or *zbxproxy_tls_connect* are set to `psk`, this is required.  If not, this is ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlspskfile'
+      zbxproxy_tls_psk_identity:
+        type: str
+        required: false
+        description:
+          - The identity string for the pre-shared key.
+          - If either *zbxproxy_tls_accept* or *zbxproxy_tls_connect* are set to `psk`, this is required.  If not, this is ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlspskidentity'
+      zbxproxy_tls_server_cert_issuer:
+        type: str
+        required: false
+        description:
+          - The issuer of the server certificate.
+          - If not specified, the server will not validate the issuer of the server certificate.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlsservercertissuer'
+      zbxproxy_tls_server_cert_subject:
+        type: str
+        required: false
+        description:
+          - The subject of the server certificate.
+          - If not specified, the server will not validate the subject of the server certificate.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tlsservercertsubject'
+      zbxproxy_log_type:
+        type: str
+        required: false
+        default: file
+        choices:
+          - file
+          - system
+          - console
+        description:
+          - The type of logging to use for the Zabbix Proxy.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#logtype'
+      zbxproxy_log_file:
+        type: path
+        required: false
+        default: /var/log/zabbix/zabbix_proxy.log
+        description:
+          - The path to the log file for the Zabbix Proxy.
+          - This option is only used if *zbxproxy_log_type* is set to `file`.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#logfile'
+      zbxproxy_log_file_size:
+        type: int
+        required: false
+        description:
+          - The maximum size of the log file in megabytes.
+          - Valid values are between 0 and 1024.
+          - If set to 0, the log file will not be rotated.
+          - This option is only used if *zbxproxy_log_type* is set to `file`.
+          - If *zbxproxy_manage_logrotate* is set to `true`, this option will default to and should be set to 0 to prevent conflicts.
+          - If *zbxproxy_manage_logrotate* is set to `false`, this option will default to 1.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#logfilesize'
+      zbxproxy_pid_file:
+        type: path
+        required: false
+        default: /run/zabbix/zabbix_proxy.pid
+        description:
+          - The path to the PID file for the Zabbix Proxy.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#pidfile'
+      zbxproxy_socket_dir:
+        type: path
+        required: false
+        default: /run/zabbix
+        description:
+          - The directory in which the Zabbix Proxy will create its socket file.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#socketdir'
+      zbxproxy_database_host:
+        type: str
+        required: false
+        default: localhost
+        description:
+          - The host to which the Zabbix Proxy will connect to the database.
+          - If the database is PostgreSQL, setting this to an empty string will cause the server to connect via a Unix socket on the local system.
+          - If the database is MySQL, setting this to `localhost` will cause the server to connect via a Unix socket on the local system.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbhost'
+      zbxproxy_database_socket:
+        type: path
+        required: false
+        description:
+          - The path to the MySQL Unix socket file for accessing the database.
+          - This is only used if *zbxproxy_database_type* is set to `mysql`.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbsocket'
+      zbxproxy_database_schema:
+        type: str
+        required: false
+        description:
+          - The schema to use for the Zabbix Proxy database.
+          - This is only used if *zbxproxy_database_type* is set to `postgresql`.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbschema'
+      zbxproxy_database_port:
+        type: int
+        required: false
+        default: 5432
+        description:
+          - The port on which the Zabbix Proxy will connect to the database.
+          - Valid values are between 1024 and 65535.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbport'
+      zbxproxy_database_password:
+        type: str
+        required: false
+        no_log: true
+        description:
+          - The password for the Zabbix Proxy to connect to the database.
+          - If *zbxproxy_configure_vault* is set to `true`, this option will be ignored.
+          - If *zbxproxy_configure_vault* is set to `false` and *zbxproxy_database_host* is not set to an empty string, this option must be set.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbpassword'
+      zbxproxy_allow_unsupported_db_versions:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Whether to allow the Zabbix Proxy to connect to unsupported versions of the database.
+          - This may be needed for newer versions of TimescaleDB.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#allowunsupporteddbversions'
+      zbxproxy_vault_database_mount_point:
+        type: str
+        required: false
+        default: zabbix
+        description:
+          - The HashiCorp Vault KV2 mount point where the Zabbix Proxy database secret is stored.
+      zbxproxy_vault_database_path:
+        type: str
+        required: false
+        default: database
+        description:
+          - The path within the HashiCorp Vault KV2 mount point where the Zabbix Proxy database secret is stored.
+          - The secret at this path must have the keys `username` and `password` defined.
+      zbxproxy_db_tls_connect:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - require
+          - verify_ca
+          - verify_full
+        description:
+          - Defines the TLS behavior for connecting to the database.
+          - If set to `unencrypted`, the server will not use TLS encryption.
+          - If set to `require`, the server will use TLS encryption but will not validate the server certificate.
+          - If set to `verify-ca`, the server will use TLS encryption and will validate the server certificate chain, but not the host name.
+          - If set to `verify-full`, the server will use TLS encryption and will validate the server certificate chain and host name.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbtlsconnect'
+      zbxproxy_db_tls_ca_file:
+        type: path
+        required: false
+        description:
+          - The path to the CA certificate file used for validating the database server certificate.
+          - If *zbxproxy_db_tls_connect* is set to `verify-ca` or `verify-full`, this is required. Otherwise, it will be ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbtlscacertfile'
+      zbxproxy_db_tls_cert_file:
+        type: path
+        required: false
+        description:
+          - The path to the client certificate file used for authenticating the Zabbix Proxy to the database server.
+          - If client certificate authentication is not being used, this option should not be set.
+          - If *zbxproxy_db_tls_key_file* is set, this option must also be set.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbtlscertfile'
+      zbxproxy_db_tls_key_file:
+        type: path
+        required: false
+        description:
+          - The path to the client private key file used for authenticating the Zabbix Proxy to the database server.
+          - If client certificate authentication is not being used, this option should not be set.
+          - If *zbxproxy_db_tls_cert_file* is set, this option must also be set.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbtlskeyfile'
+      zbxproxy_db_tls_cipher:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the proxy will accept for TLS connections to the database.
+          - If not specified, the proxy will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbtlscipher'
+      zbxproxy_db_tls_cipher_13:
+        type: str
+        required: false
+        description:
+          - The list of ciphers in OpenSSL format that the proxy will accept for TLS 1.3 connections to the database.
+          - If not specified, the proxy will use the system-wide default ciphers.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#dbtlscipher13'
+      zbxproxy_vault_token:
+        type: str
+        required: false
+        description:
+          - The token used to authenticate to HashiCorp Vault.
+          - If *zbxproxy_configure_vault* is set to `true`, this is required. Otherwise, it will be ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#vaulttoken'
+      zbxproxy_vault_url:
+        type: str
+        required: false
+        description:
+          - The URL of the HashiCorp Vault server.
+          - If *zbxproxy_configure_vault* is set to `true`, this option must be set. Otherwise, it will be ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#vaulturl'
+      zbxproxy_buffer_mode:
+        type: str
+        required: false
+        default: disk
+        choices:
+          - disk
+          - memory
+          - hybrid
+        description:
+          - Where the Zabbix proxy buffer should be stored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#proxybuffermode'
+      zbxproxy_local_buffer_in_hours:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of hours of data to buffer data locally, even after syncing to the Zabbix server.
+          - This value is mutually exclusive with *zbxproxy_memory_buffer_size*.
+          - Valid values are between 0 and 720.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#proxylocalbuffer'
+      zbxproxy_memory_buffer_age_in_seconds:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of seconds to keep data in memory, even after syncing to the Zabbix server, before pushing the data to the database.
+          - If set to `0`, the data will be pushed to the database immediately.
+          - Valid values are 0 or between 600 and 864000.
+          - The value must be less that the *zbxproxy_offline_buffer_in_hours* value.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#proxymemorybufferage'
+      zbxproxy_memory_buffer_size:
+        type: bytes
+        required: false
+        default: 0
+        description:
+          - The maximum size of the memory buffer in bytes.
+          - This value is mutually exclusive with *zbxproxy_local_buffer*.
+          - If set to `0`, the memory buffer will not be used.
+          - Valid values are 0 or between 128K and 2G.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#proxymemorybuffersize'
+      zbxproxy_active:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether the Zabbix Proxy should be active.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#proxymode'
+      zbxproxy_offline_buffer_in_hours:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of hours to keep data when the Zabbix server is unavailable.
+          - Valid values are between 0 and 720.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#proxyofflinebuffer'
+      zbxproxy_proxy_config_frequency:
+        type: int
+        required: false
+        default: 10
+        description:
+          - The frequency in seconds at which the Zabbix Proxy will synchronize with the proxy configuration.
+          - Valid values are between 1 and 604800.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#proxyconfigfrequency'
+      zbxproxy_data_sender_frequency:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The frequency in seconds at which the Zabbix Proxy will send data to the Zabbix server.
+          - Valid values are between 1 and 3600.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#datasenderfrequency'
+      zbxproxy_servers:
+        type: list
+        required: true
+        elements: str
+        description:
+          - A list of Zabbix servers to which the Zabbix Proxy will connect.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#server'
+      zbxproxy_start_pollers:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of poller processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startpollers'
+      zbxproxy_start_agent_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of agent poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startagentpollers'
+      zbxproxy_start_browser_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of browser poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startbrowserpollers'
+      zbxproxy_start_http_agent_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of HTTP agent poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#starthttpagentpollers'
+      zbxproxy_start_snmp_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of asynchronous SNMP poller processes to start.
+          - Valid values are between 0 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startsnmppollers'
+      zbxproxy_start_ipmi_pollers:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of IPMI poller processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startipmipollers'
+      zbxproxy_start_preprocessors:
+        type: int
+        required: false
+        default: 16
+        description:
+          - The number of preprocessor processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startpreprocessors'
+      zbxproxy_start_pollers_unreachable:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of poller processes to start for unreachable hosts.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startpollersunreachable'
+      zbxproxy_start_history_pollers:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of history poller processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#starthistorypollers'
+      zbxproxy_start_trappers:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of trapper processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#starttrappers'
+      zbxproxy_start_pingers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of pinger processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startpingers'
+      zbxproxy_start_discoverers:
+        type: int
+        required: false
+        default: 5
+        description:
+          - The number of discoverer processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startdiscoverers'
+      zbxproxy_start_http_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of HTTP poller processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#starthttppollers'
+      zbxproxy_start_java_pollers:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of Java poller processes to start.
+          - Valid values are between 0 and 1000.
+          - If *zbxproxy_use_java_gateway* is set to `false`, this is ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startjavapollers'
+      zbxproxy_start_vmware_collectors:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of VMware collector processes to start.
+          - Valid values are between 0 and 250.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startvmwarecollectors'
+      zbxproxy_start_snmp_trapper:
+        type: int
+        required: false
+        default: 0
+        description:
+          - The number of SNMP trapper processes to start.
+          - Valid values are between 0 and 1.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startsnmptrapper'
+      zbxproxy_start_db_syncers:
+        type: int
+        required: false
+        default: 4
+        description:
+          - The number of database syncer processes to start.
+          - Valid values are between 1 and 100.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startdbsyncers'
+      zbxproxy_start_odbc_pollers:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The number of ODBC poller processes to start.
+          - Valid values are between 0 and 1000.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#startodbcpollers'
+      zbxproxy_cache_size:
+        type: bytes
+        required: false
+        default: 32M
+        description:
+          - The size of the cache in memory.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#cachesize'
+      zbxproxy_history_cache_size:
+        type: bytes
+        required: false
+        default: 8M
+        description:
+          - The size of the history cache in memory.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#historycachesize'
+      zbxproxy_history_index_cache_size:
+        type: bytes
+        required: false
+        default: 4M
+        description:
+          - The size of the history index cache in memory.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#historyindexcachesize'
+      zbxproxy_vmware_cache_size:
+        type: bytes
+        required: false
+        default: 8M
+        description:
+          - The size of the VMware cache in memory.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#vmwarecachesize'
+      zbxproxy_max_concurrent_checks_per_poller:
+        type: int
+        required: false
+        default: 1000
+        description:
+          - The maximum number of checks that can be processed concurrently by a poller process.
+          - Valid values are between 1 and 1000.
+          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#maxconcurrentchecksperpoller'
+      zbxproxy_use_java_gateway:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Whether to use the Java Gateway for monitoring.
+      zbxproxy_java_gateway:
+        type: str
+        required: false
+        description:
+          - The IP address or hostname of the Java Gateway.
+          - If *zbxproxy_use_java_gateway* is set to `true`, this is required. Otherwise, it will be ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#javagateway'
+      zbxproxy_java_gateway_port:
+        type: int
+        required: false
+        default: 10052
+        description:
+          - The port on which the Java Gateway will listen for incoming connections.
+          - Valid values are between 1024 and 32767.
+          - If *zbxproxy_use_java_gateway* is set to `false`, this will be ignored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#javagatewayport'
+      zbxproxy_vmware_frequency:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The frequency in seconds at which the Zabbix Proxy will poll VMware data.
+          - Valid values are between 10 and 86400.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#vmwarefrequency'
+      zbxproxy_vmware_perf_frequency:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The frequency in seconds at which the Zabbix Proxy will poll VMware performance data.
+          - Valid values are between 10 and 86400.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#vmwareperffrequency'
+      zbxproxy_vmware_timeout:
+        type: int
+        required: false
+        default: 10
+        description:
+          - The timeout in seconds for VMware data collection.
+          - Valid values are between 1 and 300.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#vmwaretimeout'
+      zbxproxy_snmp_trapper_file:
+        type: path
+        required: false
+        default: /tmp/zabbix_traps.tmp
+        description:
+          - The path to the file where SNMP traps will be stored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#snmptrapperfile'
+      zbxproxy_housekeeping_frequency:
+        type: int
+        required: false
+        default: 1
+        description:
+          - The frequency in hours at which the Zabbix Proxy will perform housekeeping tasks.
+          - Valid values are between 0 and 24.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#housekeepingfrequency'
+      zbxproxy_timeout:
+        type: int
+        required: false
+        default: 3
+        description:
+          - The timeout in seconds for processing requests.
+          - Valid values are between 1 and 30.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#timeout'
+      zbxproxy_trapper_timeout:
+        type: int
+        required: false
+        default: 300
+        description:
+          - The timeout in seconds for processing trapper requests.
+          - Valid values are between 1 and 300.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#trappertimeout'
+      zbxproxy_unreachable_period:
+        type: int
+        required: false
+        default: 45
+        description:
+          - The period with no response in seconds after which a host is considered unavailable.
+          - Valid values are between 1 and 3600.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#unreachableperiod'
+      zbxproxy_unreachable_delay:
+        type: int
+        required: false
+        default: 15
+        description:
+          - The period in seconds between checks for hosts that did not respond previously but are not yet considered unavailable.
+          - Valid values are between 1 and 3600.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#unreachabledelay'
+      zbxproxy_unavailable_delay:
+        type: int
+        required: false
+        default: 60
+        description:
+          - The period in seconds between checks for hosts that are considered unavailable.
+          - Valid values are between 1 and 3600.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#unavailabledelay'
+      zbxproxy_external_scripts:
+        type: path
+        required: false
+        default: /usr/lib/zabbix/externalscripts
+        description:
+          - The path to the directory where external scripts are stored.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#externalscripts'
+      zbxproxy_fping_location:
+        type: path
+        required: false
+        default: /usr/sbin/fping
+        description:
+          - The path to the fping binary.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#fpinglocation'
+      zbxproxy_fping6_location:
+        type: path
+        required: false
+        default: /usr/sbin/fping6
+        description:
+          - The path to the fping6 binary.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#fping6location'
+      zbxproxy_ssh_key_location:
+        type: path
+        required: false
+        description:
+          - The path to the SSH key used for SSH checks.
+          - If not specified, the default SSH key will be used.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#sshkeylocation'
+      zbxproxy_tmp_dir:
+        type: path
+        required: false
+        default: /tmp
+        description:
+          - The directory in which the Zabbix Proxy will store temporary files.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#tmpdir'
+      zbxproxy_include_files:
+        type: list
+        elements: path
+        required: false
+        description:
+          - A list of paths to additional configuration files to include in the Zabbix Proxy configuration.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#include'
+      zbxproxy_include_directories:
+        type: list
+        elements: path
+        required: false
+        description:
+          - A list of directories containing additional configuration files to include in the Zabbix Proxy configuration.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#include'
+      zbxproxy_ssl_cert_location:
+        type: path
+        required: false
+        description:
+          - The path to the SSL certificate files to use in web monitoring.
+          - If not specified, the server will not use SSL client certificates for web monitoring.
+          - If specified, the *zbxproxy_ssl_key_location* option must also be specified.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#sslcertlocation'
+      zbxproxy_ssl_key_location:
+        type: path
+        required: false
+        description:
+          - The path to the SSL key files to use in web monitoring.
+          - If not specified, the server will not use SSL client certificates for web monitoring.
+          - If specified, the *zbxproxy_ssl_cert_location* option must also be specified.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#sslkeylocation'
+      zbxproxy_load_module_path:
+        type: path
+        required: false
+        description:
+          - The path to the directory containing loadable modules.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#loadmodulepath'
+      zbxproxy_load_modules:
+        type: list
+        elements: str
+        required: false
+        description:
+          - A list of loadable modules to load.
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_proxy#loadmodule'
+      zbxproxy_name:
+        type: str
+        required: false
+        default: "{{ inventory_hostname | upper }}"
+        description:
+          - The name of the Zabbix Proxy on the Zabbix server.
+      zbxproxy_group_name:
+        type: str
+        required: false
+        description:
+          - The name of the group to which the Zabbix Proxy belongs on the Zabbix server.
+          - If not specified, the Zabbix Proxy will not be assigned to a group.
+      zbxproxy_address:
+        type: str
+        required: false
+        description:
+          - The IP address or hostname on which the Zabbix Proxy will listen for incoming connections.
+          - If *zbxproxy_active* is set to `false`, this is required. Otherwise, it will be ignored.
+      zbxproxy_addresses:
+        type: list
+        required: false
+        elements: str
+        description:
+          - A list of IP addresses or hostnames on which the Zabbix Proxy will listen for incoming connections.
+          - If *zbxproxy_active* is set to `true`, this is required. Otherwise, it will be ignored.
+      zbxproxy_tls_accept:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - psk
+          - cert
+        description:
+          - The type of TLS encryption to use for incoming connections.
+          - If set to `unencrypted`, the server will not use TLS encryption.
+          - If set to `psk`, the server will use TLS encryption with pre-shared keys.
+          - If set to `cert`, the server will use TLS encryption with certificates.
+      zbxproxy_tls_connect:
+        type: str
+        required: false
+        default: unencrypted
+        choices:
+          - unencrypted
+          - psk
+          - cert
+        description:
+          - The type of TLS encryption to use for outgoing connections.
+          - If set to `unencrypted`, the server will not use TLS encryption.
+          - If set to `psk`, the server will use TLS encryption with pre-shared keys.
+          - If set to `cert`, the server will use TLS encryption with certificates.
+      zbxproxy_logrotate_period:
+        type: str
+        required: false
+        default: daily
+        choices:
+          - daily
+          - weekly
+          - monthly
+        description:
+          - The period at which logrotate should rotate the Zabbix Proxy's log file.
+      zbxproxy_logrotate_retention:
+        type: int
+        required: false
+        default: 14
+        description:
+          - The number of rotated log files to retain.
+      zbxproxy_logrotate_mode:
+        type: str
+        required: false
+        default: '0640'
+        description:
+          - The permissions to set on the rotated log files.

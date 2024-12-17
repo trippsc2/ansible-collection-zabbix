@@ -1,0 +1,17 @@
+---
+- name: Ensure Zabbix Server group exists
+  become: true
+  ansible.builtin.group:
+    name: "{{ zbxproxy_group }}"
+    state: present
+    system: true
+
+- name: Ensure Zabbix Server user exists
+  become: true
+  ansible.builtin.user:
+    name: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    password: '!'
+    password_lock: true
+    shell: /usr/sbin/nologin
+    state: present

@@ -1,0 +1,22 @@
+---
+- name: Ensure Zabbix Proxy group exists
+  become: true
+  ansible.builtin.group:
+    name: "{{ zbxproxy_group }}"
+    state: present
+    system: true
+
+- name: Ensure Zabbix Proxy user exists
+  become: true
+  ansible.builtin.user:
+    name: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    groups: "{{ _zbxproxy_additional_groups }}"
+    system: true
+    password: '!'
+    password_lock: true
+    shell: /usr/sbin/nologin
+    home: /var/lib/zabbix
+    createhome: false
+    comment: Zabbix Monitoring System
+    state: present

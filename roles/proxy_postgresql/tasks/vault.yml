@@ -1,0 +1,55 @@
+---
+- name: Create Zabbix secret backend
+  when:
+    - zbxproxy_vault_create_mount_points
+  delegate_to: localhost
+  trippsc2.hashi_vault.vault_kv2_secret_engine:
+    url: "{{ vault_url | default(omit) }}"
+    token: "{{ vault_token | default(omit) }}"
+    engine_mount_point: "{{ zbxproxy_vault_database_mount_point }}"
+    state: present
+
+- name: Ensure Zabbix database secret is created
+  block:
+    - name: Check if database secret exists
+      delegate_to: localhost
+      community.hashi_vault.vault_kv2_get:
+        token: "{{ vault_token | default(omit) }}"
+        url: "{{ vault_url | default(omit) }}"
+        engine_mount_point: "{{ zbxproxy_vault_database_mount_point }}"
+        path: "{{ zbxproxy_vault_database_path }}"
+      register: _zbxproxy_vault_database
+
+    - name: Store password in variable, if found
+      ansible.builtin.set_fact:
+        zabbix_database_password: "{{ _zbxproxy_vault_database.secret.password }}"
+  rescue:
+    - name: Generate a new password
+      when:
+        - zabbix_database_password is not defined
+      ansible.builtin.set_fact:
+        zabbix_database_password: >-
+          {{ lookup('ansible.builtin.password',
+                    '/dev/null chars=ascii_lowercase,ascii_uppercase,digits,punctuation length=20') }}
+
+    - name: Update Vault secret
+      delegate_to: localhost
+      community.hashi_vault.vault_kv2_write:
+        token: "{{ vault_token | default(omit) }}"
+        url: "{{ vault_url | default(omit) }}"
+        engine_mount_point: "{{ zbxproxy_vault_database_mount_point }}"
+        path: "{{ zbxproxy_vault_database_path }}"
+        data:
+          username: "{{ zbxproxy_user }}"
+          password: "{{ zabbix_database_password }}"
+
+- name: Create PostgreSQL user
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_user:
+    db: postgres
+    name: "{{ zbxproxy_user }}"
+    password: "{{ zabbix_database_password }}"
+    state: present

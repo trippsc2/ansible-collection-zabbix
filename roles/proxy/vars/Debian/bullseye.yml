@@ -1,0 +1,5 @@
+---
+_zbxproxy_supported_major_versions:
+  - '6.4'
+
+_zbxproxy_default_firewall_type: firewalld

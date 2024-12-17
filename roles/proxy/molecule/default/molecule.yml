@@ -1,0 +1,116 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: libvirt
+  cachier: machine
+  parallel: true
+platforms:
+  - name: linux
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
+    memory: 2048
+    cpus: 2
+    provider_options:
+      default_prefix: zabbix_proxy_
+    groups:
+      - subjects
+  - name: server
+    box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
+    memory: 2048
+    cpus: 2
+    provider_options:
+      default_prefix: zabbix_proxy_
+    groups:
+      - zabbix_server
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        vault_token: 47542cbc-6bf8-4fba-8eda-02e0a0d29a0a
+        vault_url: "http://{{ hostvars['linux'].ansible_host }}:8200"
+        zabbix_host: "{{ hostvars['server'].ansible_host }}"
+        zabbix_port: 443
+        zabbix_ssl: true
+        zabbix_validate_certs: false
+        zabbix_username: test
+        zabbix_password: SecurePassword1234!
+        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
+        pgsql_ssl: true
+        pgsql_ssl_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        pgsql_ssl_cert_file: >-
+          {{ '/etc/pki/tls/certs/pgsql.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/pgsql.crt' }}
+        pgsql_ssl_key_file: >-
+          {{ '/etc/pki/tls/private/pgsql.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/pgsql.key' }}
+        pgsql_log_to_csvlog: true
+        pgsql_log_to_syslog: true
+        pgsql_vault_ssl_mode: verify-full
+        pgsql_vault_access_hostname: "{{ hostvars['linux'].ansible_host }}"
+      subjects:
+        zbxproxy_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
+        zbxproxy_pgsql_standalone: false
+        zbxproxy_servers:
+          - "{{ hostvars['server'].ansible_host }}"
+        zbxproxy_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-postgresql}
+        zbxproxy_database_host: localhost
+        zbxproxy_database_port: 5432
+        zbxproxy_database_use_ssl: true
+        zbxproxy_database_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxproxy_vault_token: "{{ vault_token }}"
+        zbxproxy_vault_url: "{{ vault_url }}"
+        zbxproxy_tls_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxproxy_tls_cert_file: >-
+          {{ '/etc/pki/tls/certs/zabbix-server.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-server.crt' }}
+        zbxproxy_tls_key_file: >-
+          {{ '/etc/pki/tls/private/zabbix-server.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-server.key' }}
+        zbxproxy_vault_database_mount_point: zabbix
+        zbxproxy_vault_database_path: proxy_database
+        zbxproxy_db_tls_connect: verify_full
+        zbxproxy_db_tls_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxproxy_address: "{{ hostvars['linux'].ansible_host }}"
+        zbxproxy_tls_accept: cert
+        zbxproxy_tls_connect: cert
+      zabbix_server:
+        zbxserver_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'
+        zbxserver_pgsql_standalone: false
+        zbxserver_database_type: postgresql
+        zbxserver_database_host: localhost
+        zbxserver_database_port: 5432
+        zbxserver_database_use_ssl: true
+        zbxserver_database_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxserver_vault_token: "{{ vault_token }}"
+        zbxserver_vault_url: "{{ vault_url }}"
+        zbxserver_web_server_certificate_path: >-
+          {{ '/etc/pki/tls/certs/zabbix-web.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-web.crt' }}
+        zbxserver_web_server_private_key_path: >-
+          {{ '/etc/pki/tls/private/zabbix-web.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-web.key' }}
+        zbxserver_tls_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxserver_tls_cert_file: >-
+          {{ '/etc/pki/tls/certs/zabbix-server.crt' if ansible_os_family == 'RedHat' else '/etc/ssl/certs/zabbix-server.crt' }}
+        zbxserver_tls_key_file: >-
+          {{ '/etc/pki/tls/private/zabbix-server.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-server.key' }}
+        zbxserver_server_host: '127.0.0.1'
+        zbxserver_allow_unsupported_db_versions: true # TimescaleDB can give false positives
+        zbxserver_vault_database_mount_point: zabbix
+        zbxserver_vault_database_path: server_database
+        zbxserver_db_tls_connect: verify_full
+        zbxserver_db_tls_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
+        zbxserver_vault_users_mount_point: zabbix
+        zbxserver_vault_users_base_path: users
+        zbxserver_unmanaged_users:
+          - username: "{{ zabbix_username }}"
+            password: "{{ zabbix_password }}"
+            role_name: Super admin role
+            groups:
+              - Internal
+verifier:
+  name: ansible

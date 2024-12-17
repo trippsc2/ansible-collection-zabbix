@@ -1,0 +1,33 @@
+---
+galaxy_info:
+    author: Jim Tarpley
+    namespace: trippsc2
+    role_name: proxy
+    description: This role installs and configures the Zabbix Proxy on a Linux machine.
+    license: MIT
+
+    min_ansible_version: '2.15'
+
+    platforms:
+      - name: Debian
+        versions:
+          - bullseye
+          - bookworm
+      - name: EL
+        versions:
+          - '8'
+          - '9'
+      - name: Ubuntu
+        versions:
+          - focal
+          - jammy
+          - noble
+
+collections:
+  - ansible.posix
+  - community.general
+  - community.hashi_vault
+  - community.zabbix
+
+dependencies:
+  - role: trippsc2.zabbix.repo

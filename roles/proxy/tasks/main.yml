@@ -1,0 +1,42 @@
+---
+- name: Validate
+  ansible.builtin.import_tasks: validate.yml
+
+- name: Ensure Zabbix user exists
+  ansible.builtin.import_tasks: user.yml
+
+- name: Ensure Zabbix Server is installed
+  ansible.builtin.include_tasks: "install/{{ ansible_os_family }}.yml"
+
+- name: Ensure SELinux is configured for use with Zabbix
+  when:
+    - _zbxproxy_configure_selinux
+  ansible.builtin.include_tasks: selinux.yml
+
+- name: Configure firewalld
+  when:
+    - zbxproxy_configure_firewall
+    - _zbxproxy_firewall_type == 'firewalld'
+  ansible.builtin.include_tasks: firewalld.yml
+
+- name: Configure ufw
+  when:
+    - zbxproxy_configure_firewall
+    - _zbxproxy_firewall_type == 'ufw'
+  ansible.builtin.include_tasks: ufw.yml
+
+- name: Ensure Zabbix is configured and started
+  ansible.builtin.import_tasks: configure.yml
+
+- name: Perform first app configuration steps
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_host: "{{ zabbix_host }}"
+    ansible_httpapi_port: "{{ zabbix_port }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_ssl | default(false) }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_validate_certs | default(omit) }}"
+    ansible_zabbix_url_path: "{{ zabbix_url_path | default('') }}"
+    ansible_user: "{{ zabbix_username }}"
+    ansible_httpapi_pass: "{{ zabbix_password }}"
+  ansible.builtin.include_tasks: first-steps.yml
