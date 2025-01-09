@@ -3,7 +3,7 @@ argument_specs:
   main:
     short_description: Zabbix Agent 2
     description:
-      - This role installs the Zabbix Agent 2 on a Linux or Windows machine.
+      - This role installs the Zabbix Agent 2 on a Linux or Windows system.
     author:
       - Jim Tarpley
     options:

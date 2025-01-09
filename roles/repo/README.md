@@ -3,7 +3,7 @@
 # Ansible Role: trippsc2.zabbix.repo
 Version: 1.1.8
 
-This role installs the Zabbix official repository on a Linux machine.
+This role installs the Zabbix official repository on a Linux system.
 
 ## Requirements
 

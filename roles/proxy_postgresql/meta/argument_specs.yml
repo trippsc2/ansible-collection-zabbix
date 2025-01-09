@@ -3,7 +3,7 @@ argument_specs:
   main:
     short_description: Zabbix Proxy PostgreSQL
     description:
-      - This role installs PostgreSQL server for use by a Zabbix Proxy.
+      - This role installs PostgreSQL server for use by a Zabbix Proxy on a Linux system.
       - This role uses **trippsc2.postgresql.install** to install PostgreSQL.
       - The *pgsql_additional_hba_entries* variable is overridden by this role. The rest of the role variables can be set in the playbook or inventory.
     author: Jim Tarpley

@@ -3,7 +3,7 @@ argument_specs:
   main:
     short_description: Zabbix Repo
     description:
-      - This role installs the Zabbix official repository on a Linux machine.
+      - This role installs the Zabbix official repository on a Linux system.
     author:
       - Jim Tarpley
     options:

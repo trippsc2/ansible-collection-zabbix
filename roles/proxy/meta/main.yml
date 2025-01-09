@@ -3,7 +3,7 @@ galaxy_info:
     author: Jim Tarpley
     namespace: trippsc2
     role_name: proxy
-    description: This role installs and configures the Zabbix Proxy on a Linux machine.
+    description: This role installs and configures the Zabbix Proxy on a Linux system.
     license: MIT
 
     min_ansible_version: '2.15'

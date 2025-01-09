@@ -3,7 +3,7 @@ argument_specs:
   main:
     short_description: Zabbix Proxy
     description:
-      - This role installs and configures the Zabbix Proxy on a Linux machine.
+      - This role installs and configures the Zabbix Proxy on a Linux system.
     author:
       - Jim Tarpley
     options:

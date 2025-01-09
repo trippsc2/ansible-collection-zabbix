@@ -3,7 +3,11 @@
 # Ansible Role: trippsc2.zabbix.server_postgresql
 Version: 1.1.8
 
-['This role installs PostgreSQL server for use by a Zabbix server.', 'This role uses trippsc2.postgresql.install to install PostgreSQL.']
+This role installs PostgreSQL server for use by a Zabbix Server on a Linux system.
+
+This role uses **trippsc2.postgresql.install** to install PostgreSQL.
+The *pgsql_additional_hba_entries* variable is overridden by this role. The rest of the role variables can be set in the playbook or inventory.
+
 
 ## Requirements
 

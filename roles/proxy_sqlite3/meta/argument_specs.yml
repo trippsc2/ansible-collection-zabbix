@@ -3,7 +3,7 @@ argument_specs:
   main:
     short_description: Zabbix Proxy SQLite3
     description:
-      - This role installs a SQLite3 database for use by a Zabbix Proxy.
+      - This role installs a SQLite3 database for use by a Zabbix Proxy on a Linux system.
     author: Jim Tarpley
     options:
       zbxproxy_major_version:

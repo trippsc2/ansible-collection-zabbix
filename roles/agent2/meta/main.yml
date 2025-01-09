@@ -3,7 +3,7 @@ galaxy_info:
     author: Jim Tarpley
     namespace: trippsc2
     role_name: agent2
-    description: This role installs the Zabbix Agent 2 on a Linux or Windows machine.
+    description: This role installs the Zabbix Agent 2 on a Linux or Windows system.
     license: MIT
 
     min_ansible_version: '2.15'

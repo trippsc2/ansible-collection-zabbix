@@ -3,7 +3,7 @@
 # Ansible Role: trippsc2.zabbix.proxy_sqlite3
 Version: 1.1.8
 
-['This role installs a SQLite3 database for use by a Zabbix Proxy.']
+This role installs a SQLite3 database for use by a Zabbix Proxy on a Linux system.
 
 ## Requirements
 

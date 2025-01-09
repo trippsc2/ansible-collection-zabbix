@@ -3,7 +3,7 @@
 # Ansible Role: trippsc2.zabbix.agent2
 Version: 1.1.8
 
-This role installs the Zabbix Agent 2 on a Linux or Windows machine.
+This role installs the Zabbix Agent 2 on a Linux or Windows system.
 
 ## Requirements
 
