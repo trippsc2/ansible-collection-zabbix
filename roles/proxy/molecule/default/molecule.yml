@@ -54,7 +54,7 @@ provisioner:
         zbxproxy_pgsql_standalone: false
         zbxproxy_servers:
           - "{{ hostvars['server'].ansible_host }}"
-        zbxproxy_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-postgresql}
+        zbxproxy_database_type: ${MOLECULE_ZABBIX_DATABASE_TYPE:-sqlite3}
         zbxproxy_database_host: localhost
         zbxproxy_database_port: 5432
         zbxproxy_database_use_ssl: true

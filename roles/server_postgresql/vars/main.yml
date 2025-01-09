@@ -30,12 +30,10 @@ _zbxserver_pgsql_hba_entries: >-
 _zbxserver_pgsql_schema_script_path_by_zabbix_major_version:
   '7.2': /usr/share/zabbix/sql-scripts/postgresql/server.sql.gz
   '7.0': /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz
-  '6.4': /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz
 
 _zbxserver_timescaledb_schema_script_path_by_zabbix_major_version:
   '7.2': /usr/share/zabbix/sql-scripts/postgresql/timescaledb/schema.sql
   '7.0': /usr/share/zabbix-sql-scripts/postgresql/timescaledb/schema.sql
-  '6.4': /usr/share/zabbix-sql-scripts/postgresql/timescaledb.sql
 
 _zbxserver_pgsql_schema_script_path: >-
   {{ _zbxserver_pgsql_schema_script_path_by_zabbix_major_version[zbxserver_major_version] }}

@@ -20,7 +20,7 @@ StatsAllowedIP={{ zbxproxy_stats_allowed_ip | join(',') }}
 {% if zbxproxy_listen_backlog is defined %}
 ListenBacklog={{ zbxproxy_listen_backlog }}
 {% endif %}
-{% if zbxproxy_major_version != '6.4' and zbxproxy_web_driver_url is defined %}
+{% if zbxproxy_web_driver_url is defined %}
 WebDriverURL={{ zbxproxy_web_driver_url }}
 {% endif %}
 {% if zbxproxy_tls_ca_file is defined %}
@@ -77,6 +77,7 @@ LogFileSize={{ zbxproxy_log_file_size }}
 {% endif %}
 PidFile={{ zbxproxy_pid_file }}
 SocketDir={{ zbxproxy_socket_dir }}
+{% if zbxproxy_database_type != 'sqlite3' %}
 DBHost={{ zbxproxy_database_host }}
 {% if zbxproxy_database_type == 'mysql' and zbxproxy_database_socket is defined %}
 DBSocket={{ zbxproxy_database_socket }}
@@ -84,7 +85,9 @@ DBSocket={{ zbxproxy_database_socket }}
 {% if zbxproxy_database_type == 'postgresql' and zbxproxy_database_schema is defined %}
 DBSchema={{ zbxproxy_database_schema }}
 {% endif %}
-DBName={{ zbxproxy_database_name }}
+{% endif %}
+DBName={{ _zbxproxy_database_name }}
+{% if zbxproxy_database_type != 'sqlite3' %}
 {% if not zbxproxy_configure_vault %}
 DBUser={{ zbxproxy_user }}
 DBPassword={{ zbxproxy_database_password }}
@@ -109,22 +112,23 @@ DBTLSCipher={{ zbxproxy_db_tls_cipher }}
 {% if zbxproxy_db_tls_cipher_13 is defined %}
 DBTLSCipher13={{ zbxproxy_db_tls_cipher_13 }}
 {% endif %}
+{% endif %}
 {% if zbxproxy_configure_vault %}
 Vault=HashiCorp
 VaultToken={{ zbxproxy_vault_token }}
 VaultURL={{ zbxproxy_vault_url }}
+{% if zbxproxy_database_type != 'sqlite3' %}
 VaultDBPath={{ zbxproxy_vault_database_mount_point }}/{{ zbxproxy_vault_database_path }}
 {% endif %}
-{% if zbxproxy_major_version != '6.4' %}
-ProxyBufferMode={{ zbxproxy_buffer_mode }}
 {% endif %}
+ProxyBufferMode={{ zbxproxy_buffer_mode }}
 {% if zbxproxy_local_buffer_in_hours is defined %}
 ProxyLocalBuffer={{ zbxproxy_local_buffer_in_hours }}
 {% endif %}
-{% if zbxproxy_major_version != '6.4' and zbxproxy_memory_buffer_age_in_seconds is defined %}
+{% if zbxproxy_memory_buffer_age_in_seconds is defined %}
 ProxyMemoryBufferAge={{ zbxproxy_memory_buffer_age_in_seconds }}
 {% endif %}
-{% if zbxproxy_major_version != '6.4' and zbxproxy_memory_buffer_size is defined %}
+{% if zbxproxy_memory_buffer_size is defined %}
 ProxyMemoryBufferSize={{ zbxproxy_memory_buffer_size }}
 {% endif %}
 {% if zbxproxy_offline_buffer_in_hours is defined %}
@@ -135,12 +139,10 @@ DataSenderFrequency={{ zbxproxy_data_sender_frequency }}
 ProxyMode={{ zbxproxy_active | ternary('0', '1') }}
 Server={{ zbxproxy_servers | join(',') }}
 StartPollers={{ zbxproxy_start_pollers }}
-{% if zbxproxy_major_version != '6.4' %}
 StartAgentPollers={{ zbxproxy_start_agent_pollers }}
 StartBrowserPollers={{ zbxproxy_start_browser_pollers }}
 StartHTTPAgentPollers={{ zbxproxy_start_http_agent_pollers }}
 StartSNMPPollers={{ zbxproxy_start_snmp_pollers }}
-{% endif %}
 StartIPMIPollers={{ zbxproxy_start_ipmi_pollers }}
 StartPreprocessors={{ zbxproxy_start_preprocessors }}
 StartPollersUnreachable={{ zbxproxy_start_pollers_unreachable }}
@@ -159,9 +161,7 @@ CacheSize={{ zbxproxy_cache_size }}
 HistoryCacheSize={{ zbxproxy_history_cache_size }}
 HistoryIndexCacheSize={{ zbxproxy_history_index_cache_size }}
 VMwareCacheSize={{ zbxproxy_vmware_cache_size }}
-{% if zbxproxy_major_version != '6.4' %}
 MaxConcurrentChecksPerPoller={{ zbxproxy_max_concurrent_checks_per_poller }}
-{% endif %}
 {% if zbxproxy_use_java_gateway %}
 JavaGateway={{ zbxproxy_java_gateway }}
 JavaGatewayPort={{ zbxproxy_java_gateway_port }}

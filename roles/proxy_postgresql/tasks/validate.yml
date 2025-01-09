@@ -31,11 +31,11 @@
     fail_msg: PostgreSQL listen addresses must not be restricted to local only when PostgreSQL is standalone.
     success_msg: PostgreSQL listen addresses are not restricted to local only.
 
-- name: Validate Zabbix server IP addresses are defined
+- name: Validate Zabbix proxy IP addresses are defined
   when:
     - zbxproxy_pgsql_standalone
   ansible.builtin.assert:
     that:
       - zbxproxy_ip_addresses is defined
-    fail_msg: Zabbix server IP addresses must be defined when PostgreSQL is standalone.
-    success_msg: Zabbix server IP addresses are defined.
+    fail_msg: Zabbix proxy IP addresses must be defined when PostgreSQL is standalone.
+    success_msg: Zabbix proxy IP addresses are defined.

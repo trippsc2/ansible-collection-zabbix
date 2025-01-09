@@ -13,6 +13,5 @@ argument_specs:
         choices:
           - '7.2'
           - '7.0'
-          - '6.4'
         description:
           - The major version of Zabbix to be deployed.

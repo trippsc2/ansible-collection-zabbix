@@ -6,3 +6,11 @@
       - "{{ _zbxserver_package_name }}"
       - zabbix-selinux-policy
     state: present
+
+- name: Ensure SELinux management packages are installed
+  when:
+    - _zbxserver_configure_selinux
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ _zbxserver_selinux_packages }}"
+    state: present

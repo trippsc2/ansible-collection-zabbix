@@ -86,6 +86,7 @@
 
 - name: Validate database port
   when:
+    - zbxproxy_database_type != 'sqlite3'
     - zbxproxy_database_port is defined
   ansible.builtin.assert:
     that:
@@ -96,6 +97,7 @@
 
 - name: Validate Vault variables
   when:
+    - zbxproxy_database_type != 'sqlite3'
     - zbxproxy_configure_vault
   block:
     - name: Validate Vault database mount point is defined
@@ -124,7 +126,6 @@
 
 - name: Validate proxy memory buffer age
   when:
-    - zbxproxy_major_version != '6.4'
     - zbxproxy_memory_buffer_age_in_seconds is defined
   ansible.builtin.assert:
     that:
@@ -136,7 +137,6 @@
 
 - name: Validate proxy memory buffer age is less than or equal to proxy offline buffer
   when:
-    - zbxproxy_major_version != '6.4'
     - zbxproxy_memory_buffer_age_in_seconds is defined
     - zbxproxy_offline_buffer_in_hours is defined
   ansible.builtin.assert:
@@ -187,8 +187,6 @@
     success_msg: Zabbix start pollers is valid.
 
 - name: Validate start agent pollers
-  when:
-    - zbxproxy_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxproxy_start_agent_pollers >= 0
@@ -197,8 +195,6 @@
     success_msg: Zabbix start agent pollers is valid.
 
 - name: Validate start browser pollers
-  when:
-    - zbxproxy_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxproxy_start_browser_pollers >= 0
@@ -207,8 +203,6 @@
     success_msg: Zabbix start browser pollers is valid.
 
 - name: Validate start HTTP agent pollers
-  when:
-    - zbxproxy_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxproxy_start_http_agent_pollers >= 0
@@ -217,8 +211,6 @@
     success_msg: Zabbix start HTTP agent pollers is valid.
 
 - name: Validate start SNMP pollers
-  when:
-    - zbxproxy_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxproxy_start_snmp_pollers >= 0
@@ -325,8 +317,6 @@
     success_msg: Zabbix start ODBC pollers is valid.
 
 - name: Validate max concurrent checks per poller
-  when:
-    - zbxproxy_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxproxy_max_concurrent_checks_per_poller >= 1
@@ -434,17 +424,3 @@
       - zbxproxy_addresses | length > 0
     fail_msg: Zabbix proxy addresses must be defined and at least one address must be present.
     success_msg: Zabbix proxy addresses are defined.
-
-- name: Set variable indicating whether the address is an IP address
-  when:
-    - not zbxproxy_active
-    - zbxproxy_major_version == '6.4'
-  ansible.builtin.set_fact:
-    _zbxproxy_address_is_ip: "{{ zbxproxy_address | ansible.utils.ipaddr }}"
-
-- name: Validate logrotate retention
-  ansible.builtin.assert:
-    that:
-      - zbxproxy_logrotate_retention >= 1
-    fail_msg: Zabbix logrotate retention must be at least 1.
-    success_msg: Zabbix logrotate retention is valid.

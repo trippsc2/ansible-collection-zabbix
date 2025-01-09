@@ -76,8 +76,18 @@
 - name: Prepare proxy database
   hosts:
     - subjects
-  roles:
-    - role: trippsc2.zabbix.proxy_postgresql
+  tasks:
+    - name: Prepare SQLite3 database
+      when:
+        - zbxproxy_database_type == 'sqlite3'
+      ansible.builtin.include_role:
+        name: trippsc2.zabbix.proxy_sqlite3
+
+    - name: Prepare PostgreSQL database
+      when:
+        - zbxproxy_database_type == 'postgresql'
+      ansible.builtin.include_role:
+        name: trippsc2.zabbix.proxy_postgresql
 
 - name: Prepare web frontend
   hosts:

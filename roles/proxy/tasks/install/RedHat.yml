@@ -4,5 +4,15 @@
   ansible.builtin.dnf:
     name:
       - "{{ _zbxproxy_package_name }}"
+    state: present
+
+- name: Ensure SELinux packages are installed
+  when:
+    - _zbxproxy_configure_selinux
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - policycoreutils
+      - python3-libsemanage
       - zabbix-selinux-policy
     state: present

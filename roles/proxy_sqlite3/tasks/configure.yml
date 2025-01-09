@@ -1,0 +1,55 @@
+---
+- name: Ensure the SQLite3 directory exists
+  become: true
+  ansible.builtin.file:
+    name: "{{ zbxproxy_database_name | dirname }}"
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0755'
+    state: directory
+
+- name: Ensure the SQLite3 directory exists (SELinux)
+  when:
+    - _zbxproxy_configure_selinux
+  become: true
+  ansible.builtin.file:
+    name: "{{ zbxproxy_database_name | dirname }}"
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0755'
+    seuser: system_u
+    serole: object_r
+    setype: zabbix_var_lib_t
+    state: directory
+
+- name: Import SQLite3 schema
+  become: true
+  ansible.builtin.shell: |
+    set -euxo pipefail
+    sqlite3 {{ zbxproxy_database_name }} < {{ _zbxproxy_sqlite3_schema_script_path }}
+  args:
+    executable: /bin/bash
+    creates: "{{ zbxproxy_database_name }}"
+
+- name: Ensure the SQLite3 database is owned by the Zabbix user
+  become: true
+  ansible.builtin.file:
+    name: "{{ zbxproxy_database_name }}"
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0600'
+    state: file
+
+- name: Ensure the SQLite3 database is owned by the Zabbix user (SELinux)
+  when:
+    - _zbxproxy_configure_selinux
+  become: true
+  ansible.builtin.file:
+    name: "{{ zbxproxy_database_name }}"
+    owner: "{{ zbxproxy_user }}"
+    group: "{{ zbxproxy_group }}"
+    mode: '0600'
+    seuser: system_u
+    serole: object_r
+    setype: zabbix_var_lib_t
+    state: file

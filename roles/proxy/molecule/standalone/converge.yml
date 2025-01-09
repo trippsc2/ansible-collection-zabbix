@@ -3,4 +3,4 @@
   hosts:
     - subjects
   roles:
-    - role: trippsc2.zabbix.server
+    - role: trippsc2.zabbix.proxy

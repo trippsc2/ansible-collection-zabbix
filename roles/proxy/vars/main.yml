@@ -7,9 +7,6 @@ _zbxproxy_tls_encryption_values:
 _zbxproxy_default_major_version: >-
   {{ _zbxproxy_supported_major_versions[0] }}
 
-_zbxproxy_major_version: >-
-  {{ zbxproxy_major_version | default(_zbxproxy_default_major_version) }}
-
 _zbxproxy_configure_selinux: >-
   {{ zbxproxy_configure_selinux | default(_zbxproxy_default_configure_selinux) }}
 
@@ -22,6 +19,15 @@ _zbxproxy_firewall_type: >-
 _zbxproxy_package_name_by_database_type:
   postgresql: zabbix-proxy-pgsql
   mysql: zabbix-proxy-mysql
+  sqlite3: zabbix-proxy-sqlite3
+
+_zbxproxy_default_database_name_by_type:
+  postgresql: zabbix-proxy
+  mysql: zabbix-proxy
+  sqlite3: /var/lib/zabbix/zabbix_proxy.db
+
+_zbxproxy_database_name: >-
+  {{ zbxproxy_database_name | default(_zbxproxy_default_database_name_by_type[zbxproxy_database_type]) }}
 
 _zbxproxy_package_name: >-
   {{ _zbxproxy_package_name_by_database_type[zbxproxy_database_type] }}
@@ -32,4 +38,4 @@ _zbxproxy_tls_accept: >-
 _zbxproxy_tls_connect: >-
   {{ _zbxproxy_tls_encryption_values[zbxproxy_tls_connect] }}
 
-zbx_major_version: "{{ _zbxproxy_major_version }}"
+zbx_major_version: "{{ zbxproxy_major_version }}"

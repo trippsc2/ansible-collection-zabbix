@@ -2,7 +2,6 @@
 _zbxserver_supported_major_versions:
   - '7.2'
   - '7.0'
-  - '6.4'
 
 _zbxserver_php_fpm_service_name: php8.3-fpm.service
 
@@ -15,4 +14,3 @@ _zbxserver_php_postgresql_packages:
 _zbxserver_web_server_root_by_major_versions:
   '7.2': /usr/share/zabbix/ui
   '7.0': /usr/share/zabbix
-  '6.4': /usr/share/zabbix

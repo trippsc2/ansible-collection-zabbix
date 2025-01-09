@@ -1,5 +1,2 @@
 ---
-_zbxserver_supported_major_versions:
-  - '6.4'
-
-_zbxserver_default_firewall_type: ufw
+_zbxserver_supported_major_versions: []

@@ -22,14 +22,12 @@ argument_specs:
           - Alternatively, this (or any other authentication method) can be configured through ansible.cfg or environment variables.
       zbxproxy_major_version:
         type: str
-        required: false
+        required: true
         choices:
           - '7.2'
           - '7.0'
-          - '6.4'
         description:
           - The major version of Zabbix to install.
-          - This defaults to the latest supported version for the OS.
       zbxproxy_pgsql_standalone:
         type: bool
         required: false
@@ -109,9 +107,9 @@ argument_specs:
         required: false
         elements: str
         description:
-          - The IP addresses of the Zabbix servers.
+          - The IP addresses of the Zabbix proxy.
           - If *zbxproxy_pgsql_standalone* is `true`, this is required.
-          - A pg_hba.conf entry will be created to access the Zabbix server database authenticated with the Zabbix server user via scram-sha-256 for each IP address.
+          - A pg_hba.conf entry will be created to access the Zabbix proxy database authenticated with the Zabbix proxy user via scram-sha-256 for each IP address.
       zbxproxy_configure_vault:
         type: bool
         required: false
@@ -149,7 +147,7 @@ argument_specs:
         required: false
         default: zabbix
         description:
-          - The PostgreSQL user to be used by the Zabbix server.
+          - The PostgreSQL user to be used by the Zabbix proxy.
           - A Linux user with the same name will be created, if it does not exist.
           - The Linux user will be used for peer authentication to the PostgreSQL server during initial configuration.
       zbxproxy_group:
@@ -161,6 +159,6 @@ argument_specs:
       zbxproxy_database_name:
         type: str
         required: false
-        default: zabbix-server
+        default: zabbix-proxy
         description:
-          - The name of the Zabbix Server database.
+          - The name of the Zabbix Proxy database.

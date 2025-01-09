@@ -1,0 +1,32 @@
+---
+galaxy_info:
+  author: Jim Tarpley
+  namespace: trippsc2
+  role_name: proxy_postgresql
+  description:
+    - This role installs a SQLite3 database for use by a Zabbix Proxy.
+  license: MIT
+
+  min_ansible_version: '2.15'
+
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: EL
+      versions:
+        - '8'
+        - '9'
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+
+  galaxy_tags: []
+
+collections: []
+
+dependencies:
+  - role: trippsc2.zabbix.repo

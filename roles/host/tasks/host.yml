@@ -17,7 +17,9 @@
     status: enabled
     tls_accept: "{{ _zbxhost_tls_accept }}"
     tls_connect: "{{ _zbxhost_tls_connect }}"
+    monitored_by: "{{ _zbxhost_monitored_by }}"
     proxy: "{{ zbxhost_proxy | default(omit) }}"
+    proxy_group: "{{ zbxhost_proxy_group | default(omit) }}"
     state: present
 
 - name: Create Zabbix host macros

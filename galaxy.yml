@@ -1,7 +1,7 @@
 ---
 namespace: trippsc2
 name: zabbix
-version: 1.1.7
+version: 1.1.8
 readme: README.md
 authors:
   - Jim Tarpley
@@ -9,7 +9,10 @@ description: This collection contains roles for installing and configuring Zabbi
 
 license_file: 'LICENSE'
 
-tags: []
+tags:
+  - infrastructure
+  - linux
+  - monitoring
 
 dependencies:
   ansible.posix: ">=1.0.0"

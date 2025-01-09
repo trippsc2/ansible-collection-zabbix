@@ -6,7 +6,7 @@ zbxproxy_pgsql_additional_hba_entries: []
 zbxproxy_user: zabbix
 zbxproxy_group: zabbix
 
-zbxproxy_database_name: zabbix-server
+zbxproxy_database_name: zabbix-proxy
 
 zbxproxy_configure_vault: true
 zbxproxy_vault_create_mount_points: true

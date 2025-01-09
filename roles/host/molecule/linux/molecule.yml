@@ -16,14 +16,6 @@ platforms:
       default_prefix: zabbix_host_linux_
     groups:
       - zabbix_server
-  - name: proxy
-    box: jtarpley/rocky9_cis
-    memory: 2048
-    cpus: 2
-    provider_options:
-      default_prefix: zabbix_host_linux_
-    groups:
-      - zabbix_proxy
   - name: linux
     box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
@@ -85,7 +77,6 @@ provisioner:
             port: '10050'
         zbxhost_templates:
           - Linux by Zabbix agent
-        zbxhost_proxy: "${MOLECULE_ZABBIX_PROXY:-{{ omit }}}"
         _zbxagent_cert_file: /tmp/zabbix-agent.crt
       zabbix_proxy:
         zbxproxy_major_version: '${MOLECULE_ZABBIX_MAJOR_VERSION:-7.2}'

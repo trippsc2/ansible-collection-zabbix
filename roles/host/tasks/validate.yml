@@ -1,4 +1,11 @@
 ---
+- name: Validate proxy and proxy group are not both defined
+  ansible.builtin.assert:
+    that:
+      - zbxhost_proxy is not defined or zbxhost_proxy_group is not defined
+    fail_msg: "The 'zbxhost_proxy' and 'zbxhost_proxy_group' variables cannot be defined at the same time."
+    success_msg: "The 'zbxhost_proxy' and 'zbxhost_proxy_group' variables are not both defined."
+
 - name: Validate VMware
   when:
     - zbxhost_configure_vmware_monitoring

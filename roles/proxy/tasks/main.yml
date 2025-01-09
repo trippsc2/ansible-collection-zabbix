@@ -5,7 +5,7 @@
 - name: Ensure Zabbix user exists
   ansible.builtin.import_tasks: user.yml
 
-- name: Ensure Zabbix Server is installed
+- name: Ensure Zabbix Proxy is installed
   ansible.builtin.include_tasks: "install/{{ ansible_os_family }}.yml"
 
 - name: Ensure SELinux is configured for use with Zabbix

@@ -9,5 +9,5 @@ _zbxproxy_selinux_packages:
 
 _zbxproxy_default_firewall_type: firewalld
 
-_zbxproxy_env_file_path: /etc/sysconfig/zabbix-server
+_zbxproxy_env_file_path: /etc/sysconfig/zabbix-proxy
 _zbxproxy_exec_stop_command: /bin/kill -SIGTERM $MAINPID

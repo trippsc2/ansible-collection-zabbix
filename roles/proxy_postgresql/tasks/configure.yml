@@ -1,5 +1,5 @@
 ---
-- name: Create Zabbix server database
+- name: Create Zabbix Proxy database
   become: true
   become_user: postgres
   vars:

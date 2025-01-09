@@ -1,0 +1,12 @@
+---
+- name: Validate
+  ansible.builtin.import_tasks: validate.yml
+
+- name: Create user
+  ansible.builtin.include_tasks: user.yml
+
+- name: Install Zabbix packages
+  ansible.builtin.include_tasks: "install/{{ ansible_os_family }}.yml"
+
+- name: Configure database
+  ansible.builtin.import_tasks: configure.yml

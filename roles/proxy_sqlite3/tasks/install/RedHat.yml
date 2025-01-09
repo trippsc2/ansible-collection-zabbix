@@ -1,0 +1,25 @@
+---
+- name: Ensure SQLite3 is installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - sqlite
+    state: present
+
+- name: Ensure Zabbix SQL scripts package is installed
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - zabbix-sql-scripts
+    state: present
+
+- name: Install SELinux packages
+  when:
+    - _zbxproxy_configure_selinux
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - policycoreutils
+      - python3-libsemanage
+      - zabbix-selinux-policy
+    state: present

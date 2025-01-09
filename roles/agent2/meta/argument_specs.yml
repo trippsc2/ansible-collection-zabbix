@@ -13,7 +13,6 @@ argument_specs:
         choices:
           - '7.2'
           - '7.0'
-          - '6.4'
         description:
           - The major version of the Zabbix Agent 2 to install.
           - On Linux systems, this is required.
@@ -40,7 +39,6 @@ argument_specs:
         description:
           - Whether to install the Ember+ plugin for the Zabbix Agent 2 on Linux systems.
           - On Windows, this is ignored.
-          - If *zbxagnet_major_version* is set to `6.4`, this is ignored because this plugin is not available for that version.
       zbxagent_install_mongodb_plugin:
         type: bool
         required: false
@@ -82,7 +80,7 @@ argument_specs:
         description:
           - The path to the PID file for the Zabbix Agent 2 service.
           - On Windows, this is ignored.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pidfile'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#pidfile'
       zbxagent_log_type:
         type: str
         required: false
@@ -94,8 +92,8 @@ argument_specs:
         description:
           - The type of logging to use for the Zabbix Agent 2.
           - The value `system` is only supported on Linux systems.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logtype'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logtype'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#logtype'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#logtype'
       zbxagent_log_file:
         type: path
         required: false
@@ -103,8 +101,8 @@ argument_specs:
           - The path to the log file for the Zabbix Agent 2.
           - For Linux systems, this is `/var/log/zabbix/zabbix_agent2.log` by default.
           - For Windows systems, this is `C:\ProgramData\Zabbix Agent 2\zabbix_agent2.log` by default.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logfile'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logfile'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#logfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#logfile'
       zbxagent_log_file_size:
         type: int
         required: false
@@ -113,24 +111,24 @@ argument_specs:
           - The maximum size of the log file in MB.
           - Valid values are between `0` and `1024`.
           - If set to `0`, the log file will not be rotated.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logfilesize'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logfilesize'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#logfilesize'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#logfilesize'
       zbxagent_source_ip:
         type: str
         required: false
         description:
           - The IP address to use as the source IP for active checks.
           - If not specified, the default behavior is to use the IP address of the default route.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#sourceip'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#sourceip'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#sourceip'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#sourceip'
       zbxagent_servers:
         type: list
         required: true
         elements: str
         description:
           - A list of Zabbix servers for which the agent will allow connections.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#server'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#server'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#server'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#server'
       zbxagent_listen_port:
         type: int
         required: false
@@ -138,16 +136,16 @@ argument_specs:
         description:
           - The port on which the Zabbix Agent 2 will listen for connections.
           - Valid values are between `1024` and `32767`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#listenport'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#listenport'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#listenport'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#listenport'
       zbxagent_listen_ip:
         type: str
         required: false
         description:
           - The IP address on which the Zabbix Agent 2 will listen for connections.
           - If not specified, the default behavior is to listen on all available IP addresses.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#listenip'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#listenip'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#listenip'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#listenip'
       zbxagent_status_port:
         type: int
         required: false
@@ -155,61 +153,61 @@ argument_specs:
           - The port on which the Zabbix Agent 2 will host the HTTP status page.
           - If not specified, the default behavior is to not host the HTTP status page.
           - Valid values are between `1024` and `32767`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#statusport'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#statusport'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#statusport'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#statusport'
       zbxagent_active_servers:
         type: list
         required: true
         elements: str
         description:
           - A list of Zabbix servers to which the agent will send active check data.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#serveractive'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#serveractive'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#serveractive'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#serveractive'
       zbxagent_hostname:
         type: str
         required: false
         description:
           - The hostname of the Zabbix Agent 2.
           - If not specified, the default behavior is to use the hostname of the machine.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostname'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostname'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#hostname'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#hostname'
       zbxagent_hostname_item:
         type: str
         required: false
         description:
           - The item key to use for the hostname of the Zabbix Agent 2.
           - If not specified, the default behavior is to use the `system.hostname` item key.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostnameitem'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostnameitem'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#hostnameitem'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#hostnameitem'
       zbxagent_host_metadata:
         type: str
         required: false
         description:
           - The metadata to associate with the Zabbix Agent 2 host.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostmetadata'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostmetadata'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#hostmetadata'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#hostmetadata'
       zbxagent_host_metadata_item:
         type: str
         required: false
         description:
           - The item key to use for the metadata of the Zabbix Agent 2 host.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostmetadataitem'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostmetadataitem'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#hostmetadataitem'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#hostmetadataitem'
       zbxagent_host_interface:
         type: str
         required: false
         description:
           - The host interface to use during autoregistration.
           - If not specified, the default behavior is to use the IP address of the default route.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostinterface'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostinterface'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#hostinterface'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#hostinterface'
       zbxagent_host_interface_item:
         type: str
         required: false
         description:
           - The item key to use for the host interface during autoregistration.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#hostinterfaceitem'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#hostinterfaceitem'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#hostinterfaceitem'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#hostinterfaceitem'
       zbxagent_refresh_active_checks:
         type: int
         required: false
@@ -217,8 +215,8 @@ argument_specs:
         description:
           - The interval at which the Zabbix Agent 2 will refresh active checks in seconds.
           - Valid values are between `1` and `86400`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#refreshactivechecks'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#refreshactivechecks'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#refreshactivechecks'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#refreshactivechecks'
       zbxagent_buffer_send:
         type: int
         required: false
@@ -226,8 +224,8 @@ argument_specs:
         description:
           - The number of values to buffer before sending to the Zabbix server.
           - Valid values are between `1` and `3600`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#buffersend'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#buffersend'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#buffersend'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#buffersend'
       zbxagent_buffer_size:
         type: int
         required: false
@@ -236,16 +234,16 @@ argument_specs:
           - The number of values to buffer before flushing to the server or proxy.
           - This is ignored if *zbxagent_enable_persistent_buffer* is `true`.
           - Valid values are between `2` and `65535`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#buffersize'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#buffersize'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#buffersize'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#buffersize'
       zbxagent_enable_persistent_buffer:
         type: bool
         required: false
         default: false
         description:
           - Whether to enable the persistent buffer for the Zabbix Agent 2.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#enablepersistentbuffer'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#enablepersistentbuffer'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#enablepersistentbuffer'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#enablepersistentbuffer'
       zbxagent_persistent_buffer_period:
         type: str
         required: false
@@ -255,16 +253,16 @@ argument_specs:
           - Valid values are in the duration formats `Xs`, `Xm`, `Xh`, or `Xd`.
           - Valid values are between `1m` and `365d`.
           - If *zbxagent_enable_persistent_buffer* is `false`, this is ignored.  Otherwise, it is required.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#persistentbufferperiod'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#persistentbufferperiod'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#persistentbufferperiod'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#persistentbufferperiod'
       zbxagent_persistent_buffer_file:
         type: path
         required: false
         description:
           - The path to the persistent buffer SQLite file.
           - If *zbxagent_enable_persistent_buffer* is `false`, this is ignored.  Otherwise, it is required.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#persistentbufferfile'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#persistentbufferfile'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#persistentbufferfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#persistentbufferfile'
       zbxagent_heartbeat_frequency:
         type: int
         required: false
@@ -273,16 +271,16 @@ argument_specs:
           - The interval at which the Zabbix Agent 2 will send heartbeat messages in seconds.
           - If set to `0`, the heartbeat messages will not be sent.
           - Valid values are between `0` and `3600`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#heartbeatfrequency'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#heartbeatfrequency'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#heartbeatfrequency'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#heartbeatfrequency'
       zbxagent_aliases:
         type: dict
         required: false
         description:
           - A dictionary of aliases for items, triggers, and graphs.
           - 'The key is the alias name and the value is the item key, trigger expression, or graph name. (e.g. Alias=`key`:`value`)'
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#aliases'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#aliases'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#aliases'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#aliases'
       zbxagent_timeout:
         type: int
         required: false
@@ -290,8 +288,8 @@ argument_specs:
         description:
           - The timeout for active checks in seconds.
           - Valid values are between `1` and `30`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#timeout'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#timeout'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#timeout'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#timeout'
       zbxagent_include_files:
         type: list
         required: false
@@ -299,8 +297,8 @@ argument_specs:
         elements: path
         description:
           - A list of configuration files to include in the Zabbix Agent 2 configuration.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#include'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#include'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#include'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#include'
       zbxagent_include_directories:
         type: list
         required: false
@@ -309,8 +307,8 @@ argument_specs:
         description:
           - A list of directories to include in the Zabbix Agent 2 configuration.
           - This will include the directory and all .conf files within it.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#include'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#include'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#include'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#include'
       zbxagent_plugin_timeout:
         type: int
         required: false
@@ -318,38 +316,38 @@ argument_specs:
           - The timeout for plugin execution in seconds.
           - If not specified, the *zbxagent_timeout* value will be used.
           - Valid values are between `1` and `30`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#plugintimeout'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#plugintimeout'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#plugintimeout'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#plugintimeout'
       zbxagent_plugin_socket:
         type: path
         required: false
         description:
           - The path to the control socket for plugin execution.
           - On Windows, this is ignored.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#pluginsocket'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#pluginsocket'
       zbxagent_unsafe_user_parameters:
         type: bool
         required: false
         default: false
         description:
           - Whether to allow parameters without sanitization.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#unsafeuserparameters'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#unsafeuserparameters'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#unsafeuserparameters'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#unsafeuserparameters'
       zbxagent_user_parameters:
         type: dict
         required: false
         description:
           - A dictionary of user parameters.
           - The key is the user parameter name and the value is the command to execute. (e.g. UserParameter=<name>,<command>)
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#userparameters'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#userparameter'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#userparameters'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#userparameter'
       zbxagent_user_parameter_dir:
         type: path
         required: false
         description:
           - The working directory when executing scripts for user parameters.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#userparameterdir'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#userparameterdir'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#userparameterdir'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#userparameterdir'
       zbxagent_control_socket:
         type: path
         required: false
@@ -357,7 +355,7 @@ argument_specs:
         description:
           - The path to the control socket for the Zabbix Agent 2.
           - On Windows, this is ignored.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#controlsocket'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#controlsocket'
       zbxagent_tls_connect:
         type: str
         required: false
@@ -368,8 +366,8 @@ argument_specs:
           - cert
         description:
           - The type of connection to use for connections to the Zabbix server for active checks.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsconnect'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsconnect'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsconnect'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsconnect'
       zbxagent_tls_accept:
         type: str
         required: false
@@ -380,64 +378,64 @@ argument_specs:
           - cert
         description:
           - The type of connection to accept for connections from the Zabbix server.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsaccept'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsaccept'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsaccept'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsaccept'
       zbxagent_tls_ca_file:
         type: path
         required: false
         description:
           - The path to the top level CA certificate file for validating TLS certificates.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlscafile'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlscafile'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlscafile'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlscafile'
       zbxagent_tls_crl_file:
         type: path
         required: false
         description:
           - The path to the certificate revocation list file for validating TLS certificates.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlscrlfile'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlscrlfile'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlscrlfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlscrlfile'
       zbxagent_tls_server_cert_issuer:
         type: str
         required: false
         description:
           - The issuer of the certificate used to validate the Zabbix server.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsservercertissuer'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsservercertissuer'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsservercertissuer'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsservercertissuer'
       zbxagent_tls_server_cert_subject:
         type: str
         required: false
         description:
           - The subject of the certificate used to validate the Zabbix server.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsservercertsubject'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsservercertsubject'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsservercertsubject'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsservercertsubject'
       zbxagent_tls_cert_file:
         type: path
         required: false
         description:
           - The path to the server certificate file or server certificate chain file for the Zabbix Agent 2.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlscertfile'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlscertfile'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlscertfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlscertfile'
       zbxagent_tls_key_file:
         type: path
         required: false
         description:
           - The path to the server private key file for the Zabbix Agent 2.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlskeyfile'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlskeyfile'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlskeyfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlskeyfile'
       zbxagent_tls_psk_identity:
         type: str
         required: false
         description:
           - The PSK identity string for the Zabbix Agent 2.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlspskidentity'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlspskidentity'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlspskidentity'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlspskidentity'
       zbxagent_tls_psk_file:
         type: path
         required: false
         description:
           - The path to the PSK file for the Zabbix Agent 2.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlspskfile'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlspskfile'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlspskfile'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlspskfile'
       zbxagent_log_max_lines_per_second:
         type: int
         required: false
@@ -445,16 +443,16 @@ argument_specs:
         description:
           - The maximum number of log lines per second to send to the Zabbix server/proxy for monitoring.
           - Valid values are between `1` and `1000`.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#logmaxlinespersecond'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#logmaxlinespersecond'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#logmaxlinespersecond'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#logmaxlinespersecond'
       zbxagent_systemrun_log_remote_commands:
         type: bool
         required: false
         default: false
         description:
           - Whether to log remote commands in the systemrun log.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#systemrunlogremotecommands'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#systemrunlogremotecommands'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#systemrunlogremotecommands'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#systemrunlogremotecommands'
       zbxagent_plugin_parameters:
         type: dict
         required: false
@@ -468,7 +466,7 @@ argument_specs:
         description:
           - The default URI for the Ember+ plugin.
           - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
       zbxagent_ember_plus_keepalive:
         type: int
         required: false
@@ -476,7 +474,7 @@ argument_specs:
           - The interval at which the Ember+ plugin will send keepalive messages in seconds.
           - Valid values are between `60` and `900`.
           - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
       zbxagent_ember_plus_sessions:
         type: list
         required: false
@@ -485,7 +483,7 @@ argument_specs:
         description:
           - A list of Ember+ sessions to configure.
           - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
         options:
           name:
             type: str
@@ -503,7 +501,7 @@ argument_specs:
         description:
           - The path to the Ember+ system file.
           - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
       zbxagent_ember_plus_timeout:
         type: int
         required: false
@@ -511,7 +509,7 @@ argument_specs:
           - The timeout for Ember+ plugin requests in seconds.
           - Valid values are between `1` and `30`.
           - This is ignored on Windows systems or if *zbxagent_install_ember_plus_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/ember_plus_plugin'
       zbxagent_mongodb_default_password:
         type: str
         required: false
@@ -519,21 +517,21 @@ argument_specs:
         description:
           - The default password for the MongoDB plugin.
           - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
       zbxagent_mongodb_default_uri:
         type: str
         required: false
         description:
           - The default URI for the MongoDB plugin.
           - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
       zbxagent_mongodb_default_user:
         type: str
         required: false
         description:
           - The default user for the MongoDB plugin.
           - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
       zbxagent_mongodb_keepalive:
         type: int
         required: false
@@ -541,7 +539,7 @@ argument_specs:
           - The interval at which the MongoDB plugin will send keepalive messages in seconds.
           - Valid values are between `60` and `900`.
           - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
       zbxagent_mongodb_sessions:
         type: list
         required: false
@@ -550,26 +548,26 @@ argument_specs:
         description:
           - A list of MongoDB sessions to configure.
           - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
         options:
           name:
             type: str
             required: true
             description:
               - The name of the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
           tls_ca_file:
             type: path
             required: false
             description:
               - The path to the CA certificate file for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
           tls_cert_file:
             type: path
             required: false
             description:
               - The path to the certificate file for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
           tls_connect:
             type: str
             required: false
@@ -579,32 +577,32 @@ argument_specs:
               - verify_full
             description:
               - Whether to use and verify TLS for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
           tls_key_file:
             type: path
             required: false
             description:
               - The path to the key file for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
           uri:
             type: str
             required: false
             description:
               - The URI for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
           user:
             type: str
             required: false
             description:
               - The user for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
       zbxagent_mongodb_system_path:
         type: path
         required: false
         description:
           - The path to the MongoDB system file.
           - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
       zbxagent_mongodb_timeout:
         type: int
         required: false
@@ -612,28 +610,28 @@ argument_specs:
           - The timeout for MongoDB plugin requests in seconds.
           - Valid values are between `1` and `30`.
           - This is ignored if *zbxagent_install_mongodb_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mongodb_plugin'
       zbxagent_mssql_custom_queries_dir:
         type: path
         required: false
         description:
           - The path to the directory containing custom queries for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_ca_cert_path:
         type: path
         required: false
         description:
           - The path to the default CA certificate file for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_database:
         type: str
         required: false
         description:
           - The default database for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_encrypt:
         type: str
         required: false
@@ -645,14 +643,14 @@ argument_specs:
         description:
           - The default encryption setting for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_host_name_in_certificate:
         type: bool
         required: false
         description:
           - Whether to use the host name in the certificate for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_password:
         type: str
         required: false
@@ -660,7 +658,7 @@ argument_specs:
         description:
           - The default password for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_tls_min_version:
         type: str
         required: false
@@ -672,28 +670,28 @@ argument_specs:
         description:
           - The default TLS minimum version for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_trust_server_certificate:
         type: bool
         required: false
         description:
           - Whether to trust the server certificate for the MSSQL plugin without verifying it.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_uri:
         type: str
         required: false
         description:
           - The default URI for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_default_user:
         type: str
         required: false
         description:
           - The default user for the MSSQL plugin.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_keepalive:
         type: int
         required: false
@@ -701,7 +699,7 @@ argument_specs:
           - The interval at which the MSSQL plugin will send keepalive messages in seconds.
           - Valid values are between `60` and `900`.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_sessions:
         type: list
         required: false
@@ -710,26 +708,26 @@ argument_specs:
         description:
           - A list of MSSQL sessions to configure.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
         options:
           name:
             type: str
             required: true
             description:
               - The name of the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           ca_cert_path:
             type: path
             required: false
             description:
               - The path to the CA certificate file for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           database:
             type: str
             required: false
             description:
               - The default database for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           encrypt:
             type: str
             required: false
@@ -740,20 +738,20 @@ argument_specs:
               - disable
             description:
               - The encryption setting for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           host_name_in_certificate:
             type: bool
             required: false
             description:
               - Whether to use the host name in the certificate for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           password:
             type: str
             required: false
             no_log: true
             description:
               - The password for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           tls_min_version:
             type: str
             required: false
@@ -764,32 +762,32 @@ argument_specs:
               - '1.3'
             description:
               - The TLS minimum version for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           trust_server_certificate:
             type: bool
             required: false
             description:
               - Whether to trust the server certificate for the session without verifying it.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           uri:
             type: str
             required: false
             description:
               - The URI for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
           user:
             type: str
             required: false
             description:
               - The user for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_system_path:
         type: path
         required: false
         description:
           - The path to the MSSQL system file.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_mssql_timeout:
         type: int
         required: false
@@ -797,7 +795,7 @@ argument_specs:
           - The timeout for MSSQL plugin requests in seconds.
           - Valid values are between `1` and `30`.
           - This is ignored if *zbxagent_install_mssql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/mssql_plugin'
       zbxagent_pgsql_call_timeout:
         type: int
         required: false
@@ -805,14 +803,14 @@ argument_specs:
           - The timeout for PostgreSQL plugin requests.
           - Valid values are between `1` and `30`.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_custom_queries_dir:
         type: path
         required: false
         description:
           - The path to the directory containing custom queries for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_cache_mode:
         type: str
         required: false
@@ -822,14 +820,14 @@ argument_specs:
         description:
           - The default cache mode for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_database:
         type: str
         required: false
         description:
           - The default database for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_password:
         type: str
         required: false
@@ -837,21 +835,21 @@ argument_specs:
         description:
           - The default password for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_tls_ca_file:
         type: path
         required: false
         description:
           - The default CA certificate file for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_tls_cert_file:
         type: path
         required: false
         description:
           - The default certificate file for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_tls_connect:
         type: str
         required: false
@@ -862,28 +860,28 @@ argument_specs:
         description:
           - The default TLS connection setting for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_tls_key_file:
         type: path
         required: false
         description:
           - The default key file for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_uri:
         type: str
         required: false
         description:
           - The default URI for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_default_user:
         type: str
         required: false
         description:
           - The default user for the PostgreSQL plugin.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_keepalive:
         type: int
         required: false
@@ -891,7 +889,7 @@ argument_specs:
           - The interval at which the PostgreSQL plugin will send keepalive messages in seconds.
           - Valid values are between `60` and `900`.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_sessions:
         type: list
         required: false
@@ -900,14 +898,14 @@ argument_specs:
         description:
           - A list of PostgreSQL sessions to configure.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
         options:
           name:
             type: str
             required: true
             description:
               - The name of the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           cache_mode:
             type: str
             required: false
@@ -916,32 +914,32 @@ argument_specs:
               - describe
             description:
               - The cache mode for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           database:
             type: str
             required: false
             description:
               - The default database for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           password:
             type: str
             required: false
             no_log: true
             description:
               - The password for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           tls_ca_file:
             type: path
             required: false
             description:
               - The CA certificate file for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           tls_cert_file:
             type: path
             required: false
             description:
               - The certificate file for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           tls_connect:
             type: str
             required: false
@@ -951,32 +949,32 @@ argument_specs:
               - verify_full
             description:
               - The TLS connection setting for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           tls_key_file:
             type: path
             required: false
             description:
               - The key file for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           uri:
             type: str
             required: false
             description:
               - The URI for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
           user:
             type: str
             required: false
             description:
               - The user for the session.
-              - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+              - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_system_path:
         type: path
         required: false
         description:
           - The path to the PostgreSQL system file.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_pgsql_timeout:
         type: int
         required: false
@@ -984,7 +982,7 @@ argument_specs:
           - The timeout for PostgreSQL plugin requests in seconds.
           - Valid values are between `1` and `30`.
           - This is ignored if *zbxagent_install_pgsql_plugin* is `false`.
-          - 'Reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
+          - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_plugins/pgsql_plugin'
       zbxagent_allow_keys:
         type: list
         required: false
@@ -992,8 +990,8 @@ argument_specs:
         elements: str
         description:
           - A list of keys to allow for passive checks.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#allowkey'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#allowkey'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#allowkey'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#allowkey'
       zbxagent_deny_keys:
         type: list
         required: false
@@ -1001,16 +999,16 @@ argument_specs:
         elements: str
         description:
           - A list of keys to deny for passive checks.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#denykey'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#denykey'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#denykey'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#denykey'
       zbxagent_force_active_checks_on_start:
         type: bool
         required: false
         default: false
         description:
           - Whether to force active checks on start.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#forceactivechecksonstart'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#forceactivechecksonstart'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#forceactivechecksonstart'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#forceactivechecksonstart'
       zbxagent_logrotate_period:
         type: str
         required: false

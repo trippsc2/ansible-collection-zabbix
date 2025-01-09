@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.host
-Version: 1.1.7
+Version: 1.1.8
 
 This role configures a host within Zabbix Server.
 
@@ -29,20 +29,21 @@ This role configures a host within Zabbix Server.
 | zabbix_host | <p>The hostname or IP address of the Zabbix server for API requests.</p> | str | yes |  |  |
 | zabbix_port | <p>The port on which to connect to Zabbix server for API requests.</p> | int | yes |  |  |
 | zabbix_url_path | <p>The URL path for the Zabbix API.</p><p>If using Apache for web frontend, this should be set to `zabbix` unless configured otherwise.</p><p>If using NGINX for web frontend, this should be set to an empty string unless configured otherwise.</p> | str | no |  |  |
-| zabbix_ssl | <p>Whether to use SSL for API requests.</p> | bool | no |  | false |
-| zabbix_validate_certs | <p>Whether to validate SSL certificates for API requests.</p><p>If not specified, the default behavior is to validate certificates.</p> | bool | no |  | false |
+| zabbix_ssl | <p>Whether to use SSL for API requests.</p> | bool | no |  | False |
+| zabbix_validate_certs | <p>Whether to validate SSL certificates for API requests.</p><p>If not specified, the default behavior is to validate certificates.</p> | bool | no |  |  |
 | zabbix_username | <p>The username to use for API requests.</p> | str | yes |  |  |
 | zabbix_password | <p>The password to use for API requests.</p> | str | yes |  |  |
-| zbxhost_configure_vmware_monitoring | <p>Whether to configure VMware monitoring for the host.</p> | bool | no |  | false |
-| zbxagent_tls_connect | <p>The type of connection to use for connections to the Zabbix server for active checks.</p><p>This should not be supplied when not using a Zabbix agent interface.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsconnect</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsconnect</p> | str | no | <ul><li>unencrypted</li><li>psk</li><li>cert</li></ul> | unencrypted |
-| zbxagent_tls_accept | <p>The type of connection to accept for connections from the Zabbix server.</p><p>This should not be supplied when not using a Zabbix agent interface.</p><p>Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsaccept</p><p>Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsaccept</p> | str | no | <ul><li>unencrypted</li><li>psk</li><li>cert</li></ul> | unencrypted |
+| zbxhost_configure_vmware_monitoring | <p>Whether to configure VMware monitoring for the host.</p> | bool | no |  | False |
+| zbxagent_tls_connect | <p>The type of connection to use for connections to the Zabbix server for active checks.</p><p>This should not be supplied when not using a Zabbix agent interface.</p><p>Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsconnect</p><p>Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsconnect</p> | str | no | <ul><li>unencrypted</li><li>psk</li><li>cert</li></ul> | unencrypted |
+| zbxagent_tls_accept | <p>The type of connection to accept for connections from the Zabbix server.</p><p>This should not be supplied when not using a Zabbix agent interface.</p><p>Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsaccept</p><p>Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsaccept</p> | str | no | <ul><li>unencrypted</li><li>psk</li><li>cert</li></ul> | unencrypted |
 | zbxhost_name | <p>The name of the host on the Zabbix Server.</p> | str | yes |  |  |
 | zbxhost_visible_name | <p>The visible name of the host on the Zabbix Server.</p><p>If not specified, the visible name will not be set on the host.</p> | str | no |  |  |
 | zbxhost_groups | <p>A list of host groups to which the host on the Zabbix Server belongs.</p> | list of 'str' | yes |  |  |
 | zbxhost_interfaces | <p>A list of interfaces for the host on the Zabbix Server.</p> | list of dicts of 'zbxhost_interfaces' options | yes |  |  |
 | zbxhost_templates | <p>A list of templates to link to the host on the Zabbix Server.</p> | list of 'str' | yes |  |  |
-| zbxhost_proxy | <p>The name of the Zabbix proxy to use for the host.</p><p>If not specified, the host will not use a proxy.</p> | str | no |  |  |
-| zbxhost_macros | <p>A dictionary of macros to set for the host on the Zabbix Server.</p> | list of dicts of 'zbxhost_macros' options | no |  |  |
+| zbxhost_proxy | <p>The name of the Zabbix proxy to use for the host.</p><p>This is mutually exclusive with `zbxhost_proxy_group`.</p><p>If not specified, the host will not use a proxy.</p> | str | no |  |  |
+| zbxhost_proxy_group | <p>The name of the Zabbix proxy group to use for the host.</p><p>This is mutually exclusive with `zbxhost_proxy`.</p><p>If not specified, the host will not use a proxy group.</p> | str | no |  |  |
+| zbxhost_macros | <p>A dictionary of macros to set for the host on the Zabbix Server.</p> | list of dicts of 'zbxhost_macros' options | no |  | [] |
 | zbxhost_vmware_uuid | <p>The UUID of the VM to monitor.</p><p>If *zbxhost_configure_vmware_monitoring* is `false`, this is ignored.</p><p>Otherwise, this value will be used to set the VM UUID host macro, instead of querying the vCenter server or standalone ESXi host.</p> | str | no |  |  |
 
 ### Options for zbxhost_interfaces

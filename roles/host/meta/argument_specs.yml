@@ -104,8 +104,8 @@ argument_specs:
         description:
           - The type of connection to use for connections to the Zabbix server for active checks.
           - This should not be supplied when not using a Zabbix agent interface.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsconnect'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsconnect'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsconnect'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsconnect'
       zbxagent_tls_accept:
         type: str
         required: false
@@ -117,8 +117,8 @@ argument_specs:
         description:
           - The type of connection to accept for connections from the Zabbix server.
           - This should not be supplied when not using a Zabbix agent interface.
-          - 'Linux reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2#tlsaccept'
-          - 'Windows reference: https://www.zabbix.com/documentation/7.0/en/manual/appendix/config/zabbix_agent2_win#tlsaccept'
+          - 'Linux reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2#tlsaccept'
+          - 'Windows reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_agent2_win#tlsaccept'
       zbxhost_name:
         type: str
         required: true
@@ -319,7 +319,15 @@ argument_specs:
         required: false
         description:
           - The name of the Zabbix proxy to use for the host.
+          - This is mutually exclusive with `zbxhost_proxy_group`.
           - If not specified, the host will not use a proxy.
+      zbxhost_proxy_group:
+        type: str
+        required: false
+        description:
+          - The name of the Zabbix proxy group to use for the host.
+          - This is mutually exclusive with `zbxhost_proxy`.
+          - If not specified, the host will not use a proxy group.
       zbxhost_macros:
         type: list
         required: false

@@ -7,7 +7,6 @@
 
 - name: Prepare database
   hosts:
-    - zabbix_proxy
     - zabbix_server
   pre_tasks:
     - name: Set OS variables (Debian-based)
@@ -65,12 +64,6 @@
     - zabbix_server
   roles:
     - role: trippsc2.zabbix.server_postgresql
-
-- name: Prepare Zabbix proxy database
-  hosts:
-    - zabbix_proxy
-  roles:
-    - role: trippsc2.zabbix.proxy_postgresql
 
 - name: Prepare web frontend
   hosts:
@@ -173,83 +166,14 @@
           - clientAuth
     - role: trippsc2.zabbix.server
 
-- name: Prepare Zabbix proxy
-  hosts:
-    - zabbix_proxy
-  pre_tasks:
-    - name: Create zabbix group
-      become: true
-      ansible.builtin.group:
-        name: zabbix
-        state: present
-        system: true
-    
-    - name: Create zabbix user
-      become: true
-      ansible.builtin.user:
-        name: zabbix
-        group: zabbix
-        system: true
-        shell: /usr/sbin/nologin
-        password: '!'
-        password_lock: true
-        home: /var/lib/zabbix
-        createhome: false
-        comment: Zabbix Monitoring System
-        state: present
-  roles:
-    - role: trippsc2.hashi_vault.signed_certificate
-      vars:
-        cert_certificate_path: "{{ zbxproxy_tls_cert_file }}"
-        cert_private_key_path: "{{ zbxproxy_tls_key_file }}"
-        cert_certificate_owner: zabbix
-        cert_certificate_group: zabbix
-        cert_private_key_owner: zabbix
-        cert_private_key_group: zabbix
-        cert_common_name: "{{ inventory_hostname }}"
-        cert_subject_alternative_names:
-          - "DNS:{{ inventory_hostname }}"
-          - DNS:localhost
-          - "IP:{{ ansible_host }}"
-          - IP:127.0.0.1
-        cert_extended_key_usage:
-          - serverAuth
-          - clientAuth
-    - role: trippsc2.zabbix.proxy
-
 - name: Prepare Zabbix agent certificate
   hosts:
     - subjects
-  pre_tasks:
-    - name: Create zabbix group
-      become: true
-      ansible.builtin.group:
-        name: zabbix
-        state: present
-        system: true
-    
-    - name: Create zabbix user
-      become: true
-      ansible.builtin.user:
-        name: zabbix
-        group: zabbix
-        system: true
-        shell: /usr/sbin/nologin
-        password: '!'
-        password_lock: true
-        home: /var/lib/zabbix
-        createhome: false
-        comment: Zabbix Monitoring System
-        state: present
   roles:
     - role: trippsc2.hashi_vault.signed_certificate
       vars:
         cert_certificate_path: "{{ zbxagent_tls_cert_file }}"
         cert_private_key_path: "{{ zbxagent_tls_key_file }}"
-        cert_certificate_owner: zabbix
-        cert_certificate_group: zabbix
-        cert_private_key_owner: zabbix
-        cert_private_key_group: zabbix
         cert_common_name: "{{ ansible_host }}"
         cert_subject_alternative_names:
           - "DNS:{{ inventory_hostname }}"

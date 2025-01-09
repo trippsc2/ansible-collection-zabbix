@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.repo
-Version: 1.1.7
+Version: 1.1.8
 
 This role installs the Zabbix official repository on a Linux machine.
 
@@ -20,7 +20,7 @@ None.
 ## Role Arguments
 |Option|Description|Type|Required|Choices|Default|
 |---|---|---|---|---|---|
-| zbx_major_version | <p>The major version of Zabbix to be deployed.</p> | str | yes | <ul><li>7.2</li><li>7.0</li><li>6.4</li></ul> |  |
+| zbx_major_version | <p>The major version of Zabbix to be deployed.</p> | str | yes | <ul><li>7.2</li><li>7.0</li></ul> |  |
 
 
 ## License

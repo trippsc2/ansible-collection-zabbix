@@ -66,7 +66,6 @@ argument_specs:
         choices:
           - '7.2'
           - '7.0'
-          - '6.4'
         description:
           - The major version of Zabbix to install.
           - This defaults to the latest supported version for the OS.
@@ -156,7 +155,6 @@ argument_specs:
         default: true
         description:
           - Whether the Zabbix server should check for software updates.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#allowsoftwareupdatecheck'
       zbxserver_enable_global_scripts:
         type: bool
@@ -164,7 +162,6 @@ argument_specs:
         default: true
         description:
           - Whether to enable global scripts for the Zabbix server.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#enableglobalscripts'
       zbxserver_listen_port:
         type: int
@@ -227,7 +224,6 @@ argument_specs:
         description:
           - The URL of the Zabbix web driver.
           - If not specified, the server will not use the web driver.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#webdriverurl'
       zbxserver_tls_ca_file:
         type: path
@@ -580,7 +576,6 @@ argument_specs:
         description:
           - The number of agent poller processes to start.
           - Valid values are between 0 and 1000.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startagentpollers'
       zbxserver_start_browser_pollers:
         type: int
@@ -589,7 +584,6 @@ argument_specs:
         description:
           - The number of browser poller processes to start.
           - Valid values are between 0 and 1000.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startbrowserpollers'
       zbxserver_start_http_agent_pollers:
         type: int
@@ -598,7 +592,6 @@ argument_specs:
         description:
           - The number of HTTP agent poller processes to start.
           - Valid values are between 0 and 1000.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#starthttpagentpollers'
       zbxserver_start_snmp_pollers:
         type: int
@@ -607,7 +600,6 @@ argument_specs:
         description:
           - The number of asynchronous SNMP poller processes to start.
           - Valid values are between 0 and 1000.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#startsnmppollers'
       zbxserver_start_ipmi_pollers:
         type: int
@@ -826,7 +818,6 @@ argument_specs:
         description:
           - The maximum number of checks that can be processed concurrently by a poller process.
           - Valid values are between 1 and 1000.
-          - This feature was added in Zabbix 7.0 and will be ignored in earlier versions.
           - 'Reference: https://www.zabbix.com/documentation/current/en/manual/appendix/config/zabbix_server#maxconcurrentchecksperpoller'
       zbxserver_use_java_gateway:
         type: bool

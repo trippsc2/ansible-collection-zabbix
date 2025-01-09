@@ -6,9 +6,7 @@ zbxproxy_configure_vault: true
 zbxproxy_user: zabbix
 zbxproxy_group: zabbix
 
-zbxproxy_database_name: zabbix-proxy
-
-zbxproxy_database_type: postgresql
+zbxproxy_database_type: sqlite3
 
 zbxproxy_allow_root: false
 zbxproxy_enable_remote_commands: false

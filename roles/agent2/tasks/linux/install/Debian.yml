@@ -9,7 +9,6 @@
 
 - name: Install Ember+ plugin
   when:
-    - zbxagent_major_version != '6.4'
     - zbxagent_install_ember_plus_plugin
   become: true
   ansible.builtin.apt:

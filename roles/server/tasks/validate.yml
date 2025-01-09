@@ -96,8 +96,6 @@
     success_msg: Zabbix start pollers is valid.
 
 - name: Validate start agent pollers
-  when:
-    - zbxserver_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxserver_start_agent_pollers >= 0
@@ -106,8 +104,6 @@
     success_msg: Zabbix start agent pollers is valid.
 
 - name: Validate start browser pollers
-  when:
-    - zbxserver_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxserver_start_browser_pollers >= 0
@@ -116,8 +112,6 @@
     success_msg: Zabbix start browser pollers is valid.
 
 - name: Validate start HTTP agent pollers
-  when:
-    - zbxserver_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxserver_start_http_agent_pollers >= 0
@@ -126,8 +120,6 @@
     success_msg: Zabbix start HTTP agent pollers is valid.
 
 - name: Validate start SNMP pollers
-  when:
-    - zbxserver_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxserver_start_snmp_pollers >= 0
@@ -298,8 +290,6 @@
     success_msg: Zabbix start ODBC pollers is valid.
 
 - name: Validate max concurrent checks per poller
-  when:
-    - zbxserver_major_version != '6.4'
   ansible.builtin.assert:
     that:
       - zbxserver_max_concurrent_checks_per_poller >= 1

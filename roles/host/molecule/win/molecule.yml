@@ -16,14 +16,6 @@ platforms:
       default_prefix: zabbix_host_win_
     groups:
       - zabbix_server
-  - name: proxy
-    box: jtarpley/rocky9_cis
-    memory: 2048
-    cpus: 2
-    provider_options:
-      default_prefix: zabbix_host_win_
-    groups:
-      - zabbix_proxy
   - name: win
     box: jtarpley/${MOLECULE_BOX:-w2022_cis}
     memory: 2048
@@ -69,7 +61,6 @@ provisioner:
             useip: 1
             main: 1
             port: '10050'
-        zbxhost_proxy: "${MOLECULE_ZABBIX_PROXY:-{{ omit }}}"
         zbxhost_templates:
           - Windows by Zabbix agent
       windows:

@@ -1,0 +1,5 @@
+---
+zbxproxy_user: zabbix
+zbxproxy_group: zabbix
+
+zbxproxy_database_name: /var/lib/zabbix/zabbix_proxy.db

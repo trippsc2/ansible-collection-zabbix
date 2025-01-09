@@ -1,0 +1,16 @@
+---
+- name: Verify
+  hosts:
+    - subjects
+  tasks:
+    - name: Check if SQLite3 database exists
+      ansible.builtin.stat:
+        name: "{{ zbxproxy_database_name | default('/var/lib/zabbix/zabbix_proxy.db') }}"
+      register: _zbxproxy_database_stat
+
+    - name: Verify SQLite3 database exists
+      ansible.builtin.assert:
+        that:
+          - _zbxproxy_database_stat.stat.exists
+        fail_msg: SQLite3 database does not exist.
+        success_msg: SQLite3 database exists.

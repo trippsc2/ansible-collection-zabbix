@@ -1,0 +1,22 @@
+---
+- name: Include OS family variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/main.yml"
+
+- name: Include non-EL release variables
+  when:
+    - ansible_os_family != 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
+
+- name: Include EL major version variables
+  when:
+    - ansible_os_family == 'RedHat'
+  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
+
+- name: Validate Zabbix major version
+  when:
+    - zbxproxy_major_version is defined
+  ansible.builtin.assert:
+    that:
+      - zbxproxy_major_version in _zbxproxy_supported_major_versions
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is not supported running Zabbix {{ zbxproxy_major_version }}. Supported versions for this OS are: {{ _zbxproxy_supported_major_versions | join(', ') }}"
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is supported running Zabbix {{ zbxproxy_major_version }}."

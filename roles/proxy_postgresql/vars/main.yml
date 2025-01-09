@@ -1,12 +1,6 @@
 ---
-_zbxproxy_default_major_version: >-
-  {{ _zbxproxy_supported_major_versions[0] }}
-
 _zbxproxy_default_pgsql_listen_on_local_only: "{{ not zbxproxy_pgsql_standalone }}"
 _zbxproxy_default_pgsql_listen_on_all_addresses: "{{ zbxproxy_pgsql_standalone }}"
-
-_zbxproxy_major_version: >-
-  {{ zbxproxy_major_version | default(_zbxproxy_default_major_version) }}
 
 _zbxproxy_pgsql_listen_on_local_only: >-
   {{ pgsql_listen_on_local_only | default(_zbxproxy_default_pgsql_listen_on_local_only) }}
@@ -32,9 +26,8 @@ _zbxproxy_pgsql_hba_entries: >-
 _zbxproxy_pgsql_schema_script_path_by_zabbix_major_version:
   '7.2': /usr/share/zabbix/sql-scripts/postgresql/proxy.sql
   '7.0': /usr/share/zabbix-sql-scripts/postgresql/proxy.sql
-  '6.4': /usr/share/zabbix-sql-scripts/postgresql/proxy.sql
 
 _zbxproxy_pgsql_schema_script_path: >-
-  {{ _zbxproxy_pgsql_schema_script_path_by_zabbix_major_version[_zbxproxy_major_version] }}
+  {{ _zbxproxy_pgsql_schema_script_path_by_zabbix_major_version[zbxproxy_major_version] }}
 
-zbx_major_version: "{{ _zbxproxy_major_version }}"
+zbx_major_version: "{{ zbxproxy_major_version }}"

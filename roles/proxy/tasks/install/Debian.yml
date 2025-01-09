@@ -6,3 +6,13 @@
       - "{{ _zbxproxy_package_name }}"
     state: present
     update_cache: true
+
+- name: Ensure SELinux packages are installed
+  when:
+    - _zbxproxy_configure_selinux
+  become: true
+  ansible.builtin.apt:
+    name:
+      - policycoreutils
+      - python3-libsemanage
+    state: present

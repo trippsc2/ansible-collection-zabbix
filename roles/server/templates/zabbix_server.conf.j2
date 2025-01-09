@@ -1,10 +1,8 @@
 {{ ansible_managed | comment }}
 
 AllowRoot={{ zbxserver_allow_root | ternary('1', '0') }}
-{% if zbxserver_major_version != '6.4' %}
 AllowSoftwareUpdateCheck={{ zbxserver_allow_software_update_check | ternary('1', '0') }}
 EnableGlobalScripts={{ zbxserver_enable_global_scripts | ternary('1', '0') }}
-{% endif %}
 User={{ zbxserver_user }}
 ListenPort={{ zbxserver_listen_port }}
 {% if zbxserver_listen_ip is defined %}
@@ -21,7 +19,7 @@ ServiceManagerSyncFrequency={{ zbxserver_service_manager_sync_frequency }}
 {% if zbxserver_web_service_url is defined %}
 WebServiceURL={{ zbxserver_web_service_url }}
 {% endif %}
-{% if zbxserver_major_version != '6.4' and zbxserver_web_driver_url is defined %}
+{% if zbxserver_web_driver_url is defined %}
 WebDriverURL={{ zbxserver_web_driver_url }}
 {% endif %}
 {% if zbxserver_tls_ca_file is defined %}
@@ -116,12 +114,10 @@ ExportFileSize={{ zbxserver_export_file_size }}
 ExportType={{ zbxserver_export_type | join(',') }}
 {% endif %}
 StartPollers={{ zbxserver_start_pollers }}
-{% if zbxserver_major_version != '6.4' %}
 StartAgentPollers={{ zbxserver_start_agent_pollers }}
 StartBrowserPollers={{ zbxserver_start_browser_pollers }}
 StartHTTPAgentPollers={{ zbxserver_start_http_agent_pollers }}
 StartSNMPPollers={{ zbxserver_start_snmp_pollers }}
-{% endif %}
 StartIPMIPollers={{ zbxserver_start_ipmi_pollers }}
 StartPreprocessors={{ zbxserver_start_preprocessors }}
 StartPollersUnreachable={{ zbxserver_start_pollers_unreachable }}
@@ -151,9 +147,7 @@ TrendCacheSize={{ zbxserver_trend_cache_size }}
 TrendFunctionCacheSize={{ zbxserver_trend_function_cache_size }}
 ValueCacheSize={{ zbxserver_value_cache_size }}
 VMwareCacheSize={{ zbxserver_vmware_cache_size }}
-{% if zbxserver_major_version != '6.4' %}
 MaxConcurrentChecksPerPoller={{ zbxserver_max_concurrent_checks_per_poller }}
-{% endif %}
 {% if zbxserver_use_java_gateway %}
 JavaGateway={{ zbxserver_java_gateway }}
 JavaGatewayPort={{ zbxserver_java_gateway_port }}

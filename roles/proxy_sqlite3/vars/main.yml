@@ -1,0 +1,12 @@
+---
+_zbxproxy_sqlite3_schema_script_path_by_zabbix_major_version:
+  '7.2': /usr/share/zabbix/sql-scripts/sqlite3/proxy.sql
+  '7.0': /usr/share/zabbix-sql-scripts/sqlite3/proxy.sql
+
+_zbxproxy_configure_selinux: >-
+  {{ zbxproxy_configure_selinux | default(_zbxproxy_default_configure_selinux) }}
+
+_zbxproxy_sqlite3_schema_script_path: >-
+  {{ _zbxproxy_sqlite3_schema_script_path_by_zabbix_major_version[zbxproxy_major_version] }}
+
+zbx_major_version: "{{ zbxproxy_major_version }}"
