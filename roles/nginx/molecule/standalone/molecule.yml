@@ -54,7 +54,7 @@ provisioner:
         zbxserver_web_server_private_key_path: >-
           {{ '/etc/pki/tls/private/zabbix-web.key' if ansible_os_family == 'RedHat' else '/etc/ssl/private/zabbix-web.key' }}
       zabbix_database:
-        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
+        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-17}
         pgsql_ssl: true
         pgsql_ssl_ca_file: "{{ _zbxserver_ca_file }}"
         pgsql_ssl_cert_file: >-

@@ -37,7 +37,7 @@ provisioner:
         zabbix_validate_certs: false
         zabbix_username: test
         zabbix_password: SecurePassword1234!
-        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-16}
+        pgsql_major_version: ${MOLECULE_PGSQL_MAJOR_VERSION:-17}
         pgsql_ssl: true
         pgsql_ssl_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
