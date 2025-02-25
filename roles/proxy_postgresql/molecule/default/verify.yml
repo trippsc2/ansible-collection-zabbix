@@ -101,10 +101,6 @@
         fail_msg: PostgreSQL service not running
         success_msg: PostgreSQL service running
 
-    - name: Show expected PostgreSQL data_directory
-      ansible.builtin.debug:
-        msg: "data_directory = '{{ _pgsql_data_directory }}'"
-
     - name: Check if PostgreSQL data_directory is set
       become: true
       ansible.builtin.command:
