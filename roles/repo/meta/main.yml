@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-    author: Jim Tarpley
+    author: Jim Tarpley (@trippsc2)
     namespace: trippsc2
     role_name: repo
     description: This role installs the Zabbix official repository on a Linux system.
