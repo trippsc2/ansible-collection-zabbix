@@ -5,7 +5,7 @@ argument_specs:
     description:
       - This role installs the Zabbix official repository on a Linux system.
     author:
-      - Jim Tarpley
+      - Jim Tarpley (@trippsc2)
     options:
       zbx_major_version:
         type: str

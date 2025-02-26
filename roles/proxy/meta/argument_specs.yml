@@ -5,7 +5,7 @@ argument_specs:
     description:
       - This role installs and configures the Zabbix Proxy on a Linux system.
     author:
-      - Jim Tarpley
+      - Jim Tarpley (@trippsc2)
     options:
       vault_url:
         type: str

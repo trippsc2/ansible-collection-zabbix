@@ -4,7 +4,7 @@ name: zabbix
 version: 1.1.8
 readme: README.md
 authors:
-  - Jim Tarpley
+  - Jim Tarpley (@trippsc2)
 description: This collection contains roles for installing and configuring Zabbix.
 
 license_file: 'LICENSE'

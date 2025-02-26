@@ -5,7 +5,7 @@ argument_specs:
     description:
       - This role installs the Zabbix Agent 2 on a Linux or Windows system.
     author:
-      - Jim Tarpley
+      - Jim Tarpley (@trippsc2)
     options:
       zbxagent_major_version:
         type: str

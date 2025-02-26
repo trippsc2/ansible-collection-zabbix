@@ -5,7 +5,7 @@ argument_specs:
     description:
       - This role installs NGINX as a web frontend for Zabbix Server on a Linux system.
     author:
-      - Jim Tarpley
+      - Jim Tarpley (@trippsc2) (@trippsc2)
     options:
       zbxserver_major_version:
         type: str
