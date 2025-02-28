@@ -3,8 +3,8 @@
   become: true
   ansible.builtin.group:
     name: "{{ zbxserver_group }}"
-    state: present
     system: true
+    state: present
 
 - name: Ensure Zabbix Server user exists
   become: true
@@ -14,4 +14,5 @@
     password: '!'
     password_lock: true
     shell: /usr/sbin/nologin
+    system: true
     state: present
