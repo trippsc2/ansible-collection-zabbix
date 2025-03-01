@@ -5,4 +5,3 @@
     rule: allow
     port: "{{ zbxproxy_listen_port }}"
     proto: tcp
-    state: enabled
