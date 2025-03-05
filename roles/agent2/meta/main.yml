@@ -6,7 +6,7 @@ galaxy_info:
     description: This role installs the Zabbix Agent 2 on a Linux or Windows system.
     license: MIT
 
-    min_ansible_version: '2.15'
+    min_ansible_version: '2.16'
 
     platforms:
       - name: Debian

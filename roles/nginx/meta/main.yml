@@ -1,27 +1,27 @@
 ---
 galaxy_info:
-    author: Jim Tarpley (@trippsc2)
-    namespace: trippsc2
-    role_name: nginx
-    description: This role installs NGINX as a web frontend for Zabbix Server on a Linux system.
-    license: MIT
+  author: Jim Tarpley (@trippsc2)
+  namespace: trippsc2
+  role_name: nginx
+  description: This role installs NGINX as a web frontend for Zabbix Server on a Linux system.
+  license: MIT
 
-    min_ansible_version: '2.15'
+  min_ansible_version: '2.16'
 
-    platforms:
-      - name: Debian
-        versions:
-          - bullseye
-          - bookworm
-      - name: EL
-        versions:
-          - '8'
-          - '9'
-      - name: Ubuntu
-        versions:
-          - focal
-          - jammy
-          - noble
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: EL
+      versions:
+        - '8'
+        - '9'
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
 
 collections:
   - ansible.posix

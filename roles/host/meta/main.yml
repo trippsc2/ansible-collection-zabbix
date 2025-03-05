@@ -1,14 +1,14 @@
 ---
 galaxy_info:
-    author: Jim Tarpley (@trippsc2)
-    namespace: trippsc2
-    role_name: host
-    description: This role configures a host within Zabbix Server.
-    license: MIT
+  author: Jim Tarpley (@trippsc2)
+  namespace: trippsc2
+  role_name: host
+  description: This role configures a host within Zabbix Server.
+  license: MIT
 
-    platforms: []
+  platforms: []
 
-    min_ansible_version: '2.15'
+  min_ansible_version: '2.16'
 
 collections:
   - ansible.utils
