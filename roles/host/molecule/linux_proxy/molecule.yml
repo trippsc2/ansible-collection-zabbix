@@ -13,7 +13,7 @@ platforms:
     memory: 2048
     cpus: 2
     provider_options:
-      default_prefix: zabbix_host_linux_
+      default_prefix: zabbix_host_linux_proxy_
     groups:
       - zabbix_server
   - name: proxy
@@ -21,7 +21,7 @@ platforms:
     memory: 2048
     cpus: 2
     provider_options:
-      default_prefix: zabbix_host_linux_
+      default_prefix: zabbix_host_linux_proxy_
     groups:
       - zabbix_proxy
   - name: linux
@@ -29,7 +29,7 @@ platforms:
     memory: 2048
     cpus: 2
     provider_options:
-      default_prefix: zabbix_host_linux_
+      default_prefix: zabbix_host_linux_proxy_
     groups:
       - subjects
 provisioner:
