@@ -1,6 +1,4 @@
 ---
-zbxagent_major_version: '7.0'
-
 zbxagent_configure_logrotate: "{{ zbxagent_log_type == 'file' }}"
 zbxagent_configure_firewall: true
 zbxagent_install_ember_plus_plugin: false
