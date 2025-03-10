@@ -3,19 +3,19 @@
   ansible.builtin.include_tasks: user.yml
 
 - name: Install packages
-  ansible.builtin.include_tasks: "install/{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "linux/install/{{ ansible_os_family }}.yml"
 
 - name: Configure Zabbix Agent 2
-  ansible.builtin.include_tasks: configure.yml
+  ansible.builtin.include_tasks: linux/configure.yml
 
 - name: Configure firewalld
   when:
     - zbxagent_configure_firewall
     - _zbxagent_firewall_type == 'firewalld'
-  ansible.builtin.include_tasks: firewalld.yml
+  ansible.builtin.include_tasks: linux/firewalld.yml
 
 - name: Configure ufw
   when:
     - zbxagent_configure_firewall
     - _zbxagent_firewall_type == 'ufw'
-  ansible.builtin.include_tasks: ufw.yml
+  ansible.builtin.include_tasks: linux/ufw.yml

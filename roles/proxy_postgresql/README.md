@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.proxy_postgresql
-Version: 1.1.9
+Version: 1.1.10
 
 This role installs PostgreSQL server for use by a Zabbix Proxy on a Linux system.
 
