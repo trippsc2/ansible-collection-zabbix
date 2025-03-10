@@ -3,6 +3,7 @@
 set -e
 
 MOLECULE_BOX="rocky9_cis" molecule test
+MOLECULE_BOX="fedora41_base" molecule test
 MOLECULE_BOX="debian12_base" molecule test
 MOLECULE_BOX="ubuntu2404_base" molecule test
 

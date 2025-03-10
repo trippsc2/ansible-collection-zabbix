@@ -3,6 +3,7 @@
 set -e
 
 MOLECULE_BOX="rocky9_cis" MOLECULE_ZABBIX_MAJOR_VERSION="7.0" molecule test -s linux
+MOLECULE_BOX="fedora41_base" MOLECULE_ZABBIX_MAJOR_VERSION="7.0" molecule test -s linux
 MOLECULE_BOX="debian12_base" MOLECULE_ZABBIX_MAJOR_VERSION="7.0" molecule test -s linux
 MOLECULE_BOX="ubuntu2404_base" MOLECULE_ZABBIX_MAJOR_VERSION="7.0" molecule test -s linux
 

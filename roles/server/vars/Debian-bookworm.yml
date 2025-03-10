@@ -1,0 +1,21 @@
+---
+_zbxserver_supported_os: true
+
+_zbxserver_supported_major_versions:
+  - '7.2'
+  - '7.0'
+
+_zbxserver_default_firewall_type: firewalld
+
+_zbxserver_default_configure_selinux: false
+
+_zbxserver_default_additional_groups:
+  - ssl-cert
+
+_zbxserver_selinux_packages:
+  - python3-selinux
+  - python3-semanage
+
+_zbxserver_env_file_path: /etc/default/zabbix-server
+_zbxserver_exec_stop_command: >-
+  /bin/sh -c '[ -n "$1" ] && kill -s TERM "$1"' -- "$MAINPID"

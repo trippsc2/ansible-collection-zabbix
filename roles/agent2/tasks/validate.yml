@@ -1,21 +1,25 @@
 ---
-- name: Include OS family variables
-  ansible.builtin.include_vars: "{{ ansible_os_family }}/main.yml"
+- name: Include OS specific variables
+  ansible.builtin.include_vars: "{{ _file }}"
+  vars:
+    _file: "{{ lookup('first_found', _params) }}"
+    _params:
+      files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release | default('') }}.yml"
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - fallback.yml
+      paths:
+        - "{{ role_path }}/vars"
 
-- name: Include non-EL Linux distribution variables
-  when:
-    - ansible_os_family != 'RedHat'
-    - ansible_os_family != 'Windows'
-  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution }}.yml"
-
-- name: Validate Zabbix major version is defined
-  when:
-    - ansible_os_family != 'Windows'
+- name: Validate OS is supported
   ansible.builtin.assert:
     that:
-      - zbxagent_major_version is defined
-    fail_msg: "The 'zbxagent_major_version' variable is not defined."
-    success_msg: "The 'zbxagent_major_version' variable is defined."
+      - _zbxagent_supported_os
+    fail_msg: "This role does not support {{ ansible_distribution }} {{ ansible_distribution_version }}."
+    success_msg: "This role supports {{ ansible_distribution }} {{ ansible_distribution_version }}."
 
 - name: Validate maximum log size
   when:

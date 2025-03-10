@@ -1,0 +1,19 @@
+---
+_zbxproxy_supported_os: true
+
+_zbxproxy_supported_major_versions:
+  - '7.2'
+  - '7.0'
+
+_zbxproxy_default_configure_selinux: true
+
+_zbxproxy_default_additional_groups: "{{ omit }}"
+
+_zbxproxy_selinux_packages:
+  - policycoreutils
+  - python3-libsemanage
+
+_zbxproxy_default_firewall_type: firewalld
+
+_zbxproxy_env_file_path: /etc/sysconfig/zabbix-proxy
+_zbxproxy_exec_stop_command: /bin/kill -SIGTERM $MAINPID

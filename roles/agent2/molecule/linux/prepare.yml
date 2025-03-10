@@ -1,4 +1,10 @@
 ---
+- name: Prepare Vault
+  hosts:
+    - vault
+  roles:
+    - role: trippsc2.hashi_vault.testing_ca
+
 - name: Prepare
   hosts:
     - subjects
@@ -24,7 +30,6 @@
         comment: Zabbix Monitoring System
         state: present
   roles:
-    - role: trippsc2.hashi_vault.testing_ca
     - role: trippsc2.hashi_vault.signed_certificate
       vars:
         cert_certificate_path: "{{ zbxagent_tls_cert_file }}"

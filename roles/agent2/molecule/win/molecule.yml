@@ -14,8 +14,6 @@ platforms:
     cpus: 2
     provider_options:
       default_prefix: zabbix_agent2_win_
-    groups:
-      - vault_server
   - name: win
     box: jtarpley/${MOLECULE_BOX:-w2022_cis}
     memory: 2048
@@ -46,15 +44,15 @@ provisioner:
         zbxagent_tls_ca_file: C:\Windows\Temp\vault.crt
         zbxagent_tls_cert_file: C:\Windows\Temp\zabbix-agent.crt
         zbxagent_tls_key_file: C:\Windows\Temp\zabbix-agent.key
-      vault_server:
-        _zbxagent_ca_file: >-
-          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
       windows:
         ansible_shell_type: powershell
         ansible_become_method: runas
         ansible_become_user: SYSTEM
         ansible_password: vagrant
     host_vars:
+      vault:
+        _zbxagent_ca_file: >-
+          {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
       win:
         ansible_ssh_common_args: '-o PreferredAuthentications=password -o PubkeyAuthentication=no -o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=60s -o ForwardX11=no -o LogLevel=ERROR -o StrictHostKeyChecking=no'
 verifier:

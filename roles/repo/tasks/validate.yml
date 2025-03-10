@@ -14,55 +14,30 @@
       - distribution_release
       - os_family
 
-- name: Validate OS family
+- name: Include OS specific variables
+  ansible.builtin.include_vars: "{{ _file }}"
+  vars:
+    _file: "{{ lookup('first_found', _params) }}"
+    _params:
+      files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family }}.yml"
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: Validate OS is supported
   ansible.builtin.assert:
     that:
-      - ansible_os_family in _zbx_supported_os_families
-    fail_msg: "{{ ansible_os_family }}-based distributions are not supported."
-    success_msg: "Some {{ ansible_os_family }}-based distributions are supported. Checking details."
+      - _zbx_supported_os
+    fail_msg: "This role does not support {{ ansible_distribution }} {{ ansible_distribution_version }}."
+    success_msg: "This role supports {{ ansible_distribution }} {{ ansible_distribution_version }}."
 
-- name: Validate distribution
-  when:
-    - ansible_os_family != 'RedHat'
+- name: Validate Zabbix major version
   ansible.builtin.assert:
     that:
-      - ansible_distribution in _zbx_supported_non_el_distributions
-    fail_msg: "{{ ansible_distribution }} is not supported."
-    success_msg: "Some {{ ansible_distribution }} releases are supported. Checking details."
-
-- name: Validate Debian release
-  when:
-    - ansible_distribution == 'Debian'
-  ansible.builtin.assert:
-    that:
-      - ansible_distribution_release in _zbx_supported_debian_releases
-    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: {{ _zbx_supported_debian_releases | join(', ') }}"
-    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported."
-
-- name: Validate EL version
-  when:
-    - ansible_os_family == 'RedHat'
-  ansible.builtin.assert:
-    that:
-      - ansible_distribution_major_version | string in _zbx_el_supported_major_versions
-    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported. Supported versions are: {{ _zbx_el_supported_major_versions | join(', ') }}"
-    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is supported."
-
-- name: Validate Ubuntu release
-  when:
-    - ansible_distribution == 'Ubuntu'
-  ansible.builtin.assert:
-    that:
-      - ansible_distribution_release in _zbx_supported_ubuntu_releases
-    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported. Supported releases are: {{ _zbx_supported_ubuntu_releases | join(', ') }}"
-    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported."
-
-- name: Include EL OS variables
-  when:
-    - ansible_os_family == 'RedHat'
-  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
-
-- name: Include non-EL OS variables
-  when:
-    - ansible_os_family != 'RedHat'
-  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
+      - zbx_major_version in _zbx_repo_package_url_by_major_version.keys()
+    fail_msg: "This role does not support Zabbix {{ zbx_major_version }} on {{ ansible_distribution }} {{ ansible_distribution_version }}."
+    success_msg: "This role supports Zabbix {{ zbx_major_version }} on {{ ansible_distribution }} {{ ansible_distribution_version }}."

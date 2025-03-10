@@ -8,6 +8,12 @@ driver:
   cachier: machine
   parallel: true
 platforms:
+  - name: vault
+    box: jtarpley/rocky9_cis
+    memory: 2048
+    cpus: 2
+    provider_options:
+      default_prefix: zabbix_agent2_linux_
   - name: linux
     box: jtarpley/${MOLECULE_BOX:-rocky9_cis}
     memory: 2048
@@ -22,7 +28,7 @@ provisioner:
     group_vars:
       all:
         vault_token: 47542cbc-6bf8-4fba-8eda-02e0a0d29a0a
-        vault_url: "http://{{ hostvars['linux'].ansible_host }}:8200"
+        vault_url: "http://{{ hostvars['vault'].ansible_host }}:8200"
         _zbxagent_ca_file: >-
           {{ '/etc/pki/ca-trust/source/anchors/vault.crt' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/vault.crt' }}
       subjects:

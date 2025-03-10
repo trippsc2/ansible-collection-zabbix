@@ -1,23 +1,32 @@
 ---
-- name: Include OS family variables
-  ansible.builtin.include_vars: "{{ ansible_os_family }}/main.yml"
+- name: Include OS specific variables
+  ansible.builtin.include_vars: "{{ _file }}"
+  vars:
+    _file: "{{ lookup('first_found', _params) }}"
+    _params:
+      files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release | default('') }}.yml"
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - fallback.yml
+      paths:
+        - "{{ role_path }}/vars"
 
-- name: Include non-EL release variables
-  when:
-    - ansible_os_family != 'RedHat'
-  ansible.builtin.include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
-
-- name: Include EL major version variables
-  when:
-    - ansible_os_family == 'RedHat'
-  ansible.builtin.include_vars: "{{ ansible_os_family }}/{{ ansible_distribution_major_version }}.yml"
+- name: Validate OS is supported
+  ansible.builtin.assert:
+    that:
+      - _zbxserver_supported_os
+    fail_msg: "This role does not support {{ ansible_distribution }} {{ ansible_distribution_version }}."
+    success_msg: "This role supports {{ ansible_distribution }} {{ ansible_distribution_version }}."
 
 - name: Validate Zabbix major version
   ansible.builtin.assert:
     that:
       - zbxserver_major_version in _zbxserver_supported_major_versions
-    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is not supported running Zabbix {{ zbxserver_major_version }}. Supported versions for this OS are: {{ _zbxserver_supported_major_versions | join(', ') }}"
-    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version if ansible_os_family == 'RedHat' else ansible_distribution_release }} is supported running Zabbix {{ zbxserver_major_version }}."
+    fail_msg: "This role does not support Zabbix Server {{ zbxserver_major_version }} on {{ ansible_distribution }} {{ ansible_distribution_version }}."
+    success_msg: "This role supports Zabbix Server {{ zbxserver_major_version }} on {{ ansible_distribution }} {{ ansible_distribution_version }}."
 
 - name: Validate listen port
   ansible.builtin.assert:

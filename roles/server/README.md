@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.server
-Version: 1.1.8
+Version: 1.1.9
 
 This role installs and configures the Zabbix server on a Linux system.
 
@@ -335,5 +335,5 @@ This role installs and configures the Zabbix server on a Linux system.
 MIT
 
 ## Author and Project Information
-Jim Tarpley
+Jim Tarpley (@trippsc2)
 <!-- END_ANSIBLE_DOCS -->

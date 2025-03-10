@@ -1,3 +1,0 @@
----
-_zbxagent_default_log_file: C:\ProgramData\Zabbix Agent 2\zabbix_agent2.log
-_zbx_default_host_name: "{{ inventory_hostname | upper }}"

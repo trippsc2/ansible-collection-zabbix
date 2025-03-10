@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.repo
-Version: 1.1.8
+Version: 1.1.9
 
 This role installs the Zabbix official repository on a Linux system.
 
@@ -11,6 +11,7 @@ This role installs the Zabbix official repository on a Linux system.
 | -------- | -------- |
 | Debian | <ul><li>bullseye</li><li>bookworm</li></ul> |
 | EL | <ul><li>8</li><li>9</li></ul> |
+| Fedora | <ul><li>all</li></ul> |
 | Ubuntu | <ul><li>focal</li><li>jammy</li><li>noble</li></ul> |
 
 ## Dependencies
@@ -27,5 +28,5 @@ None.
 MIT
 
 ## Author and Project Information
-Jim Tarpley
+Jim Tarpley (@trippsc2)
 <!-- END_ANSIBLE_DOCS -->

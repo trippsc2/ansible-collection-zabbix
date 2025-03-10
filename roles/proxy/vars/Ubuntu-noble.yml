@@ -1,0 +1,21 @@
+---
+_zbxproxy_supported_os: true
+
+_zbxproxy_supported_major_versions:
+  - '7.2'
+  - '7.0'
+
+_zbxproxy_default_firewall_type: ufw
+
+_zbxproxy_default_configure_selinux: false
+
+_zbxproxy_default_additional_groups:
+  - ssl-cert
+
+_zbxproxy_selinux_packages:
+  - python3-selinux
+  - python3-semanage
+
+_zbxproxy_env_file_path: /etc/default/zabbix-proxy
+_zbxproxy_exec_stop_command: >-
+  /bin/sh -c '[ -n "$1" ] && kill -s TERM "$1"' -- "$MAINPID"

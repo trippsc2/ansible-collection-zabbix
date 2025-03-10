@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.9] - 2025-03-06
+
+### Role - agent2
+
+- Added support for Fedora.
+
+### Role - repo
+
+- Added support for Fedora.
+
 ## [1.1.8] - 2025-01-09
 
 ### Collection

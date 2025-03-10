@@ -1,7 +1,4 @@
 ---
-_zbxserver_default_major_version: >-
-  {{ _zbxserver_supported_major_versions[0] }}
-
 _zbxserver_default_nginx_module_version: >-
   {{ ((_zbxserver_nginx_module_versions_allowed |
         default({}))[zbxserver_major_version] |

@@ -1,0 +1,4 @@
+---
+_zbxagent_supported_os: true
+
+_zbxagent_default_log_file: C:\ProgramData\Zabbix Agent 2\zabbix_agent2.log

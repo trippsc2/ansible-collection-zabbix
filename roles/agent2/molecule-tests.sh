@@ -4,6 +4,7 @@ set -e
 
 MOLECULE_BOX="rocky9_cis" molecule test -s linux
 MOLECULE_BOX="w2022_cis" molecule test -s win
+MOLECULE_BOX="fedora41_base" molecule test -s linux
 MOLECULE_BOX="debian12_base" molecule test -s linux
 MOLECULE_BOX="ubuntu2404_base" molecule test -s linux
 MOLECULE_BOX="w11_24h2_base" molecule test -s win

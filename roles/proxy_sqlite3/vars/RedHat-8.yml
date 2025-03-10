@@ -1,0 +1,8 @@
+---
+_zbxproxy_supported_os: true
+
+_zbxproxy_supported_major_versions:
+  - '7.2'
+  - '7.0'
+
+_zbxproxy_default_configure_selinux: true

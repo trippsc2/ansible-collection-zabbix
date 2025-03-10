@@ -1,6 +1,0 @@
----
-_zbxserver_supported_major_versions:
-  - '7.2'
-  - '7.0'
-
-_zbxserver_default_firewall_type: firewalld
