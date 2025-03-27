@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.12] - 2025-03-27
+
+### Role - server
+
+- Fixed typo in SAML task.
+
 ## [1.1.11] - 2025-03-27
 
 ### Role - server

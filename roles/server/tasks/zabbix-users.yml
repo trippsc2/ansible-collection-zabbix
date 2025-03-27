@@ -172,6 +172,7 @@
         mediatype: Email
         name: Email
     provision_groups: "{{ item.group_mappings | default(omit) }}"
+    provision_status: true
     state: present
 
 - name: Configure authentication
