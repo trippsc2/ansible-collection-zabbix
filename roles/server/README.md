@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.server
-Version: 1.1.10
+Version: 1.1.11
 
 This role installs and configures the Zabbix server on a Linux system.
 
@@ -318,7 +318,7 @@ This role installs and configures the Zabbix server on a Linux system.
 | username_attribute | <p>The attribute to use for the username.</p> | str | no |  | NameID |
 | name_format | <p>The format to use for the NameID.</p> | str | no |  | urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified |
 | name_attribute | <p>The attribute to use for the user's first name.</p> | str | no |  | DisplayName |
-| last_name_attribute | <p>The attribute to use for the user's last name.</p> | str | no |  | LastName |
+| surname_attribute | <p>The attribute to use for the user's last name.</p> | str | no |  | LastName |
 | email_attribute | <p>The attribute to use for the user's email address.</p> | str | no |  | Email |
 | user_group_attribute | <p>The attribute to use for the user's group membership.</p> | str | no |  | Groups |
 | group_mappings | <p>A list of group mappings for the SAML directory.</p> | list of dicts of 'group_mappings' options | no |  | [] |

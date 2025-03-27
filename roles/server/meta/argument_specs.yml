@@ -1652,7 +1652,7 @@ argument_specs:
             default: DisplayName
             description:
               - The attribute to use for the user's first name.
-          last_name_attribute:
+          surname_attribute:
             type: str
             required: false
             default: LastName

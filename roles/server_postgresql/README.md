@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.server_postgresql
-Version: 1.1.10
+Version: 1.1.11
 
 This role installs PostgreSQL server for use by a Zabbix Server on a Linux system.
 
