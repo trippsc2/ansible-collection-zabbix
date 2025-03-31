@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.proxy
-Version: 1.1.12
+Version: 1.1.13
 
 This role installs and configures the Zabbix Proxy on a Linux system.
 

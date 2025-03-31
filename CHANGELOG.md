@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.13] - 2025-03-31
+
+### Role - agent2
+
+- Fixed task include bugs.
+
 ## [1.1.12] - 2025-03-27
 
 ### Role - server

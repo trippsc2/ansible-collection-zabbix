@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.host
-Version: 1.1.12
+Version: 1.1.13
 
 This role configures a host within Zabbix Server.
 

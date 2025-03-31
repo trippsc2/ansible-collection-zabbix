@@ -1,6 +1,6 @@
 ---
 - name: Install Zabbix Agent 2
-  ansible.builtin.import_tasks: win/install.yml
+  ansible.builtin.include_tasks: win/install.yml
 
 - name: Configure Zabbix Agent 2
-  ansible.builtin.import_tasks: win/configure.yml
+  ansible.builtin.include_tasks: win/configure.yml
