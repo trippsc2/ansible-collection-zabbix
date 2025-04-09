@@ -4,7 +4,7 @@
     src: zabbix_agent2.win.conf.j2
     dest: C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf
   notify:
-    - _zbxagent_restart_zabbix_agent2
+    - _zbxagent_restart_win_zabbix_agent2
 
 - name: Ensure include directories exist
   loop: "{{ zbxagent_include_directories }}"

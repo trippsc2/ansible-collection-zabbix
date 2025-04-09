@@ -9,7 +9,7 @@
     state: restarted
 
 - name: Restart Zabbix Agent
-  listen: _zbxagent_restart_zabbix_agent2
+  listen: _zbxagent_restart_win_zabbix_agent2
   when:
     - ansible_os_family == 'Windows'
   ansible.windows.win_service:

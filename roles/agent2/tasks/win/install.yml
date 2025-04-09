@@ -5,7 +5,7 @@
       - zabbix-agent2
     state: present
   notify:
-    - _zbxagent_restart_zabbix_agent2
+    - _zbxagent_restart_win_zabbix_agent2
 
 - name: Install Zabbix Agent 2 plugins
   when:

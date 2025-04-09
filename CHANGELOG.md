@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.14] - 2025-03-31
+
+### Role - agent2
+
+- Fixed handler bug that caused Windows systems to not restart the service.
+
 ## [1.1.13] - 2025-03-31
 
 ### Role - agent2
