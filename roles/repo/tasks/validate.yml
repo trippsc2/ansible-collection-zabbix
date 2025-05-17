@@ -4,6 +4,7 @@
     - ansible_distribution is not defined or
       ansible_distribution_major_version is not defined or
       ansible_distribution_release is not defined or
+      ansible_distribution_version is not defined or
       ansible_os_family is not defined
   ansible.builtin.setup:
     gather_subset:
@@ -12,6 +13,7 @@
       - distribution
       - distribution_major_version
       - distribution_release
+      - distribution_version
       - os_family
 
 - name: Include OS specific variables
@@ -20,20 +22,34 @@
     _file: "{{ lookup('first_found', _params) }}"
     _params:
       files:
-        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release | default('') }}.yml"
         - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
         - "{{ ansible_os_family }}.yml"
+        - fallback.yml
       paths:
         - "{{ role_path }}/vars"
 
 - name: Validate OS is supported
   ansible.builtin.assert:
     that:
-      - _zbx_supported_os
-    fail_msg: "This role does not support {{ ansible_distribution }} {{ ansible_distribution_version }}."
-    success_msg: "This role supports {{ ansible_distribution }} {{ ansible_distribution_version }}."
+      - _zbx_os_is_supported
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} is not supported."
+    success_msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} is from a supported OS family."
+
+- name: Indicate OS is tested
+  when:
+    - _zbx_os_is_tested
+  ansible.builtin.debug:
+    msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} has been tested with this role."
+
+- name: Warn if OS is not tested
+  when:
+    - not _zbx_os_is_tested
+  ansible.builtin.debug:
+    msg: "WARNING: {{ ansible_distribution }} {{ ansible_distribution_version }} is not tested."
+  changed_when: true
 
 - name: Validate Zabbix major version
   ansible.builtin.assert:

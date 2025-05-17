@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.agent2
-Version: 1.1.14
+Version: 1.1.15
 
 This role installs the Zabbix Agent 2 on a Linux or Windows system.
 
@@ -9,11 +9,10 @@ This role installs the Zabbix Agent 2 on a Linux or Windows system.
 
 | Platform | Versions |
 | -------- | -------- |
-| Debian | <ul><li>bullseye</li><li>bookworm</li></ul> |
-| EL | <ul><li>8</li><li>9</li></ul> |
-| Fedora | <ul><li>all</li></ul> |
-| Ubuntu | <ul><li>focal</li><li>jammy</li><li>noble</li></ul> |
-| Windows | <ul><li>2019</li><li>2022</li></ul> |
+| Debian | <ul><li>bookworm</li></ul> |
+| EL | <ul><li>9</li><li>8</li></ul> |
+| Ubuntu | <ul><li>noble</li><li>jammy</li><li>focal</li></ul> |
+| Windows | <ul><li>all</li></ul> |
 
 ## Dependencies
 

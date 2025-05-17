@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.15] - 2025-05-16
+
+### Role - agent2
+
+- Changed OS validation.
+
+### Role - nginx
+
+- Changed OS validation.
+
+### Role - proxy
+
+- Changed OS validation.
+
+### Role - proxy_postgresql
+
+- Changed OS validation.
+
+### Role - proxy_sqlite3
+
+- Changed OS validation.
+
+### Role - repo
+
+- Changed OS validation.
+
+### Role - server
+
+- Changed OS validation.
+
+### Role - server_postgresql
+
+- Changed OS validation.
+
 ## [1.1.14] - 2025-03-31
 
 ### Role - agent2

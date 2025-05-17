@@ -7,23 +7,23 @@
       when:
         - ansible_os_family == 'Debian'
       ansible.builtin.set_fact:
-        _pgsql_package_name: postgresql-16
+        _pgsql_package_name: postgresql-17
         _pgsql_service_name: postgresql.service
-        _pgsql_config_file: /etc/postgresql/16/main/postgresql.conf
-        _pgsql_hba_config_file: /etc/postgresql/16/main/pg_hba.conf
-        _pgsql_data_directory: /var/lib/postgresql/16/main
-        _pgsql_ident_file: /etc/postgresql/16/main/pg_ident.conf
+        _pgsql_config_file: /etc/postgresql/17/main/postgresql.conf
+        _pgsql_hba_config_file: /etc/postgresql/17/main/pg_hba.conf
+        _pgsql_data_directory: /var/lib/postgresql/17/main
+        _pgsql_ident_file: /etc/postgresql/17/main/pg_ident.conf
 
     - name: Set OS variables (EL)
       when:
         - ansible_os_family == 'RedHat'
       ansible.builtin.set_fact:
-        _pgsql_package_name: postgresql16-server
-        _pgsql_service_name: postgresql-16.service
-        _pgsql_config_file: /var/lib/pgsql/16/data/postgresql.conf
-        _pgsql_hba_config_file: /var/lib/pgsql/16/data/pg_hba.conf
-        _pgsql_data_directory: /var/lib/pgsql/16/data
-        _pgsql_ident_file: /var/lib/pgsql/16/data/pg_ident.conf
+        _pgsql_package_name: postgresql17-server
+        _pgsql_service_name: postgresql-17.service
+        _pgsql_config_file: /var/lib/pgsql/17/data/postgresql.conf
+        _pgsql_hba_config_file: /var/lib/pgsql/17/data/pg_hba.conf
+        _pgsql_data_directory: /var/lib/pgsql/17/data
+        _pgsql_ident_file: /var/lib/pgsql/17/data/pg_ident.conf
 
     - name: Set expected values
       ansible.builtin.set_fact:
@@ -51,7 +51,7 @@
         _pgsql_hba_entries_expected:
           - local all all peer
           - "host all {{ pgsql_vault_user | default('vault') }} {{ hostvars['linux'].ansible_host }}/32 scram-sha-256"
-          - "host {{ zbxproxy_database_name | default('zabbix-server') }} {{ zbxproxy_user | default('zabbix') }} {{ hostvars['linux'].ansible_host }}/32 scram-sha-256"
+          - "host {{ zbxproxy_database_name | default('zabbix-proxy') }} {{ zbxproxy_user | default('zabbix') }} {{ hostvars['linux'].ansible_host }}/32 scram-sha-256"
           - host all all 127.0.0.1/32 scram-sha-256
           - host all all ::1/128 scram-sha-256
 

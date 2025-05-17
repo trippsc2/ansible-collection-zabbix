@@ -1,2 +1,3 @@
 ---
-_zbxagent_supported_os: false
+_zbxagent_os_is_supported: false
+_zbxagent_os_is_tested: false

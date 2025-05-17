@@ -1,5 +1,5 @@
 ---
-_zbxserver_supported_os: true
+_zbxserver_os_is_supported: true
 
 _zbxserver_supported_major_versions:
   - '7.2'

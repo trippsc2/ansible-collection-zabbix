@@ -1,8 +1,7 @@
 ---
-_zbxproxy_supported_os: true
+_zbxproxy_os_is_supported: true
 
 _zbxproxy_supported_major_versions:
-  - '7.2'
   - '7.0'
 
 _zbxproxy_pgsql_base_directory: /var/lib/postgresql
