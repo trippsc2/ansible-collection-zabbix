@@ -54,7 +54,7 @@ jobs:
         run: |
           source ~/venv/ansible-2.16/bin/activate
           rm -rf ~/.ansible/collections/ansible_collections/*
-          cd ./roles/agent2
+          cd ./roles/host
           molecule test -s linux
           rm -rf ~/.ansible/collections/ansible_collections/*
           deactivate
@@ -90,7 +90,7 @@ jobs:
         run: |
           source ~/venv/ansible-2.16/bin/activate
           rm -rf ~/.ansible/collections/ansible_collections/*
-          cd ./roles/agent2
+          cd ./roles/host
           molecule test -s linux_proxy
           rm -rf ~/.ansible/collections/ansible_collections/*
           deactivate
@@ -127,7 +127,7 @@ jobs:
         run: |
           source ~/venv/ansible-2.16/bin/activate
           rm -rf ~/.ansible/collections/ansible_collections/*
-          cd ./roles/agent2
+          cd ./roles/host
           molecule test -s win
           rm -rf ~/.ansible/collections/ansible_collections/*
           deactivate
@@ -164,7 +164,7 @@ jobs:
         run: |
           source ~/venv/ansible-2.16/bin/activate
           rm -rf ~/.ansible/collections/ansible_collections/*
-          cd ./roles/agent2
+          cd ./roles/host
           molecule test -s win_proxy
           rm -rf ~/.ansible/collections/ansible_collections/*
           deactivate
