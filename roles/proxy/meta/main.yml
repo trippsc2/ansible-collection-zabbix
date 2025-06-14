@@ -20,12 +20,10 @@ galaxy_info:
       versions:
         - noble
         - jammy
-        - focal
 
 collections:
   - ansible.posix
   - community.general
-  - community.hashi_vault
   - community.zabbix
 
 dependencies:

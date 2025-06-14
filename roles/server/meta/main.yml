@@ -20,13 +20,13 @@ galaxy_info:
       versions:
         - noble
         - jammy
-        - focal
 
 collections:
   - ansible.posix
   - community.general
   - community.hashi_vault
   - community.zabbix
+  - trippsc2.hashi_vault
 
 dependencies:
   - role: trippsc2.zabbix.repo

@@ -24,12 +24,8 @@ galaxy_info:
       versions:
         - noble
         - jammy
-        - focal
-
-  galaxy_tags: []
 
 collections:
-  - ansible.posix
   - community.hashi_vault
   - community.postgresql
   - trippsc2.hashi_vault

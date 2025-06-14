@@ -1,0 +1,69 @@
+---
+name: Molecule - proxy_postgresql role
+'on':
+  workflow_call: {}
+  workflow_dispatch: {}
+  pull_request:
+    branches:
+      - main
+    paths:
+      - galaxy.yml
+      - roles/proxy_postgresql/**
+      - '!roles/proxy_postgresql/.aar_doc.yml'
+      - '!roles/proxy_postgresql/README.md'
+      - '!roles/proxy_postgresql/meta/argument_specs.yml'
+      - '!roles/proxy_postgresql/meta/main.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - galaxy.yml
+      - roles/proxy_postgresql/**
+      - '!roles/proxy_postgresql/.aar_doc.yml'
+      - '!roles/proxy_postgresql/README.md'
+      - '!roles/proxy_postgresql/meta/argument_specs.yml'
+      - '!roles/proxy_postgresql/meta/main.yml'
+defaults:
+  run:
+    working-directory: 'trippsc2.zabbix'
+jobs:
+  molecule:
+    name: Run Molecule tests
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+    strategy:
+      fail-fast: false
+      matrix:
+        box:
+          - debian12_base
+          - rocky9_cis
+          - rocky8_cis
+          - ubuntu2404_base
+          - ubuntu2204_base
+        version:
+          - '7.2'
+          - '7.0'
+        standalone:
+          - true
+          - false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: 'trippsc2.zabbix'
+      - name: Run Molecule tests
+        run: |
+          source ~/venv/ansible-2.16/bin/activate
+          rm -rf ~/.ansible/collections/ansible_collections/*
+          cd ./roles/proxy_postgresql
+          molecule test
+          rm -rf ~/.ansible/collections/ansible_collections/*
+          deactivate
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: '1'
+          MOLECULE_BOX: ${{ matrix.box }}
+          MOLECULE_PGSQL_STANDALONE: ${{ matrix.standalone }}
+          MOLECULE_ZABBIX_MAJOR_VERSION: ${{ matrix.version }}

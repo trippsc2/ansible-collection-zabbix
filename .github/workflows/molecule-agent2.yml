@@ -1,0 +1,98 @@
+---
+name: Molecule - agent2 role
+'on':
+  workflow_call: {}
+  workflow_dispatch: {}
+  pull_request:
+    branches:
+      - main
+    paths:
+      - galaxy.yml
+      - roles/agent2/**
+      - '!roles/agent2/.aar_doc.yml'
+      - '!roles/agent2/README.md'
+      - '!roles/agent2/meta/argument_specs.yml'
+      - '!roles/agent2/meta/main.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - galaxy.yml
+      - roles/agent2/**
+      - '!roles/agent2/.aar_doc.yml'
+      - '!roles/agent2/README.md'
+      - '!roles/agent2/meta/argument_specs.yml'
+      - '!roles/agent2/meta/main.yml'
+defaults:
+  run:
+    working-directory: 'trippsc2.zabbix'
+jobs:
+  molecule_linux:
+    name: Run Molecule tests - Linux
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+    strategy:
+      fail-fast: false
+      matrix:
+        box:
+          - debian12_base
+          - rocky9_cis
+          - rocky8_cis
+          - ubuntu2404_base
+          - ubuntu2204_base
+        version:
+          - '7.2'
+          - '7.0'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: 'trippsc2.zabbix'
+      - name: Run Molecule tests
+        run: |
+          source ~/venv/ansible-2.16/bin/activate
+          rm -rf ~/.ansible/collections/ansible_collections/*
+          cd ./roles/agent2
+          molecule test -s linux
+          rm -rf ~/.ansible/collections/ansible_collections/*
+          deactivate
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: '1'
+          MOLECULE_BOX: ${{ matrix.box }}
+          MOLECULE_ZABBIX_MAJOR_VERSION: ${{ matrix.version }}
+  molecule_win:
+    name: Run Molecule tests - Windows
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+    strategy:
+      fail-fast: false
+      matrix:
+        box:
+          - w2025_cis
+          - w2022_cis
+          - w2019_cis
+          - w11_24h2_base
+          - w11_23h2_base
+          - w10_22h2_base
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: 'trippsc2.zabbix'
+      - name: Run Molecule tests
+        run: |
+          source ~/venv/ansible-2.16/bin/activate
+          rm -rf ~/.ansible/collections/ansible_collections/*
+          cd ./roles/agent2
+          molecule test -s win
+          rm -rf ~/.ansible/collections/ansible_collections/*
+          deactivate
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: '1'
+          MOLECULE_BOX: ${{ matrix.box }}

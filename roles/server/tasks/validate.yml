@@ -31,16 +31,16 @@
 - name: Validate listen port
   ansible.builtin.assert:
     that:
-      - zbxserver_listen_port >= 1024
-      - zbxserver_listen_port <= 32767
+      - zbxserver_listen_port | int >= 1024
+      - zbxserver_listen_port | int <= 32767
     fail_msg: Zabbix listen port must be between 1024 and 32767.
     success_msg: Zabbix listen port is valid.
 
 - name: Validate Service Manager sync frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_service_manager_sync_frequency >= 1
-      - zbxserver_service_manager_sync_frequency <= 3600
+      - zbxserver_service_manager_sync_frequency | int >= 1
+      - zbxserver_service_manager_sync_frequency | int <= 3600
     fail_msg: Zabbix Service Manager sync frequency must be between 1 and 3600 seconds.
     success_msg: Zabbix Service Manager sync frequency is valid.
 
@@ -59,8 +59,8 @@
     - zbxserver_database_port is defined
   ansible.builtin.assert:
     that:
-      - zbxserver_database_port >= 1024
-      - zbxserver_database_port <= 65535
+      - zbxserver_database_port | int >= 1024
+      - zbxserver_database_port | int <= 65535
     fail_msg: Zabbix database port must be between 1024 and 65535.
     success_msg: Zabbix database port is valid.
 
@@ -99,136 +99,136 @@
 - name: Validate start pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_pollers >= 0
-      - zbxserver_start_pollers <= 1000
+      - zbxserver_start_pollers | int >= 0
+      - zbxserver_start_pollers | int <= 1000
     fail_msg: Zabbix start pollers must be between 0 and 1000.
     success_msg: Zabbix start pollers is valid.
 
 - name: Validate start agent pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_agent_pollers >= 0
-      - zbxserver_start_agent_pollers <= 1000
+      - zbxserver_start_agent_pollers | int >= 0
+      - zbxserver_start_agent_pollers | int <= 1000
     fail_msg: Zabbix start agent pollers must be between 0 and 1000.
     success_msg: Zabbix start agent pollers is valid.
 
 - name: Validate start browser pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_browser_pollers >= 0
-      - zbxserver_start_browser_pollers <= 1000
+      - zbxserver_start_browser_pollers | int >= 0
+      - zbxserver_start_browser_pollers | int <= 1000
     fail_msg: Zabbix start browser pollers must be between 0 and 1000.
     success_msg: Zabbix start browser pollers is valid.
 
 - name: Validate start HTTP agent pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_http_agent_pollers >= 0
-      - zbxserver_start_http_agent_pollers <= 1000
+      - zbxserver_start_http_agent_pollers | int >= 0
+      - zbxserver_start_http_agent_pollers | int <= 1000
     fail_msg: Zabbix start HTTP agent pollers must be between 0 and 1000.
     success_msg: Zabbix start HTTP agent pollers is valid.
 
 - name: Validate start SNMP pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_snmp_pollers >= 0
-      - zbxserver_start_snmp_pollers <= 1000
+      - zbxserver_start_snmp_pollers | int >= 0
+      - zbxserver_start_snmp_pollers | int <= 1000
     fail_msg: Zabbix start SNMP pollers must be between 0 and 1000.
     success_msg: Zabbix start SNMP pollers is valid.
 
 - name: Validate start IPMI pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_ipmi_pollers >= 0
-      - zbxserver_start_ipmi_pollers <= 1000
+      - zbxserver_start_ipmi_pollers | int >= 0
+      - zbxserver_start_ipmi_pollers | int <= 1000
     fail_msg: Zabbix start IPMI pollers must be between 0 and 1000.
     success_msg: Zabbix start IPMI pollers is valid.
 
 - name: Validate start pollers unreachable
   ansible.builtin.assert:
     that:
-      - zbxserver_start_pollers_unreachable >= 0
-      - zbxserver_start_pollers_unreachable <= 1000
+      - zbxserver_start_pollers_unreachable | int >= 0
+      - zbxserver_start_pollers_unreachable | int <= 1000
     fail_msg: Zabbix start pollers unreachable must be between 0 and 1000.
     success_msg: Zabbix start pollers unreachable is valid.
 
 - name: Validate start preprocessors
   ansible.builtin.assert:
     that:
-      - zbxserver_start_preprocessors >= 0
-      - zbxserver_start_preprocessors <= 1000
+      - zbxserver_start_preprocessors | int >= 0
+      - zbxserver_start_preprocessors | int <= 1000
     fail_msg: Zabbix start preprocessors must be between 0 and 1000.
     success_msg: Zabbix start preprocessors is valid.
 
 - name: Validate start history pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_history_pollers >= 0
-      - zbxserver_start_history_pollers <= 1000
+      - zbxserver_start_history_pollers | int >= 0
+      - zbxserver_start_history_pollers | int <= 1000
     fail_msg: Zabbix start history pollers must be between 0 and 1000.
     success_msg: Zabbix start history pollers is valid.
 
 - name: Validate start trappers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_trappers >= 0
-      - zbxserver_start_trappers <= 1000
+      - zbxserver_start_trappers | int >= 0
+      - zbxserver_start_trappers | int <= 1000
     fail_msg: Zabbix start trappers must be between 0 and 1000.
     success_msg: Zabbix start trappers is valid.
 
 - name: Validate start pingers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_pingers >= 0
-      - zbxserver_start_pingers <= 1000
+      - zbxserver_start_pingers | int >= 0
+      - zbxserver_start_pingers | int <= 1000
     fail_msg: Zabbix start pingers must be between 0 and 1000.
     success_msg: Zabbix start pingers is valid.
 
 - name: Validate start discoverers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_discoverers >= 0
-      - zbxserver_start_discoverers <= 1000
+      - zbxserver_start_discoverers | int >= 0
+      - zbxserver_start_discoverers | int <= 1000
     fail_msg: Zabbix start discoverers must be between 0 and 1000.
     success_msg: Zabbix start discoverers is valid.
 
 - name: Validate start HTTP pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_http_pollers >= 0
-      - zbxserver_start_http_pollers <= 1000
+      - zbxserver_start_http_pollers | int >= 0
+      - zbxserver_start_http_pollers | int <= 1000
     fail_msg: Zabbix start HTTP pollers must be between 0 and 1000.
     success_msg: Zabbix start HTTP pollers is valid.
 
 - name: Validate start connectors
   ansible.builtin.assert:
     that:
-      - zbxserver_start_connectors >= 0
-      - zbxserver_start_connectors <= 1000
+      - zbxserver_start_connectors | int >= 0
+      - zbxserver_start_connectors | int <= 1000
     fail_msg: Zabbix start connectors must be between 0 and 1000.
     success_msg: Zabbix start connectors is valid.
 
 - name: Validate start timers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_timers >= 1
-      - zbxserver_start_timers <= 1000
+      - zbxserver_start_timers | int >= 1
+      - zbxserver_start_timers | int <= 1000
     fail_msg: Zabbix start timers must be between 1 and 1000.
     success_msg: Zabbix start timers is valid.
 
 - name: Validate start escalators
   ansible.builtin.assert:
     that:
-      - zbxserver_start_escalators >= 1
-      - zbxserver_start_escalators <= 100
+      - zbxserver_start_escalators | int >= 1
+      - zbxserver_start_escalators | int <= 100
     fail_msg: Zabbix start escalators must be between 1 and 100.
     success_msg: Zabbix start escalators is valid.
 
 - name: Validate start alerters
   ansible.builtin.assert:
     that:
-      - zbxserver_start_alerters >= 1
-      - zbxserver_start_alerters <= 100
+      - zbxserver_start_alerters | int >= 1
+      - zbxserver_start_alerters | int <= 100
     fail_msg: Zabbix start alerters must be between 1 and 100.
     success_msg: Zabbix start alerters is valid.
 
@@ -237,72 +237,72 @@
     - zbxserver_use_java_gateway
   ansible.builtin.assert:
     that:
-      - zbxserver_start_java_pollers >= 0
-      - zbxserver_start_java_pollers <= 1000
+      - zbxserver_start_java_pollers | int >= 0
+      - zbxserver_start_java_pollers | int <= 1000
     fail_msg: Zabbix start Java pollers must be between 0 and 1000.
     success_msg: Zabbix start Java pollers is valid.
 
 - name: Validate start VMware collectors
   ansible.builtin.assert:
     that:
-      - zbxserver_start_vmware_collectors >= 0
-      - zbxserver_start_vmware_collectors <= 250
+      - zbxserver_start_vmware_collectors | int >= 0
+      - zbxserver_start_vmware_collectors | int <= 250
     fail_msg: Zabbix start VMware collectors must be between 0 and 250.
     success_msg: Zabbix start VMware collectors is valid.
 
 - name: Validate start SNMP trapper
   ansible.builtin.assert:
     that:
-      - zbxserver_start_snmp_trapper >= 0
-      - zbxserver_start_snmp_trapper <= 1
+      - zbxserver_start_snmp_trapper | int >= 0
+      - zbxserver_start_snmp_trapper | int <= 1
     fail_msg: Zabbix start SNMP trapper must be between 0 and 1.
     success_msg: Zabbix start SNMP trapper is valid.
 
 - name: Validate start DB syncers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_db_syncers >= 1
-      - zbxserver_start_db_syncers <= 100
+      - zbxserver_start_db_syncers | int >= 1
+      - zbxserver_start_db_syncers | int <= 100
     fail_msg: Zabbix start DB syncers must be between 1 and 100.
     success_msg: Zabbix start DB syncers is valid.
 
 - name: Validate start proxy pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_proxy_pollers >= 0
-      - zbxserver_start_proxy_pollers <= 250
+      - zbxserver_start_proxy_pollers | int >= 0
+      - zbxserver_start_proxy_pollers | int <= 250
     fail_msg: Zabbix start proxy pollers must be between 0 and 250.
     success_msg: Zabbix start proxy pollers is valid.
 
 - name: Validate start LLD processors
   ansible.builtin.assert:
     that:
-      - zbxserver_start_lld_processors >= 0
-      - zbxserver_start_lld_processors <= 100
+      - zbxserver_start_lld_processors | int >= 0
+      - zbxserver_start_lld_processors | int <= 100
     fail_msg: Zabbix start LLD processors must be between 0 and 100.
     success_msg: Zabbix start LLD processors is valid.
 
 - name: Validate start report writers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_report_writers >= 0
-      - zbxserver_start_report_writers <= 100
+      - zbxserver_start_report_writers | int >= 0
+      - zbxserver_start_report_writers | int <= 100
     fail_msg: Zabbix start report writers must be between 0 and 100.
     success_msg: Zabbix start report writers is valid.
 
 - name: Validate start ODBC pollers
   ansible.builtin.assert:
     that:
-      - zbxserver_start_odbc_pollers >= 0
-      - zbxserver_start_odbc_pollers <= 1000
+      - zbxserver_start_odbc_pollers | int >= 0
+      - zbxserver_start_odbc_pollers | int <= 1000
     fail_msg: Zabbix start ODBC pollers must be between 0 and 1000.
     success_msg: Zabbix start ODBC pollers is valid.
 
 - name: Validate max concurrent checks per poller
   ansible.builtin.assert:
     that:
-      - zbxserver_max_concurrent_checks_per_poller >= 1
-      - zbxserver_max_concurrent_checks_per_poller <= 1000
+      - zbxserver_max_concurrent_checks_per_poller | int >= 1
+      - zbxserver_max_concurrent_checks_per_poller | int <= 1000
     fail_msg: Zabbix max concurrent checks per poller must be between 1 and 1000.
     success_msg: Zabbix max concurrent checks per poller is valid.
 
@@ -311,126 +311,126 @@
     - zbxserver_use_java_gateway
   ansible.builtin.assert:
     that:
-      - zbxserver_java_gateway_port >= 1024
-      - zbxserver_java_gateway_port <= 32767
+      - zbxserver_java_gateway_port | int >= 1024
+      - zbxserver_java_gateway_port | int <= 32767
     fail_msg: Zabbix Java gateway port must be between 1024 and 32767.
     success_msg: Zabbix Java gateway port is valid.
 
 - name: Validate VMware frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_vmware_frequency >= 10
-      - zbxserver_vmware_frequency <= 86400
+      - zbxserver_vmware_frequency | int >= 10
+      - zbxserver_vmware_frequency | int <= 86400
     fail_msg: Zabbix VMware frequency must be between 10 and 86400 seconds.
     success_msg: Zabbix VMware frequency is valid.
 
 - name: Validate VMware perf frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_vmware_perf_frequency >= 10
-      - zbxserver_vmware_perf_frequency <= 86400
+      - zbxserver_vmware_perf_frequency | int >= 10
+      - zbxserver_vmware_perf_frequency | int <= 86400
     fail_msg: Zabbix VMware perf frequency must be between 10 and 86400 seconds.
     success_msg: Zabbix VMware perf frequency is valid.
 
 - name: Validate VMware timeout
   ansible.builtin.assert:
     that:
-      - zbxserver_vmware_timeout >= 1
-      - zbxserver_vmware_timeout <= 300
+      - zbxserver_vmware_timeout | int >= 1
+      - zbxserver_vmware_timeout | int <= 300
     fail_msg: Zabbix VMware timeout must be between 1 and 300 seconds.
     success_msg: Zabbix VMware timeout is valid.
 
 - name: Validate housekeeping frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_housekeeping_frequency >= 1
-      - zbxserver_housekeeping_frequency <= 24
+      - zbxserver_housekeeping_frequency | int >= 1
+      - zbxserver_housekeeping_frequency | int <= 24
     fail_msg: Zabbix housekeeping frequency must be between 1 and 24 hours.
     success_msg: Zabbix housekeeping frequency is valid.
 
 - name: Validate max housekeeping delete
   ansible.builtin.assert:
     that:
-      - zbxserver_max_housekeeper_delete >= 0
-      - zbxserver_max_housekeeper_delete <= 100000
+      - zbxserver_max_housekeeper_delete | int >= 0
+      - zbxserver_max_housekeeper_delete | int <= 100000
     fail_msg: Zabbix max housekeeper delete must be between 0 and 100000.
     success_msg: Zabbix max housekeeper delete is valid.
 
 - name: Validate problem housekeeping frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_problem_housekeeping_frequency >= 1
-      - zbxserver_problem_housekeeping_frequency <= 3600
+      - zbxserver_problem_housekeeping_frequency | int >= 1
+      - zbxserver_problem_housekeeping_frequency | int <= 3600
     fail_msg: Zabbix problem housekeeping frequency must be between 1 and 3600 seconds.
     success_msg: Zabbix problem housekeeping frequency is valid.
 
 - name: Validate cache update frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_cache_update_frequency >= 1
-      - zbxserver_cache_update_frequency <= 3600
+      - zbxserver_cache_update_frequency | int >= 1
+      - zbxserver_cache_update_frequency | int <= 3600
     fail_msg: Zabbix cache update frequency must be between 1 and 3600 seconds.
     success_msg: Zabbix cache update frequency is valid.
 
 - name: Validate timeout
   ansible.builtin.assert:
     that:
-      - zbxserver_timeout >= 1
-      - zbxserver_timeout <= 30
+      - zbxserver_timeout | int >= 1
+      - zbxserver_timeout | int <= 30
     fail_msg: Zabbix timeout must be between 1 and 30 seconds.
     success_msg: Zabbix timeout is valid.
 
 - name: Validate trapper timeout
   ansible.builtin.assert:
     that:
-      - zbxserver_trapper_timeout >= 1
-      - zbxserver_trapper_timeout <= 300
+      - zbxserver_trapper_timeout | int >= 1
+      - zbxserver_trapper_timeout | int <= 300
     fail_msg: Zabbix trapper timeout must be between 1 and 300 seconds.
     success_msg: Zabbix trapper timeout is valid.
 
 - name: Validate unreachable period
   ansible.builtin.assert:
     that:
-      - zbxserver_unreachable_period >= 1
-      - zbxserver_unreachable_period <= 3600
+      - zbxserver_unreachable_period | int >= 1
+      - zbxserver_unreachable_period | int <= 3600
     fail_msg: Zabbix unreachable period must be between 1 and 3600 seconds.
     success_msg: Zabbix unreachable period is valid.
 
 - name: Validate unreachable delay
   ansible.builtin.assert:
     that:
-      - zbxserver_unavailable_delay >= 1
-      - zbxserver_unavailable_delay <= 3600
+      - zbxserver_unavailable_delay | int >= 1
+      - zbxserver_unavailable_delay | int <= 3600
     fail_msg: Zabbix unavailable delay must be between 1 and 3600 seconds.
     success_msg: Zabbix unavailable delay is valid.
 
 - name: Validate unavailable delay
   ansible.builtin.assert:
     that:
-      - zbxserver_unavailable_delay >= 1
-      - zbxserver_unavailable_delay <= 3600
+      - zbxserver_unavailable_delay | int >= 1
+      - zbxserver_unavailable_delay | int <= 3600
     fail_msg: Zabbix unavailable delay must be between 1 and 3600 seconds.
     success_msg: Zabbix unavailable delay is valid.
 
 - name: Validate proxy config frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_proxy_config_frequency >= 1
-      - zbxserver_proxy_config_frequency <= 604800
+      - zbxserver_proxy_config_frequency | int >= 1
+      - zbxserver_proxy_config_frequency | int <= 604800
     fail_msg: Zabbix proxy config frequency must be between 1 and 604800 seconds.
     success_msg: Zabbix proxy config frequency is valid.
 
 - name: Validate proxy data frequency
   ansible.builtin.assert:
     that:
-      - zbxserver_proxy_data_frequency >= 1
-      - zbxserver_proxy_data_frequency <= 3600
+      - zbxserver_proxy_data_frequency | int >= 1
+      - zbxserver_proxy_data_frequency | int <= 3600
     fail_msg: Zabbix proxy data frequency must be between 1 and 3600 seconds.
     success_msg: Zabbix proxy data frequency is valid.
 
 - name: Validate logrotate retention
   ansible.builtin.assert:
     that:
-      - zbxserver_logrotate_retention >= 1
+      - zbxserver_logrotate_retention | int >= 1
     fail_msg: Zabbix logrotate retention must be at least 1.
     success_msg: Zabbix logrotate retention is valid.

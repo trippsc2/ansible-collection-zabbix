@@ -75,15 +75,15 @@
         - zbxagent_configure_logrotate
       ansible.builtin.assert:
         that:
-          - zbxagent_log_file_size == 0
+          - zbxagent_log_file_size | int == 0
         fail_msg: "The 'zbxagent_log_file_size' variable must be 0 when logrotate is configured"
         success_msg: "The 'zbxagent_log_file_size' variable is 0 when logrotate is configured"
 
     - name: Validate maximum log size is defined when logrotate is not configured
       ansible.builtin.assert:
         that:
-          - zbxagent_log_file_size >= 0
-          - zbxagent_log_file_size <= 1024
+          - zbxagent_log_file_size | int >= 0
+          - zbxagent_log_file_size | int <= 1024
         fail_msg: "The 'zbxagent_log_file_size' variable is not between 0 and 1024."
         success_msg: "The 'zbxagent_log_file_size' variable is between 0 and 1024."
 
@@ -92,8 +92,8 @@
     - zbxagent_listen_port is defined
   ansible.builtin.assert:
     that:
-      - zbxagent_listen_port >= 1024
-      - zbxagent_listen_port <= 32767
+      - zbxagent_listen_port | int >= 1024
+      - zbxagent_listen_port | int <= 32767
     fail_msg: "The 'zbxagent_listen_port' variable is not between 1024 and 32767."
     success_msg: "The 'zbxagent_listen_port' variable is between 1024 and 32767."
 
@@ -102,8 +102,8 @@
     - zbxagent_status_port is defined
   ansible.builtin.assert:
     that:
-      - zbxagent_status_port >= 1024
-      - zbxagent_status_port <= 32767
+      - zbxagent_status_port | int >= 1024
+      - zbxagent_status_port | int <= 32767
     fail_msg: "The 'zbxagent_status_port' variable is not between 1024 and 32767."
     success_msg: "The 'zbxagent_status_port' variable is between 1024 and 32767."
 
@@ -112,8 +112,8 @@
     - zbxagent_refresh_active_checks is defined
   ansible.builtin.assert:
     that:
-      - zbxagent_refresh_active_checks >= 1
-      - zbxagent_refresh_active_checks <= 86400
+      - zbxagent_refresh_active_checks | int >= 1
+      - zbxagent_refresh_active_checks | int <= 86400
     fail_msg: "The 'zbxagent_refresh_active_checks' variable is not between 1 and 86400."
     success_msg: "The 'zbxagent_refresh_active_checks' variable is between 1 and 86400."
 
@@ -122,8 +122,8 @@
     - zbxagent_buffer_send is defined
   ansible.builtin.assert:
     that:
-      - zbxagent_buffer_send >= 1
-      - zbxagent_buffer_send <= 3600
+      - zbxagent_buffer_send | int >= 1
+      - zbxagent_buffer_send | int <= 3600
     fail_msg: "The 'zbxagent_buffer_send' variable is not between 1 and 3600."
     success_msg: "The 'zbxagent_buffer_send' variable is between 1 and 3600."
 
@@ -132,8 +132,8 @@
     - zbxagent_buffer_size is defined
   ansible.builtin.assert:
     that:
-      - zbxagent_buffer_size >= 2
-      - zbxagent_buffer_size <= 65535
+      - zbxagent_buffer_size | int >= 2
+      - zbxagent_buffer_size | int <= 65535
     fail_msg: "The 'zbxagent_buffer_size' variable is not between 2 and 65535."
     success_msg: "The 'zbxagent_buffer_size' variable is between 2 and 65535."
 
@@ -151,16 +151,16 @@
     - zbxagent_heartbeat_frequency is defined
   ansible.builtin.assert:
     that:
-      - zbxagent_heartbeat_frequency >= 0
-      - zbxagent_heartbeat_frequency <= 3600
+      - zbxagent_heartbeat_frequency | int >= 0
+      - zbxagent_heartbeat_frequency | int <= 3600
     fail_msg: "The 'zbxagent_heartbeat_frequency' variable is not between 0 and 3600."
     success_msg: "The 'zbxagent_heartbeat_frequency' variable is between 0 and 3600."
 
 - name: Validate timeout
   ansible.builtin.assert:
     that:
-      - zbxagent_timeout >= 1
-      - zbxagent_timeout <= 30
+      - zbxagent_timeout | int >= 1
+      - zbxagent_timeout | int <= 30
     fail_msg: "The 'zbxagent_timeout' variable is not between 1 and 30."
     success_msg: "The 'zbxagent_timeout' variable is between 1 and 30."
 
@@ -169,8 +169,8 @@
     - zbxagent_plugin_timeout is defined
   ansible.builtin.assert:
     that:
-      - zbxagent_plugin_timeout >= 1
-      - zbxagent_plugin_timeout <= 30
+      - zbxagent_plugin_timeout | int >= 1
+      - zbxagent_plugin_timeout | int <= 30
     fail_msg: "The 'zbxagent_plugin_timeout' variable is not between 1 and 30."
     success_msg: "The 'zbxagent_plugin_timeout' variable is between 1 and 30."
 
@@ -193,8 +193,8 @@
         - zbxagent_ember_plus_keepalive is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_ember_plus_keepalive >= 60
-          - zbxagent_ember_plus_keepalive <= 900
+          - zbxagent_ember_plus_keepalive | int >= 60
+          - zbxagent_ember_plus_keepalive | int <= 900
         fail_msg: "The 'zbxagent_ember_plus_keepalive' variable is not between 60 and 900."
         success_msg: "The 'zbxagent_ember_plus_keepalive' variable is between 60 and 900."
 
@@ -211,8 +211,8 @@
         - zbxagent_ember_plus_timeout is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_ember_plus_timeout >= 1
-          - zbxagent_ember_plus_timeout <= 30
+          - zbxagent_ember_plus_timeout | int >= 1
+          - zbxagent_ember_plus_timeout | int <= 30
         fail_msg: "The 'zbxagent_ember_plus_timeout' variable is not between 1 and 30."
         success_msg: "The 'zbxagent_ember_plus_timeout' variable is between 1 and 30."
 
@@ -234,8 +234,8 @@
         - zbxagent_mongodb_keepalive is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_mongodb_keepalive >= 60
-          - zbxagent_mongodb_keepalive <= 900
+          - zbxagent_mongodb_keepalive | int >= 60
+          - zbxagent_mongodb_keepalive | int <= 900
         fail_msg: "The 'zbxagent_mongodb_keepalive' variable is not between 60 and 900."
         success_msg: "The 'zbxagent_mongodb_keepalive' variable is between 60 and 900."
 
@@ -305,8 +305,8 @@
         - zbxagent_mongodb_timeout is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_mongodb_timeout >= 1
-          - zbxagent_mongodb_timeout <= 30
+          - zbxagent_mongodb_timeout | int >= 1
+          - zbxagent_mongodb_timeout | int <= 30
         fail_msg: "The 'zbxagent_mongodb_timeout' variable is not between 1 and 30."
         success_msg: "The 'zbxagent_mongodb_timeout' variable is between 1 and 30."
 
@@ -363,8 +363,8 @@
         - zbxagent_mssql_keepalive is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_mssql_keepalive >= 60
-          - zbxagent_mssql_keepalive <= 900
+          - zbxagent_mssql_keepalive | int >= 60
+          - zbxagent_mssql_keepalive | int <= 900
         fail_msg: "The 'zbxagent_mssql_keepalive' variable is not between 60 and 900."
         success_msg: "The 'zbxagent_mssql_keepalive' variable is between 60 and 900."
 
@@ -401,8 +401,8 @@
         - zbxagent_mssql_timeout is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_mssql_timeout >= 1
-          - zbxagent_mssql_timeout <= 30
+          - zbxagent_mssql_timeout | int >= 1
+          - zbxagent_mssql_timeout | int <= 30
         fail_msg: "The 'zbxagent_mssql_timeout' variable is not between 1 and 30."
         success_msg: "The 'zbxagent_mssql_timeout' variable is between 1 and 30."
 
@@ -415,8 +415,8 @@
         - zbxagent_pgsql_call_timeout is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_pgsql_call_timeout >= 1
-          - zbxagent_pgsql_call_timeout <= 30
+          - zbxagent_pgsql_call_timeout | int >= 1
+          - zbxagent_pgsql_call_timeout | int <= 30
         fail_msg: "The 'zbxagent_pgsql_call_timeout' variable is not between 1 and 30."
         success_msg: "The 'zbxagent_pgsql_call_timeout' variable is between 1 and 30."
 
@@ -505,8 +505,8 @@
         - zbxagent_pgsql_keepalive is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_pgsql_keepalive >= 60
-          - zbxagent_pgsql_keepalive <= 900
+          - zbxagent_pgsql_keepalive | int >= 60
+          - zbxagent_pgsql_keepalive | int <= 900
         fail_msg: "The 'zbxagent_pgsql_keepalive' variable is not between 60 and 900."
         success_msg: "The 'zbxagent_pgsql_keepalive' variable is between 60 and 900."
 
@@ -576,16 +576,16 @@
         - zbxagent_pgsql_timeout is defined
       ansible.builtin.assert:
         that:
-          - zbxagent_pgsql_timeout >= 1
-          - zbxagent_pgsql_timeout <= 30
+          - zbxagent_pgsql_timeout | int >= 1
+          - zbxagent_pgsql_timeout | int <= 30
         fail_msg: "The 'zbxagent_pgsql_timeout' variable is not between 1 and 30."
         success_msg: "The 'zbxagent_pgsql_timeout' variable is between 1 and 30."
 
 - name: Validate maximum log lines per second
   ansible.builtin.assert:
     that:
-      - zbxagent_log_max_lines_per_second >= 1
-      - zbxagent_log_max_lines_per_second <= 1000
+      - zbxagent_log_max_lines_per_second | int >= 1
+      - zbxagent_log_max_lines_per_second | int <= 1000
     fail_msg: "The 'zbxagent_log_max_lines_per_second' variable is not between 1 and 1000."
     success_msg: "The 'zbxagent_log_max_lines_per_second' variable is between 1 and 1000."
 
@@ -594,6 +594,6 @@
     - zbxagent_configure_logrotate
   ansible.builtin.assert:
     that:
-      - zbxagent_logrotate_retention >= 1
+      - zbxagent_logrotate_retention | int >= 1
     fail_msg: "The 'zbxagent_logrotate_retention' variable is not greater than 0."
     success_msg: "The 'zbxagent_logrotate_retention' variable is greater than 0."

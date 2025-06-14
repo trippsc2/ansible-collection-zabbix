@@ -2,7 +2,7 @@
 galaxy_info:
   author: Jim Tarpley (@trippsc2)
   namespace: trippsc2
-  role_name: proxy_postgresql
+  role_name: proxy_sqlite3
   description: This role installs a SQLite3 database for use by a Zabbix Proxy on a Linux system.
   
   license: MIT
@@ -21,11 +21,6 @@ galaxy_info:
       versions:
         - noble
         - jammy
-        - focal
-
-  galaxy_tags: []
-
-collections: []
 
 dependencies:
   - role: trippsc2.zabbix.repo

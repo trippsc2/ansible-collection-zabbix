@@ -1,0 +1,129 @@
+---
+name: Generate Role Docs
+'on':
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+    paths:
+      - galaxy.yml
+      - roles/agent2/.aar_doc.yml
+      - roles/agent2/README.md
+      - roles/agent2/meta/argument_specs.yml
+      - roles/agent2/meta/main.yml
+      - roles/host/.aar_doc.yml
+      - roles/host/README.md
+      - roles/host/meta/argument_specs.yml
+      - roles/host/meta/main.yml
+      - roles/nginx/.aar_doc.yml
+      - roles/nginx/README.md
+      - roles/nginx/meta/argument_specs.yml
+      - roles/nginx/meta/main.yml
+      - roles/proxy/.aar_doc.yml
+      - roles/proxy/README.md
+      - roles/proxy/meta/argument_specs.yml
+      - roles/proxy/meta/main.yml
+      - roles/proxy_postgresql/.aar_doc.yml
+      - roles/proxy_postgresql/README.md
+      - roles/proxy_postgresql/meta/argument_specs.yml
+      - roles/proxy_postgresql/meta/main.yml
+      - roles/proxy_sqlite3/.aar_doc.yml
+      - roles/proxy_sqlite3/README.md
+      - roles/proxy_sqlite3/meta/argument_specs.yml
+      - roles/proxy_sqlite3/meta/main.yml
+      - roles/repo/.aar_doc.yml
+      - roles/repo/README.md
+      - roles/repo/meta/argument_specs.yml
+      - roles/repo/meta/main.yml
+      - roles/server/.aar_doc.yml
+      - roles/server/README.md
+      - roles/server/meta/argument_specs.yml
+      - roles/server/meta/main.yml
+      - roles/server_postgresql/.aar_doc.yml
+      - roles/server_postgresql/README.md
+      - roles/server_postgresql/meta/argument_specs.yml
+      - roles/server_postgresql/meta/main.yml
+defaults:
+  run:
+    working-directory: 'trippsc2.zabbix'
+jobs:
+  docs_agent2:
+    name: Generate agent2 role documentation
+    permissions:
+      contents: write
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'agent2'
+  docs_host:
+    name: Generate host role documentation
+    permissions:
+      contents: write
+    needs: docs_agent2
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'host'
+  docs_nginx:
+    name: Generate nginx role documentation
+    permissions:
+      contents: write
+    needs: docs_host
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'nginx'
+  docs_proxy:
+    name: Generate proxy role documentation
+    permissions:
+      contents: write
+    needs: docs_nginx
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'proxy'
+  docs_proxy_postgresql:
+    name: Generate proxy_postgresql role documentation
+    permissions:
+      contents: write
+    needs: docs_proxy
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'proxy_postgresql'
+  docs_proxy_sqlite3:
+    name: Generate proxy_sqlite3 role documentation
+    permissions:
+      contents: write
+    needs: docs_proxy_postgresql
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'proxy_sqlite3'
+  docs_repo:
+    name: Generate repo role documentation
+    permissions:
+      contents: write
+    needs: docs_proxy_sqlite3
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'repo'
+  docs_server:
+    name: Generate server role documentation
+    permissions:
+      contents: write
+    needs: docs_repo
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'server'
+  docs_server_postgresql:
+    name: Generate server_postgresql role documentation
+    permissions:
+      contents: write
+    needs: docs_server
+    uses: trippsoft/github-actions/.github/workflows/role-docs.yml@main
+    with:
+      working_directory: 'trippsc2.zabbix'
+      role_name: 'server_postgresql'
