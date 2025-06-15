@@ -1,7 +1,7 @@
 <!-- BEGIN_ANSIBLE_DOCS -->
 
 # Ansible Role: trippsc2.zabbix.server_postgresql
-Version: 1.1.15
+Version: 1.1.16
 
 This role installs PostgreSQL server for use by a Zabbix Server on a Linux system.
 
@@ -15,7 +15,7 @@ The *pgsql_additional_hba_entries* variable is overridden by this role. The rest
 | -------- | -------- |
 | Debian | <ul><li>bookworm</li></ul> |
 | EL | <ul><li>9</li><li>8</li></ul> |
-| Ubuntu | <ul><li>noble</li><li>jammy</li><li>focal</li></ul> |
+| Ubuntu | <ul><li>noble</li><li>jammy</li></ul> |
 
 ## Dependencies
 | Role |
@@ -24,7 +24,6 @@ The *pgsql_additional_hba_entries* variable is overridden by this role. The rest
 
 | Collection |
 | ---------- |
-| ansible.posix |
 | community.hashi_vault |
 | community.postgresql |
 | trippsc2.hashi_vault |
